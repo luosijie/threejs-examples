@@ -34,9 +34,50 @@
     document.body.appendChild(renderer.domElement)
 
     createAuxSystem()
+    createLightSystem()
+    createCity()
     loop()
     onWindowResize()
+
+    function createCity () {
+      var planeGeometry = new THREE.BoxGeometry(300,6,300)
+      var planeMaterial = new THREE.MeshLambertMaterial({color: 0x9ed953})
+      var plane = new THREE.Mesh(planeGeometry, planeMaterial)
+      plane.position.y = -3
+      scene.add(plane)
+
+      var tree = new Tree()
+      scene.add(tree)
+
+      function Tree () {
+        this.tree = new THREE.Object3D()
+
+        var treeTrunkGeometry = new THREE.BoxGeometry(3,10,3)
+        var treeTrunkMaterial = new THREE.MeshLambertMaterial({color: 0x8a613a})
+        var treeTrunk = new THREE.Mesh(treeTrunkGeometry, treeTrunkMaterial)
+        treeTrunk.position.y = 5
+        this.tree.add(treeTrunk)
+
+        var treeLeafsGeometry = new THREE.BoxGeometry(12, 12, 12)
+        var treeLeafsMaterial = new THREE.MeshLambertMaterial({color: 0x65a114})
+        var treeLeafs = new THREE.Mesh(treeLeafsGeometry, treeLeafsMaterial)
+        treeLeafs.position.y = 16
+        this.tree.add( treeLeafs)
+
+        return this.tree
+      }
+    }
     
+    function createLightSystem () {
+      var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1)
+      scene.add( hemisphereLight)
+
+      // var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.01 );
+      // directionalLight.position.set(0,100,0)
+      // scene.add( directionalLight )
+
+    }
+
     function createAuxSystem () {
       var stats = new Stats()
       stats.setMode(0)
