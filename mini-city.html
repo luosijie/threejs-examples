@@ -14,6 +14,8 @@
   <script src="js/libs/three.min.js"></script>
   <script src="js/libs/orbitControls.js"></script>
   <script src="js/libs/stats.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/textures.js"></script>
   <script>
     var scene, camera
     var renderer
@@ -35,34 +37,137 @@
 
     createAuxSystem()
     createLightSystem()
-    createCity()
+    createbuilding()
     loop()
     onWindowResize()
 
-    function createCity () {
+    function createbuilding () {
       var planeGeometry = new THREE.BoxGeometry(300,6,300)
-      var planeMaterial = new THREE.MeshLambertMaterial({color: 0x9ed953})
+      var planeMaterial = new THREE.MeshLambertMaterial({color: 0x6f5f6a})
       var plane = new THREE.Mesh(planeGeometry, planeMaterial)
       plane.position.y = -3
       scene.add(plane)
 
-      var tree = new Tree()
-      scene.add(tree)
 
-      function Tree () {
+      addFense()
+      addGreen()
+      addTrees()
+      addHospital()
+
+      function addHospital () {
+        var hospital = new Hospital()
+        hospital.position.z = -20
+        scene.add(hospital)  
+      }
+
+      function addGreen () {
+        var greenCoords = [
+          [-120, -120], [-120,  120], [ 120,  120], [ 120, -120],
+          [ 20 , -120], [ 20 , -100], [ 100, -100], [ 100,  100],
+          [-100,  100], [-100, -100], [-20,  -100 ], [-20,  -120 ],
+          [-120, -120]
+        ]
+        var greenShape = utils.makeShape(greenCoords)
+
+        var greenGeometry = new THREE.ExtrudeGeometry(greenShape, {
+          steps: 1,
+          amount: 3,
+          bevelEnabled: true,
+          bevelThickness: 0.5,
+          bevelSize: 1,
+          bevelSegments: 1
+        })
+
+        greenGeometry.rotateX(-0.5 * Math.PI)
+
+        var greenMaterial = new THREE.MeshLambertMaterial({color: 0xc0c06a})
+        var green = new THREE.Mesh(greenGeometry, greenMaterial)
+        scene.add(green)
+
+
+      }
+
+      function addFense () {
+        var fenseCoords = [
+          [-130, -130], [-130, 130], [ 130,  130], [ 130, -130],
+          [ 20, -130], [ 20, -120], [ 120, -120], [ 120, 120],
+          [-120, 120], [-120, -120], [-20,  -120 ], [-20,  -130 ],
+          [-130, -130]
+        ]
+        var fenseShape = utils.makeShape(fenseCoords)
+
+        var fenseGeometry = new THREE.ExtrudeGeometry(fenseShape, {
+          steps: 1,
+          amount: 3,
+          bevelEnabled: true,
+          bevelThickness: 0.5,
+          bevelSize: 1,
+          bevelSegments: 1
+        })
+        fenseGeometry.rotateX(-0.5 * Math.PI)
+
+        var fenseMaterial = new THREE.MeshLambertMaterial({color: 0xe5cabf})
+        var fense = new THREE.Mesh(fenseGeometry, fenseMaterial)
+        scene.add(fense)
+      }
+      
+      function addTrees () {
+        var treeCoords = [
+          [-110, -110], [-90, -110],[-70, -110],[-50, -110],[-30, -110],[ -10, -110],[10, -110],[30, -110],[50, -110],[70, -110],[90, -110],
+          [-110,  110], [-110, 90],[-110, 70],[-110, 50],[-110, 30],[ -110, 10],[-110, -10],[-110, -30],[-110, -50],[-110, -70],[-110, -90],
+          [ 110,  110], [90, 110], [70, 110], [50, 110], [30, 110],[-30, 110], [-50, 110], [-70, 110], [-90, 110],
+          [ 110, -110], [ 110, -90], [ 110, -70], [ 110, -50], [ 110, -30], [ 110, -10], [ 110, 10], [ 110, 30], [ 110, 50], [ 110, 70],  [ 110, 90],
+        ]
+        for (var i = 0; i < treeCoords.length; i++) {
+          var treeX = treeCoords[i][0],
+              treeY = 3,
+              treeZ = treeCoords[i][1]
+          var tree = new Tree(treeCoords[i][0], 1, treeCoords[i][1])
+          scene.add(tree)
+        }
+      }
+      
+      function Hospital () {
+        this.hospital = new THREE.Object3D()
+
+        var baseGeometry = new THREE.BoxGeometry(180, 3, 140)
+        var baseMaterial = new THREE.MeshLambertMaterial({color: 0xffffff})
+        var base = new THREE.Mesh(baseGeometry, baseMaterial)
+        base.position.y = 1
+        this.hospital.add(base)
+
+        var frontMainCoords = [
+          [-80, -30], [-80, 20], [50, 20], [50, 0], [20, -30], [-80, -30]
+        ]
+        
+        var frontMainGeometry = utils.makeExtrudeGeometry(frontMainCoords,100)
+        var frontMainMaterial = new THREE.MeshLambertMaterial({map: textures.window()})
+        var frontMain = new THREE.Mesh(frontMainGeometry, frontMainMaterial)
+        this.hospital.add(frontMain)
+
+        return this.hospital
+      }
+
+      function Tree (x, y, z) {
+        var x = x || 0
+        var y = y || 0
+        var z = z || 0
+
         this.tree = new THREE.Object3D()
-
-        var treeTrunkGeometry = new THREE.BoxGeometry(3,10,3)
+        
+        var treeTrunkGeometry = new THREE.BoxGeometry(2,16,2)
         var treeTrunkMaterial = new THREE.MeshLambertMaterial({color: 0x8a613a})
         var treeTrunk = new THREE.Mesh(treeTrunkGeometry, treeTrunkMaterial)
-        treeTrunk.position.y = 5
+        treeTrunk.position.y = 8
         this.tree.add(treeTrunk)
 
-        var treeLeafsGeometry = new THREE.BoxGeometry(12, 12, 12)
-        var treeLeafsMaterial = new THREE.MeshLambertMaterial({color: 0x65a114})
+        var treeLeafsGeometry = new THREE.BoxGeometry(8, 8, 8)
+        var treeLeafsMaterial = new THREE.MeshLambertMaterial({color: 0x9c9e5d})
         var treeLeafs = new THREE.Mesh(treeLeafsGeometry, treeLeafsMaterial)
-        treeLeafs.position.y = 16
+        treeLeafs.position.y = 12
         this.tree.add( treeLeafs)
+
+        this.tree.position.set(x, y, z)
 
         return this.tree
       }
