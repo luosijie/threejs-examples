@@ -3,8 +3,8 @@ var textures = {
     var canvas = document.createElement( 'canvas' );
     var ctx = canvas.getContext( '2d' );
 
-    canvas.width = 30
-    canvas.height = 30
+    canvas.width = 32
+    canvas.height = 32
 
     var colors = {
       border: '#3c3443',
@@ -13,15 +13,15 @@ var textures = {
     }
 
     ctx.fillStyle = colors.border
-    ctx.fillRect(0, 0, 30, 30)
+    ctx.fillRect(0, 0, 32, 32)
     ctx.fillStyle = colors.top
-    ctx.fillRect(2, 2, 12, 12)
+    ctx.fillRect(2, 2, 13, 13)
     ctx.fillStyle = colors.top
-    ctx.fillRect(16, 2, 12, 12)
+    ctx.fillRect(17, 2, 13, 13)
     ctx.fillStyle = colors.bottom
-    ctx.fillRect(2, 16, 12, 12)
+    ctx.fillRect(2, 17, 13, 13)
     ctx.fillStyle = colors.bottom
-    ctx.fillRect(16, 16, 12, 12)
+    ctx.fillRect(17, 17, 13, 13)
 
     var canvasTexture = new THREE.Texture(canvas);
     canvasTexture.wrapS = THREE.RepeatWrapping;

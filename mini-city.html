@@ -139,11 +139,51 @@
         var frontMainCoords = [
           [-80, -30], [-80, 20], [50, 20], [50, 0], [20, -30], [-80, -30]
         ]
+        var frontMainShape = utils.makeShape(frontMainCoords)
         
-        var frontMainGeometry = utils.makeExtrudeGeometry(frontMainCoords,100)
+        var frontMainGeometry = utils.makeExtrudeGeometry(frontMainShape,100)
         var frontMainMaterial = new THREE.MeshLambertMaterial({map: textures.window()})
         var frontMain = new THREE.Mesh(frontMainGeometry, frontMainMaterial)
         this.hospital.add(frontMain)
+
+        var backMainCoords = [
+          [-80, 20], [-80, 60], [80, 60], [80, 20], [-80, 20]
+        ]
+        var backMainHolePath = [
+          [-78, 22], [78, 22], [78, 58], [-78, 58], [-78, 22]
+        ]
+        var backMainShape = utils.makeShape(backMainCoords, backMainHolePath)
+
+        var backMainGeometry = utils.makeExtrudeGeometry(backMainShape, 90)
+        var backMainMaterial = new THREE.MeshLambertMaterial({color: 0xf2e21b})
+        var backMain = new THREE.Mesh(backMainGeometry, backMainMaterial)
+        this.hospital.add(backMain)
+
+        var backMiddleCoords = [
+          [0, 0], [36, 0], [36, 70], [0,70],[0,0]
+        ]
+        var backMiddleHolePath = [
+          [2,2], [34, 2], [34, 68], [2, 68], [2, 2]
+        ]
+        var backMiddleShape = utils.makeShape(backMiddleCoords, backMiddleHolePath)
+        var backMiddkeGeometry = utils.makeExtrudeGeometry(backMiddleShape, 165)
+        var backMiddle = utils.makeMesh('lambert', backMiddkeGeometry, 0xffffff)
+        backMiddle.rotation.x = -0.5 * Math.PI
+        backMiddle.rotation.z = -0.5 * Math.PI
+        backMiddle.position.y = 86
+        backMiddle.position.z = -58
+        backMiddle.position.x = -78
+        this.hospital.add(backMiddle)
+
+        var backMiddleWindowGeometry = new THREE.PlaneGeometry(32,66,1,1)
+        var backMiddleWindowMaterial = new THREE.MeshPhongMaterial({map: textures.window()})
+        backMiddleWindowMaterial.map.repeat.set(2,6)
+
+        var backMiddleWindow = new THREE.Mesh(backMiddleWindowGeometry, backMiddleWindowMaterial)
+        backMiddleWindow.position.set(83, 51, -40)
+        backMiddleWindow.rotation.y = 0.5 * Math.PI
+        this.hospital.add(backMiddleWindow)
+
 
         return this.hospital
       }
@@ -164,7 +204,7 @@
         var treeLeafsGeometry = new THREE.BoxGeometry(8, 8, 8)
         var treeLeafsMaterial = new THREE.MeshLambertMaterial({color: 0x9c9e5d})
         var treeLeafs = new THREE.Mesh(treeLeafsGeometry, treeLeafsMaterial)
-        treeLeafs.position.y = 12
+        treeLeafs.position.y = 13
         this.tree.add( treeLeafs)
 
         this.tree.position.set(x, y, z)
