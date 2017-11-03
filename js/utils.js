@@ -28,10 +28,7 @@ var utils = {
     var extrudeSetting = {
       steps: 1,
       amount: amount,
-      bevelEnabled: true,
-      bevelThickness: 0.1,
-      bevelSize: 0.1,
-      bevelSegments: 1
+      bevelEnabled: false
     }
     var geometry = new THREE.ExtrudeGeometry(shape, extrudeSetting)
     geometry.rotateX( -0.5 * Math.PI)

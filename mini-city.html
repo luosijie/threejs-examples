@@ -69,19 +69,8 @@
         ]
         var greenShape = utils.makeShape(greenCoords)
 
-        var greenGeometry = new THREE.ExtrudeGeometry(greenShape, {
-          steps: 1,
-          amount: 3,
-          bevelEnabled: true,
-          bevelThickness: 0.5,
-          bevelSize: 1,
-          bevelSegments: 1
-        })
-
-        greenGeometry.rotateX(-0.5 * Math.PI)
-
-        var greenMaterial = new THREE.MeshLambertMaterial({color: 0xc0c06a})
-        var green = new THREE.Mesh(greenGeometry, greenMaterial)
+        var greenGeometry = utils.makeExtrudeGeometry(greenShape, 3)
+        var green = utils.makeMesh('lambert', greenGeometry, 0xc0c06a)
         scene.add(green)
 
 
@@ -95,19 +84,9 @@
           [-130, -130]
         ]
         var fenseShape = utils.makeShape(fenseCoords)
-
-        var fenseGeometry = new THREE.ExtrudeGeometry(fenseShape, {
-          steps: 1,
-          amount: 3,
-          bevelEnabled: true,
-          bevelThickness: 0.5,
-          bevelSize: 1,
-          bevelSegments: 1
-        })
-        fenseGeometry.rotateX(-0.5 * Math.PI)
-
-        var fenseMaterial = new THREE.MeshLambertMaterial({color: 0xe5cabf})
-        var fense = new THREE.Mesh(fenseGeometry, fenseMaterial)
+        
+        var fenseGeometry = utils.makeExtrudeGeometry(fenseShape, 3)
+        var fense = utils.makeMesh('lambert', fenseGeometry, 0xe5cabf)
         scene.add(fense)
       }
       
@@ -131,8 +110,7 @@
         this.hospital = new THREE.Object3D()
 
         var baseGeometry = new THREE.BoxGeometry(180, 3, 140)
-        var baseMaterial = new THREE.MeshLambertMaterial({color: 0xffffff})
-        var base = new THREE.Mesh(baseGeometry, baseMaterial)
+        var base = utils.makeMesh('lambert', baseGeometry, 0xffffff)
         base.position.y = 1
         this.hospital.add(base)
 
@@ -140,11 +118,54 @@
           [-80, -30], [-80, 20], [50, 20], [50, 0], [20, -30], [-80, -30]
         ]
         var frontMainShape = utils.makeShape(frontMainCoords)
-        
         var frontMainGeometry = utils.makeExtrudeGeometry(frontMainShape,100)
-        var frontMainMaterial = new THREE.MeshLambertMaterial({map: textures.window()})
+        var frontMainMaterial = new THREE.MeshPhongMaterial({map: textures.window()})
+        frontMainMaterial.map.repeat.set(0.1, 0.08)
         var frontMain = new THREE.Mesh(frontMainGeometry, frontMainMaterial)
         this.hospital.add(frontMain)
+
+        var frontTopShape = frontMainShape
+        var frontTopGeometry = utils.makeExtrudeGeometry(frontTopShape, 5)
+        var frontTop = utils.makeMesh('lambert', frontTopGeometry, 0xb1a7af)
+        frontTop.position.y = 100
+        this.hospital.add(frontTop)
+
+        var frontPlatGeometry = new THREE.BoxGeometry(150,3,90)
+        var fronPlat = utils.makeMesh('lambert', frontPlatGeometry, 0x0792a5)
+        fronPlat.position.set(-6,18,25)
+        this.hospital.add(fronPlat)
+
+        var frontPlatVerticalGeometry = new THREE.BoxGeometry(150, 15, 3)
+        var frontPlatVertical = utils.makeMesh('phong', frontPlatVerticalGeometry, 0x0792a5)
+        frontPlatVertical.position.set(-6, 27, 68.5)
+        this.hospital.add(frontPlatVertical)
+
+        var frontBorderVerticles = new THREE.Object3D()
+        var frontBorderVerticleGeometry = new THREE.BoxGeometry(4, 106, 4)
+        var frontBorderVerticleMesh = utils.makeMesh('phong', frontBorderVerticleGeometry, 0xffffff)
+        var frontBorderVerticle1 = frontBorderVerticleMesh.clone()
+        frontBorderVerticle1.position.set(-80, 52, 30)
+        frontBorderVerticles.add(frontBorderVerticle1)
+        var frontBorderVerticle2 = frontBorderVerticleMesh.clone()
+        frontBorderVerticle2.position.set(-80, 52, -20)
+        frontBorderVerticles.add(frontBorderVerticle2)
+        var frontBorderVerticle3 = frontBorderVerticleMesh.clone()
+        frontBorderVerticle3.position.set(50, 52, -18)
+        frontBorderVerticles.add(frontBorderVerticle3)
+        this.hospital.add(frontBorderVerticles)
+
+        var frontRoofCoords = [
+          [-82, -32], [20, -32], [52,0],[52, 22],[-82,22],[-82,-32]
+        ]
+        var frontRoofHolePath = [
+          [-78, -28], [20, -28], [48,0],[48, 18],[-78,18],[-78,-28]
+        ]
+        var frontRoofShape = utils.makeShape(frontRoofCoords, frontRoofHolePath)
+        var frontRoofGeometry = utils.makeExtrudeGeometry(frontRoofShape, 8)
+        var frontRoof = utils.makeMesh('phong', frontRoofGeometry, 0xffffff)
+        frontRoof.position.y = 100
+        this.hospital.add(frontRoof)
+
 
         var backMainCoords = [
           [-80, 20], [-80, 60], [80, 60], [80, 20], [-80, 20]
@@ -155,8 +176,7 @@
         var backMainShape = utils.makeShape(backMainCoords, backMainHolePath)
 
         var backMainGeometry = utils.makeExtrudeGeometry(backMainShape, 90)
-        var backMainMaterial = new THREE.MeshLambertMaterial({color: 0xf2e21b})
-        var backMain = new THREE.Mesh(backMainGeometry, backMainMaterial)
+        var backMain = utils.makeMesh('lambert', backMainGeometry, 0xf2e21b)
         this.hospital.add(backMain)
 
         var backMiddleCoords = [
