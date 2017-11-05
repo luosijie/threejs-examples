@@ -132,13 +132,28 @@
 
         var frontPlatGeometry = new THREE.BoxGeometry(150,3,90)
         var fronPlat = utils.makeMesh('lambert', frontPlatGeometry, 0x0792a5)
-        fronPlat.position.set(-6,18,25)
+        fronPlat.position.set(-3,18,25)
         this.hospital.add(fronPlat)
 
         var frontPlatVerticalGeometry = new THREE.BoxGeometry(150, 15, 3)
         var frontPlatVertical = utils.makeMesh('phong', frontPlatVerticalGeometry, 0x0792a5)
-        frontPlatVertical.position.set(-6, 27, 68.5)
+        frontPlatVertical.position.set(-3, 27, 68.5)
         this.hospital.add(frontPlatVertical)
+
+        var frontPlatVerticalWhiteGeometry = new THREE.BoxGeometry(150, 3, 3)
+        var frontPlatVerticalWhite = utils.makeMesh('phong', frontPlatVerticalWhiteGeometry, 0xffffff)
+        frontPlatVerticalWhite.position.set(-3, 36, 68.5)
+        this.hospital.add(frontPlatVerticalWhite)
+
+        var frontPlatPillarGeometry = new THREE.CylinderGeometry(2, 2, 15, 32)
+        var frontPlatPillar = utils.makeMesh('lambert', frontPlatPillarGeometry, 0xffffff)
+        frontPlatPillar.position.set(-60, 10, 55)
+        this.hospital.add(frontPlatPillar)
+
+        var frontPlatPillar2 = frontPlatPillar.clone()
+        frontPlatPillar2.position.set(55, 10, 55)
+        this.hospital.add(frontPlatPillar2)
+
 
         var frontBorderVerticles = new THREE.Object3D()
         var frontBorderVerticleGeometry = new THREE.BoxGeometry(4, 106, 4)
