@@ -38,8 +38,46 @@
     createAuxSystem()
     createLightSystem()
     createbuilding()
+    createRoad()
     loop()
     onWindowResize()
+
+    function createRoad () {
+      var road = new THREE.Object3D()
+      var roadColor = 0xffffff
+      var roadBorderOuterCoords = [
+        [-150, 150], [150, 150], [150, -150], [-150, -150],
+      ]
+      var roadBorderOuterHoleCoords = [
+        [-149, 149], [-149,-149],[149, -149], [148, 149]
+      ]
+      var roadBorderOuterShape = utils.makeShape(roadBorderOuterCoords, roadBorderOuterHoleCoords)
+      var roadBorderOuterGeometry = utils.makeExtrudeGeometry(roadBorderOuterShape, 0.1)
+      var roadBorderOuter = utils.makeMesh('phong', roadBorderOuterGeometry, roadColor)
+      road.add(roadBorderOuter)
+
+      var roadBorderInnerCoords = [
+        [-131, 131], [-131,  -131], [ 131,  -131], [ 131, 131],
+        [ 19 , 131], [ 19 , 99], [ 99, 99], [ 99,  -99],
+        [-99,  -99], [-99, 99], [-19,  99 ], [-19,  131 ]
+      ]
+      var roadBorderInnerShape = utils.makeShape(roadBorderInnerCoords)
+      var roadBorderInnnerGeometry = utils.makeExtrudeGeometry(roadBorderInnerShape, 0.1)
+      var roadBoaderInnder = utils.makeMesh('phong', roadBorderInnnerGeometry, roadColor)
+      roadBoaderInnder.rotation.y = Math.PI
+      road.add(roadBoaderInnder)
+
+      var roadLineGeometry = new THREE.CubeGeometry(20, 0.1, 4)
+      roadLineGeometry.translate(20,0,0)
+      var roadLine = utils.makeMesh('phong', roadLineGeometry, roadColor)
+      for( var i =0; i < 4; i++){
+        for(var j=0; j < 6; j++){
+          console.log(3)
+        }
+      }
+
+      scene.add(road)
+    }
 
     function createbuilding () {
       var planeGeometry = new THREE.BoxGeometry(300,6,300)
@@ -53,6 +91,44 @@
       addGreen()
       addTrees()
       addHospital()
+      addLamps()
+
+      function addLamps () {
+        var lampCoords = [
+          [-12.5, 12.5, 41], [-7.5, 12.5, 1], [-2.5, 12.5, 1], [2.5, 12.5, 1], [7.5, 12.5, 1], 
+          [12.5, 12.5, 12], [12.5, 7.5, 2], [12.5, 2.5, 2], [12.5, -2.5, 2], [12.5, -7.5, 2], 
+          [12.5, -12.5, 23], [7.5, -12.5, 3], [2.5, -12.5, 3], [-2.5, -12.5, 3], [-7.5, -12.5, 3],
+          [-12.5, -12.5, 34], [-12.5, -7.5, 4], [-12.5, -2.5, 4], [-12.5, 2.5, 4], [-12.5, 7.5, 4],   
+        ]
+        
+        for (var i = 0; i < lampCoords.length; i++) {
+          var p = lampCoords[i]
+          var x = p[0] * 10, 
+              z = p[1] * 10, 
+              r = p[2]
+          switch (r) {
+            case 1 : r = -0.5 * Math.PI
+              break;
+            case 12 : r = -0.25 * Math.PI
+              break;
+            case 2 : r = 0
+              break;
+            case 23 : r = 0.25 * Math.PI
+              break;
+            case 3 : r = 0.5 * Math.PI
+              break;
+            case 34 : r = 0.75 * Math.PI
+              break;
+            case 4 : r = Math.PI
+              break;
+            case 41: r = 1.25 * Math.PI
+          } 
+          var lamp = new Lamp()
+          lamp.rotation.y = r
+          lamp.position.set(x,0,z)
+          scene.add(lamp)
+        }
+      }
 
       function addHospital () {
         var hospital = new Hospital()
@@ -104,6 +180,26 @@
           var tree = new Tree(treeCoords[i][0], 1, treeCoords[i][1])
           scene.add(tree)
         }
+      }
+
+      function Lamp () {
+        this.lamp = new THREE.Object3D()
+        var pillarGeomertry = new THREE.CubeGeometry(2, 30, 2)
+        pillarGeomertry.translate(0, 15, 0)
+        var pillar = utils.makeMesh('phong', pillarGeomertry, 0xebd1c2)
+        this.lamp.add(pillar)
+
+        var connectGeometry = new THREE.CubeGeometry(10,1,1)
+        var connect = utils.makeMesh('phong', connectGeometry, 0x2c0e0e)
+        connect.position.set(3, 30, 0)
+        this.lamp.add(connect)
+
+        var lightGeometry = new THREE.CubeGeometry(6,2,4)
+        light = utils.makeMesh('phong', lightGeometry, 0xebd1c2)
+        light.position.set(10, 30, 0)
+        this.lamp.add(light)
+
+        return this.lamp
       }
       
       function Hospital () {
@@ -354,12 +450,10 @@
       controls.dampingFactor = 0.25
       controls.rotateSpeed = 0.35
     }
-
     function loop () {
       renderer.render(scene, camera)
       requestAnimationFrame(loop)
     }
-
     function onWindowResize () {
       window.addEventListener('resize', function () {
         width = window.innerWidth
