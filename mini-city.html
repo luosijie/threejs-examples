@@ -130,6 +130,40 @@
         frontTop.position.y = 100
         this.hospital.add(frontTop)
 
+        var frontRoofs = new THREE.Object3D()
+        var frontRoofShelfCubeGeometryZ = new THREE.CubeGeometry(2, 2, 40)
+        var frontRoofShelfCubeZ = utils.makeMesh('phong', frontRoofShelfCubeGeometryZ, 0xffffff)
+        var frontRoofShelfCubeX = frontRoofShelfCubeZ.clone()
+        frontRoofShelfCubeX.rotation.y = 0.5 * Math.PI
+        frontRoofShelfCubeX.scale.set(1,1,1.6)
+        frontRoofShelfCubeX.position.x = 27
+        frontRoofShelfCubeX.position.z = -15
+        var frontRoofShelfCubeY = frontRoofShelfCubeZ.clone()
+        frontRoofShelfCubeY.scale.z = 0.4
+        frontRoofShelfCubeY.position.z =-15
+        frontRoofShelfCubeY.position.y = -3
+        frontRoofShelfCubeY.rotation.x = 0.5 * Math.PI
+        for (var i = 0; i < 12; i++) {
+          var frontRoofShelfCube = frontRoofShelfCubeZ.clone()
+          frontRoofShelfCube.translateX(i * 5)
+          frontRoofs.add(frontRoofShelfCube)
+        }
+        for (var i = 0; i < 2; i++) {
+          var frontRoofShelfCube = frontRoofShelfCubeX.clone()
+          frontRoofShelfCube.translateX(-i * 30)
+          frontRoofs.add(frontRoofShelfCube)
+        }
+        var frontRoofShelfCubeYPosition = [[0,0], [1,0], [0, 1], [1,1]]
+        for (var i = 0; i < frontRoofShelfCubeYPosition.length; i++) {
+          var p = frontRoofShelfCubeYPosition[i]
+          var frontRoofShelfCube = frontRoofShelfCubeY.clone()
+          frontRoofShelfCube.translateX(p[0] * 55)
+          frontRoofShelfCube.translateY(p[1] * 30)
+          frontRoofs.add(frontRoofShelfCube)
+        }
+        frontRoofs.position.set(-70, 115, 5)
+        this.hospital.add(frontRoofs)
+
         var frontPlatGeometry = new THREE.BoxGeometry(150,3,90)
         var fronPlat = utils.makeMesh('lambert', frontPlatGeometry, 0x0792a5)
         fronPlat.position.set(-3,18,25)
@@ -219,8 +253,51 @@
         backMiddleWindow.rotation.y = 0.5 * Math.PI
         this.hospital.add(backMiddleWindow)
 
+        var windowBackOrigin = new Window()
+        windowBackOrigin.scale.set(0.6,0.6,1)
+        windowBackOrigin.rotation.y = Math.PI
+        windowBackOrigin.position.set(65, 75, -61)
+
+        for (var i = 0; i < 7; i++) {
+          for (var j = 0; j < 4; j++) {
+            var windowObj = windowBackOrigin.clone()
+            windowObj.position.x -= i * 22
+            windowObj.position.y -= j * 20
+            this.hospital.add(windowObj)
+          }
+        }
+
 
         return this.hospital
+      }
+
+      function Window () {
+        this.window = new THREE.Object3D()
+        var glassGeometry = new THREE.PlaneGeometry(20, 20)
+        var glass = utils.makeMesh('phong', glassGeometry, 0x6a5e74)
+        this.window.add(glass)
+
+        var windowBorderGeometry = new THREE.CubeGeometry(22,2,2)
+        var windowBorder = utils.makeMesh('phong', windowBorderGeometry, 0xffffff)
+
+        var windowBorderTop = windowBorder.clone()
+        windowBorderTop.position.y = 10
+        this.window.add(windowBorderTop)
+
+        var windowBorderBottom = windowBorder.clone()
+        windowBorderBottom.position.y = -10
+        this.window.add(windowBorderBottom)
+
+        var windowBorderLeft = windowBorder.clone()
+        windowBorderLeft.rotation.z = 0.5 * Math.PI
+        windowBorderLeft.position.x = -10
+        this.window.add(windowBorderLeft)
+
+        var windowBorderRight = windowBorderLeft.clone()
+        windowBorderRight.position.x = 10
+        this.window.add(windowBorderRight)
+
+        return this.window
       }
 
       function Tree (x, y, z) {
