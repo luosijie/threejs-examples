@@ -67,14 +67,34 @@
       roadBoaderInnder.rotation.y = Math.PI
       road.add(roadBoaderInnder)
 
-      var roadLineGeometry = new THREE.CubeGeometry(20, 0.1, 4)
+      var roadLineGeometry = new THREE.CubeGeometry(20, 0.1, 2)
       roadLineGeometry.translate(20,0,0)
       var roadLine = utils.makeMesh('phong', roadLineGeometry, roadColor)
-      for( var i =0; i < 4; i++){
-        for(var j=0; j < 6; j++){
-          console.log(3)
-        }
+      var roadLines = new THREE.Object3D()
+      for( var i =0; i < 9; i++){
+          var roadLlineCopy = roadLine.clone()
+          roadLlineCopy.translateX(i*30)
+          roadLines.add(roadLlineCopy)
       }
+
+      var roadLinesBottom = roadLines.clone()
+      roadLinesBottom.position.z = 140
+      roadLinesBottom.position.x = -140
+      road.add(roadLinesBottom)
+
+      var roadLinesTop = roadLinesBottom.clone()
+      roadLinesTop.position.z = -140
+      road.add(roadLinesTop)
+
+      var roadLinesLeft = roadLines.clone()
+      roadLinesLeft.rotation.y = 0.5 * Math.PI
+      roadLinesLeft.position.x = -140
+      roadLinesLeft.position.z = 140
+      road.add(roadLinesLeft)
+
+      var roadLinesRight = roadLinesLeft.clone()
+      roadLinesLeft.position.x = 140
+      road.add(roadLinesLeft)
 
       scene.add(road)
     }
