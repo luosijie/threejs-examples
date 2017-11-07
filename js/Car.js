@@ -167,14 +167,18 @@ Car.prototype = {
     this._turn(angle, false, speed)
   },
   _turn: function (angle, direction, speed) {
+  	var originalAngle = this.mesh.rotation.y
   	var currentAngle = 0
-  	console.log(direction)
   	var direction = direction ? 1 : -1
   	if (speed) {
   	  while(currentAngle <= angle) {
 	  	this.mesh.rotation.y += currentAngle * speed * direction
 	  	currentAngle += 0.1
-	  }	
+	  }
+	  if (angle - currentAngle < speed) {
+	  	
+	  	this.mesh.rotation.y = originalAngle + angle * direction
+	  }
   	} else {
       this.mesh.rotation.y += angle * direction
   	}

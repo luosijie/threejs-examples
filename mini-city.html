@@ -47,9 +47,12 @@
 
     loop()
     onWindowResize()
-
+    
+    var carTest
     function buildMovingCars () {
-      
+      carTest = new Car()
+      carTest.setPosition(-145,0,145)
+      scene.add(carTest.mesh)
     }
 
     function buildStaticCars () {
@@ -494,7 +497,29 @@
       controls.dampingFactor = 0.25
       controls.rotateSpeed = 0.35
     }
+    function carMoving (car) {
+      if(car.mesh.position.x < 145 && car.mesh.position.z === 145){
+        car.forward()
+      } else if(car.mesh.rotation.y < 0.5*Math.PI){
+        car.turnLeft(0.5 * Math.PI, 0.01)
+        
+      }else if(car.mesh.position.x === 145 && car.mesh.position.z > -145){
+        car.forward()
+      }else if(car.mesh.rotation.y < Math.PI) {
+        car.turnLeft(0.5 * Math.PI, 0.01)
+      }else if(car.mesh.position.x > -145 && car.mesh.position.z == -145) {
+        car.forward()
+      }else if(car.mesh.rotation.y < 1.5 * Math.PI) {
+        car.turnLeft(0.5 * Math.PI, 0.01)
+      }else if(car.mesh.position.x === -145 && car.mesh.position.z < 145) {
+        car.forward()
+      }else if(car.mesh.rotation.y < 2 * Math.PI) {
+        car.turnLeft(0.5 * Math.PI, 0.01)
+        console.log(car.mesh.position)
+      }
+    }
     function loop () {
+      carMoving(carTest)
       renderer.render(scene, camera)
       requestAnimationFrame(loop)
     }
