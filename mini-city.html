@@ -35,14 +35,14 @@
     renderer.setClearColor(0x282828)
     document.body.appendChild(renderer.domElement)
 
-    createAuxSystem()
-    createLightSystem()
-    createbuilding()
-    createRoad()
+    buildAuxSystem()
+    buildLightSystem()
+    buildbuilding()
+    buildRoad()
     loop()
     onWindowResize()
 
-    function createRoad () {
+    function buildRoad () {
       var road = new THREE.Object3D()
       var roadColor = 0xffffff
       var roadBorderOuterCoords = [
@@ -99,7 +99,7 @@
       scene.add(road)
     }
 
-    function createbuilding () {
+    function buildbuilding () {
       var planeGeometry = new THREE.BoxGeometry(320,6,320)
       var planeMaterial = new THREE.MeshLambertMaterial({color: 0x6f5f6a})
       var plane = new THREE.Mesh(planeGeometry, planeMaterial)
@@ -143,7 +143,7 @@
               break;
             case 41: r = 1.25 * Math.PI
           } 
-          var lamp = new Lamp()
+          var lamp = createLamp()
           lamp.rotation.y = r
           lamp.position.set(x,0,z)
           scene.add(lamp)
@@ -151,7 +151,7 @@
       }
 
       function addHospital () {
-        var hospital = new Hospital()
+        var hospital = createHospital()
         hospital.position.z = -20
         scene.add(hospital)  
       }
@@ -197,38 +197,38 @@
           var treeX = treeCoords[i][0],
               treeY = 3,
               treeZ = treeCoords[i][1]
-          var tree = new Tree(treeCoords[i][0], 1, treeCoords[i][1])
+          var tree = createTree(treeCoords[i][0], 1, treeCoords[i][1])
           scene.add(tree)
         }
       }
 
-      function Lamp () {
-        this.lamp = new THREE.Object3D()
+      function createLamp () {
+        var lamp = new THREE.Object3D()
         var pillarGeomertry = new THREE.CubeGeometry(2, 30, 2)
         pillarGeomertry.translate(0, 15, 0)
         var pillar = utils.makeMesh('phong', pillarGeomertry, 0xebd1c2)
-        this.lamp.add(pillar)
+        lamp.add(pillar)
 
         var connectGeometry = new THREE.CubeGeometry(10,1,1)
         var connect = utils.makeMesh('phong', connectGeometry, 0x2c0e0e)
         connect.position.set(3, 30, 0)
-        this.lamp.add(connect)
+        lamp.add(connect)
 
         var lightGeometry = new THREE.CubeGeometry(6,2,4)
         light = utils.makeMesh('phong', lightGeometry, 0xebd1c2)
         light.position.set(10, 30, 0)
-        this.lamp.add(light)
+        lamp.add(light)
 
-        return this.lamp
+        return lamp
       }
       
-      function Hospital () {
-        this.hospital = new THREE.Object3D()
+      function createHospital () {
+        var hospital = new THREE.Object3D()
 
         var baseGeometry = new THREE.BoxGeometry(180, 3, 140)
         var base = utils.makeMesh('lambert', baseGeometry, 0xffffff)
         base.position.y = 1
-        this.hospital.add(base)
+        hospital.add(base)
 
         var frontMainCoords = [
           [-80, -30], [-80, 20], [50, 20], [50, 0], [20, -30], [-80, -30]
@@ -238,13 +238,13 @@
         var frontMainMaterial = new THREE.MeshPhongMaterial({map: textures.window()})
         frontMainMaterial.map.repeat.set(0.1, 0.08)
         var frontMain = new THREE.Mesh(frontMainGeometry, frontMainMaterial)
-        this.hospital.add(frontMain)
+        hospital.add(frontMain)
 
         var frontTopShape = frontMainShape
         var frontTopGeometry = utils.makeExtrudeGeometry(frontTopShape, 5)
         var frontTop = utils.makeMesh('lambert', frontTopGeometry, 0xb1a7af)
         frontTop.position.y = 100
-        this.hospital.add(frontTop)
+        hospital.add(frontTop)
 
         var frontRoofs = new THREE.Object3D()
         var frontRoofShelfCubeGeometryZ = new THREE.CubeGeometry(2, 2, 40)
@@ -278,31 +278,31 @@
           frontRoofs.add(frontRoofShelfCube)
         }
         frontRoofs.position.set(-70, 115, 5)
-        this.hospital.add(frontRoofs)
+        hospital.add(frontRoofs)
 
         var frontPlatGeometry = new THREE.BoxGeometry(150,3,90)
         var fronPlat = utils.makeMesh('lambert', frontPlatGeometry, 0x0792a5)
         fronPlat.position.set(-3,18,25)
-        this.hospital.add(fronPlat)
+        hospital.add(fronPlat)
 
         var frontPlatVerticalGeometry = new THREE.BoxGeometry(150, 15, 3)
         var frontPlatVertical = utils.makeMesh('phong', frontPlatVerticalGeometry, 0x0792a5)
         frontPlatVertical.position.set(-3, 27, 68.5)
-        this.hospital.add(frontPlatVertical)
+        hospital.add(frontPlatVertical)
 
         var frontPlatVerticalWhiteGeometry = new THREE.BoxGeometry(150, 3, 3)
         var frontPlatVerticalWhite = utils.makeMesh('phong', frontPlatVerticalWhiteGeometry, 0xffffff)
         frontPlatVerticalWhite.position.set(-3, 36, 68.5)
-        this.hospital.add(frontPlatVerticalWhite)
+        hospital.add(frontPlatVerticalWhite)
 
         var frontPlatPillarGeometry = new THREE.CylinderGeometry(2, 2, 15, 32)
         var frontPlatPillar = utils.makeMesh('lambert', frontPlatPillarGeometry, 0xffffff)
         frontPlatPillar.position.set(-60, 10, 55)
-        this.hospital.add(frontPlatPillar)
+        hospital.add(frontPlatPillar)
 
         var frontPlatPillar2 = frontPlatPillar.clone()
         frontPlatPillar2.position.set(55, 10, 55)
-        this.hospital.add(frontPlatPillar2)
+        hospital.add(frontPlatPillar2)
 
 
         var frontBorderVerticles = new THREE.Object3D()
@@ -317,7 +317,7 @@
         var frontBorderVerticle3 = frontBorderVerticleMesh.clone()
         frontBorderVerticle3.position.set(50, 52, -18)
         frontBorderVerticles.add(frontBorderVerticle3)
-        this.hospital.add(frontBorderVerticles)
+        hospital.add(frontBorderVerticles)
 
         var frontRoofCoords = [
           [-82, -32], [20, -32], [52,0],[52, 22],[-82,22],[-82,-32]
@@ -329,7 +329,7 @@
         var frontRoofGeometry = utils.makeExtrudeGeometry(frontRoofShape, 8)
         var frontRoof = utils.makeMesh('phong', frontRoofGeometry, 0xffffff)
         frontRoof.position.y = 100
-        this.hospital.add(frontRoof)
+        hospital.add(frontRoof)
 
 
         var backMainCoords = [
@@ -342,7 +342,7 @@
 
         var backMainGeometry = utils.makeExtrudeGeometry(backMainShape, 90)
         var backMain = utils.makeMesh('lambert', backMainGeometry, 0xf2e21b)
-        this.hospital.add(backMain)
+        hospital.add(backMain)
 
         var backMiddleCoords = [
           [0, 0], [36, 0], [36, 70], [0,70],[0,0]
@@ -358,7 +358,7 @@
         backMiddle.position.y = 86
         backMiddle.position.z = -58
         backMiddle.position.x = -78
-        this.hospital.add(backMiddle)
+        hospital.add(backMiddle)
 
         var backMiddleWindowGeometry = new THREE.PlaneGeometry(32,66,1,1)
         var backMiddleWindowMaterial = new THREE.MeshPhongMaterial({map: textures.window()})
@@ -367,9 +367,9 @@
         var backMiddleWindow = new THREE.Mesh(backMiddleWindowGeometry, backMiddleWindowMaterial)
         backMiddleWindow.position.set(83, 51, -40)
         backMiddleWindow.rotation.y = 0.5 * Math.PI
-        this.hospital.add(backMiddleWindow)
+        hospital.add(backMiddleWindow)
 
-        var windowBackOrigin = new Window()
+        var windowBackOrigin = createWindow()
         windowBackOrigin.scale.set(0.6,0.6,1)
         windowBackOrigin.rotation.y = Math.PI
         windowBackOrigin.position.set(65, 75, -61)
@@ -379,69 +379,68 @@
             var windowObj = windowBackOrigin.clone()
             windowObj.position.x -= i * 22
             windowObj.position.y -= j * 20
-            this.hospital.add(windowObj)
+            hospital.add(windowObj)
           }
         }
 
-
-        return this.hospital
+        return hospital
       }
 
-      function Window () {
-        this.window = new THREE.Object3D()
+      function createWindow () {
+        var windowObj = new THREE.Object3D()
         var glassGeometry = new THREE.PlaneGeometry(20, 20)
         var glass = utils.makeMesh('phong', glassGeometry, 0x6a5e74)
-        this.window.add(glass)
+        windowObj.add(glass)
 
         var windowBorderGeometry = new THREE.CubeGeometry(22,2,2)
         var windowBorder = utils.makeMesh('phong', windowBorderGeometry, 0xffffff)
 
         var windowBorderTop = windowBorder.clone()
         windowBorderTop.position.y = 10
-        this.window.add(windowBorderTop)
+        windowObj.add(windowBorderTop)
 
         var windowBorderBottom = windowBorder.clone()
         windowBorderBottom.position.y = -10
-        this.window.add(windowBorderBottom)
+        windowObj.add(windowBorderBottom)
 
         var windowBorderLeft = windowBorder.clone()
         windowBorderLeft.rotation.z = 0.5 * Math.PI
         windowBorderLeft.position.x = -10
-        this.window.add(windowBorderLeft)
+        windowObj.add(windowBorderLeft)
 
         var windowBorderRight = windowBorderLeft.clone()
         windowBorderRight.position.x = 10
-        this.window.add(windowBorderRight)
+        windowObj.add(windowBorderRight)
 
-        return this.window
+        return windowObj
       }
 
-      function Tree (x, y, z) {
+      function createTree (x, y, z) {
         var x = x || 0
         var y = y || 0
         var z = z || 0
 
-        this.tree = new THREE.Object3D()
+        var tree = new THREE.Object3D()
         
         var treeTrunkGeometry = new THREE.BoxGeometry(2,16,2)
         var treeTrunkMaterial = new THREE.MeshLambertMaterial({color: 0x8a613a})
         var treeTrunk = new THREE.Mesh(treeTrunkGeometry, treeTrunkMaterial)
         treeTrunk.position.y = 8
-        this.tree.add(treeTrunk)
+        tree.add(treeTrunk)
 
         var treeLeafsGeometry = new THREE.BoxGeometry(8, 8, 8)
         var treeLeafsMaterial = new THREE.MeshLambertMaterial({color: 0x9c9e5d})
         var treeLeafs = new THREE.Mesh(treeLeafsGeometry, treeLeafsMaterial)
         treeLeafs.position.y = 13
-        this.tree.add( treeLeafs)
+        tree.add( treeLeafs)
 
-        this.tree.position.set(x, y, z)
+        tree.position.set(x, y, z)
 
-        return this.tree
+        return tree
       }
     }
     
-    function createLightSystem () {
+    function buildLightSystem () {
       var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1)
       scene.add( hemisphereLight)
 
@@ -451,7 +450,7 @@
 
     }
 
-    function createAuxSystem () {
+    function buildAuxSystem () {
       var stats = new Stats()
       stats.setMode(0)
       stats.domElement.style.position = 'absolute'
@@ -494,36 +493,54 @@
       this.wheels = []
       
       var that = this
-      createBody()
-      createWindows()
-      createLights()
-      createWheels()
+      addBody()
+      addWindows()
+      addLights()
+      addWheels()
 
-      function createWheels () {
-        var wheel = new THREE.Object3D()
+      function addWheels () {
+        var wheelFrontLeft = createWheel()
+        wheelFrontLeft.position.set(8, 3, -6)
+        that.wheels.push(wheelFrontLeft)
+        that.mesh.add(wheelFrontLeft)
 
-        var wheelOuterGeometry = new THREE.CylinderGeometry( 3, 3, 3, 32)
-        wheelOuterGeometry.rotateX(0.5*Math.PI)
-        var wheelOuter = utils.makeMesh('lambert', wheelOuterGeometry, 0x000000)
-        wheel.add(wheelOuter)
+        var wheelFrontRight = createWheel()
+        wheelFrontRight.position.set(8, 3, 6)
+        that.wheels.push(wheelFrontRight)
+        that.mesh.add(wheelFrontRight)
 
-        var wheelInner = utils.makeMesh('lambert', wheelOuterGeometry, 0xdddddd)
-        wheelInner.scale.set(0.8,0.8,1.1)
-        wheel.add(wheelInner)
+        var wheelBackLeft = createWheel()
+        wheelBackLeft.position.set(-8, 3, 6)
+        that.wheels.push(wheelBackLeft)
+        that.mesh.add(wheelBackLeft)
 
-        var wheelCenterGeometry = new THREE.CylinderGeometry( 1, 1, 3.6, 4)
-        wheelCenterGeometry.rotateX(0.5*Math.PI)
-        var wheelCenter = utils.makeMesh('lambert', wheelCenterGeometry, 0xa7a7a7)
-        
-        
-        wheel.add(wheelCenter)
+        var wheelBackRight = createWheel()
+        wheelBackRight.position.set(-8, 3, -6)
+        that.wheels.push(wheelBackRight)
+        that.mesh.add(wheelBackRight)
 
+        function createWheel () {
+          var wheel = new THREE.Object3D()
 
-        wheel.position.set(-8, 3, 6)
-        that.mesh.add(wheel)
+          var wheelOuterGeometry = new THREE.CylinderGeometry( 3, 3, 3, 32)
+          wheelOuterGeometry.rotateX(0.5*Math.PI)
+          var wheelOuter = utils.makeMesh('lambert', wheelOuterGeometry, 0x000000)
+          wheel.add(wheelOuter)
+
+          var wheelInner = utils.makeMesh('lambert', wheelOuterGeometry, 0xdddddd)
+          wheelInner.scale.set(0.8,0.8,1.1)
+          wheel.add(wheelInner)
+
+          var wheelCenterGeometry = new THREE.CylinderGeometry( 1, 1, 3.6, 4)
+          wheelCenterGeometry.rotateX(0.5*Math.PI)
+          var wheelCenter = utils.makeMesh('lambert', wheelCenterGeometry, 0xa7a7a7)
+          wheel.add(wheelCenter)
+
+          return wheel
+        }
       }
 
-      function createLights () {
+      function addLights () {
         var carLights = new THREE.Object3D() 
 
         var carLightGeometry = new THREE.CubeGeometry(2,2,2)
@@ -557,7 +574,7 @@
         that.mesh.add(carLights)
       }
       
-      function createWindows () {
+      function addWindows () {
         var carWindows = new THREE.Object3D()
 
         var carWindowLeft = new THREE.Object3D()
@@ -594,7 +611,7 @@
         
         that.mesh.add(carWindows)
       }
-      function createBody () {
+      function addBody () {
         var carBodyCoords = [
           [-13,2], [13,2], [13,8], [5,8], [3,13], [-8,13], [-10,8], [-13,8], [-13,2]
         ]
@@ -622,10 +639,16 @@
       forward: function  (speed) {
         var speed = speed || 1
         this.mesh.position.x += 1 * speed
+        for(var i = 0; i < this.wheels.length; i++){
+          this.wheels[i].rotation.z -= 0.1*speed
+        }
       },
       backward: function  (speed) {
         var speed = speed || 1
         this.mesh.position.x -= 1 * speed
+        for(var i = 0; i < this.wheels.length; i++){
+          this.wheels[i].rotation.z += 0.1*speed
+        }
       },
       turnLeft: function (angle) {
         this.mesh.rotation.y += angle
@@ -635,10 +658,8 @@
       }
     }
     var car  = new Car()
-    car.setPosition(145,0,145)
+    car.setPosition(0, 0, 145)
     scene.add(car.mesh)
-
-
     
 
   </script>
