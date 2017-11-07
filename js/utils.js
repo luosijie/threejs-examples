@@ -34,6 +34,11 @@ var utils = {
     geometry.rotateX( -0.5 * Math.PI)
     return geometry
   },
+  makeShapeGeometry: function (shapeCoords) {
+    var shape = this.makeShape(shapeCoords)
+    var geometry = new THREE.ShapeGeometry(shape)
+    return geometry
+  },
   makeMesh: function (type, geometry, color) {
     var material
     if (type === 'lambert') {

@@ -30,7 +30,7 @@
     camera.lookAt(scene.position)
     scene.add(camera)
 
-    renderer = new THREE.WebGLRenderer()
+    renderer = new THREE.WebGLRenderer({antialias:true})
     renderer.setSize(width, height)
     renderer.setClearColor(0x282828)
     document.body.appendChild(renderer.domElement)
@@ -46,10 +46,10 @@
       var road = new THREE.Object3D()
       var roadColor = 0xffffff
       var roadBorderOuterCoords = [
-        [-150, 150], [150, 150], [150, -150], [-150, -150],
+        [-160, 160], [160, 160], [160, -160], [-160, -160],
       ]
       var roadBorderOuterHoleCoords = [
-        [-149, 149], [-149,-149],[149, -149], [148, 149]
+        [-159, 159], [-159,-159],[159, -159], [159, 159]
       ]
       var roadBorderOuterShape = utils.makeShape(roadBorderOuterCoords, roadBorderOuterHoleCoords)
       var roadBorderOuterGeometry = utils.makeExtrudeGeometry(roadBorderOuterShape, 0.1)
@@ -78,29 +78,29 @@
       }
 
       var roadLinesBottom = roadLines.clone()
-      roadLinesBottom.position.z = 140
+      roadLinesBottom.position.z = 145
       roadLinesBottom.position.x = -140
       road.add(roadLinesBottom)
 
       var roadLinesTop = roadLinesBottom.clone()
-      roadLinesTop.position.z = -140
+      roadLinesTop.position.z = -145
       road.add(roadLinesTop)
 
       var roadLinesLeft = roadLines.clone()
       roadLinesLeft.rotation.y = 0.5 * Math.PI
-      roadLinesLeft.position.x = -140
+      roadLinesLeft.position.x = -145
       roadLinesLeft.position.z = 140
       road.add(roadLinesLeft)
 
       var roadLinesRight = roadLinesLeft.clone()
-      roadLinesLeft.position.x = 140
-      road.add(roadLinesLeft)
+      roadLinesRight.position.x = 145
+      road.add(roadLinesRight)
 
       scene.add(road)
     }
 
     function createbuilding () {
-      var planeGeometry = new THREE.BoxGeometry(300,6,300)
+      var planeGeometry = new THREE.BoxGeometry(320,6,320)
       var planeMaterial = new THREE.MeshLambertMaterial({color: 0x6f5f6a})
       var plane = new THREE.Mesh(planeGeometry, planeMaterial)
       plane.position.y = -3
@@ -459,10 +459,10 @@
       stats.domElement.style.top = '5px'
       document.body.appendChild(stats.domElement)
 
-      var axisHelper = new THREE.AxesHelper(200)
-      scene.add(axisHelper)
+      // var axisHelper = new THREE.AxesHelper(200)
+      // scene.add(axisHelper)
 
-      var gridHelper = new THREE.GridHelper(300, 30)
+      var gridHelper = new THREE.GridHelper(320, 30)
       scene.add(gridHelper)
 
       var controls = new THREE.OrbitControls(camera, renderer.domElement)
@@ -485,6 +485,162 @@
         renderer.setSize(width, height)
       })
     }
+
+
+
+    function Car (color) {
+      this.color = color || 0x2cbab2
+      this.mesh = new THREE.Object3D()
+      this.wheels = []
+      
+      var that = this
+      createBody()
+      createWindows()
+      createLights()
+      createWheels()
+
+      function createWheels () {
+        var wheel = new THREE.Object3D()
+
+        var wheelOuterGeometry = new THREE.CylinderGeometry( 3, 3, 3, 32)
+        wheelOuterGeometry.rotateX(0.5*Math.PI)
+        var wheelOuter = utils.makeMesh('lambert', wheelOuterGeometry, 0x000000)
+        wheel.add(wheelOuter)
+
+        var wheelInner = utils.makeMesh('lambert', wheelOuterGeometry, 0xdddddd)
+        wheelInner.scale.set(0.8,0.8,1.1)
+        wheel.add(wheelInner)
+
+        var wheelCenterGeometry = new THREE.CylinderGeometry( 1, 1, 3.6, 4)
+        wheelCenterGeometry.rotateX(0.5*Math.PI)
+        var wheelCenter = utils.makeMesh('lambert', wheelCenterGeometry, 0xa7a7a7)
+        
+        
+        wheel.add(wheelCenter)
+
+
+        wheel.position.set(-8, 3, 6)
+        that.mesh.add(wheel)
+      }
+
+      function createLights () {
+        var carLights = new THREE.Object3D() 
+
+        var carLightGeometry = new THREE.CubeGeometry(2,2,2)
+        var carLight = utils.makeMesh('phong', carLightGeometry, 0xffffff)
+
+        var carLight1 = carLight.clone()
+        carLight1.position.set(12.5, 7.1, 6.1)
+        carLights.add(carLight1)
+
+        var carLight2 = carLight.clone()
+        carLight2.position.set(12.5, 7.1, -6.1)
+        carLights.add(carLight2)
+
+        var carLight3 = carLight.clone()
+        carLight3.position.set(-12.5, 7.1, 6.1)
+        carLights.add(carLight3)
+
+        var carLight4 = carLight.clone()
+        carLight4.position.set(-12.5, 7.1, -6.1)
+        carLights.add(carLight4)
+
+        var carLightFront = carLight.clone()
+        carLightFront.scale.set(1,1.3,7.1)
+        carLightFront.position.set(12.1, 3.3, 0)
+        carLights.add(carLightFront)
+
+        var carLightBack = carLightFront.clone()
+        carLightBack.position.x = -14
+        carLights.add(carLightBack)
+        
+        that.mesh.add(carLights)
+      }
+      
+      function createWindows () {
+        var carWindows = new THREE.Object3D()
+
+        var carWindowLeft = new THREE.Object3D()
+        var carWindowLeftFrontCoords = [
+          [-2, 8], [4, 8], [2.5, 12], [-2, 12]
+        ]
+        var carWindowLeftFront = makeWindow(carWindowLeftFrontCoords)
+        carWindowLeft.add(carWindowLeftFront)
+
+        var carWindowLeftBackCoords = [
+          [-9, 8], [-3, 8], [-3, 12], [-7.5, 12]
+        ]
+        var carWindowLeftBack = makeWindow(carWindowLeftBackCoords)
+        carWindowLeft.add(carWindowLeftBack)
+        carWindowLeft.position.z = 7.1
+        carWindows.add(carWindowLeft)
+
+        var carWindowRight = carWindowLeft.clone()
+        carWindowRight.position.z = -7.1
+        carWindows.add(carWindowRight)
+
+        var carWindowFrontGeometry = new THREE.CubeGeometry(0.1, 5, 12)
+        carWindowFrontGeometry.rotateZ(0.12 * Math.PI)
+        carWindowFrontGeometry.translate(4.2,10,0)
+        var carWindowFront = utils.makeMesh('phong',carWindowFrontGeometry, 0x000000)
+        carWindows.add(carWindowFront)
+
+        var carWindowBack = carWindowFront.clone()
+        carWindowBack.rotation.z = -0.24 * Math.PI
+        carWindowBack.position.x = -19
+        carWindowBack.position.y = 6
+        // carWindowFrontGeometry.translate(4.2,10,7)
+        carWindows.add(carWindowBack)
+        
+        that.mesh.add(carWindows)
+      }
+      function createBody () {
+        var carBodyCoords = [
+          [-13,2], [13,2], [13,8], [5,8], [3,13], [-8,13], [-10,8], [-13,8], [-13,2]
+        ]
+        var carBodyShape = utils.makeShape(carBodyCoords)
+        var carBodyGeometry = utils.makeExtrudeGeometry(carBodyShape, 14)
+        carBodyGeometry.translate(0,-7,0)
+        carBodyGeometry.rotateX(0.5 * Math.PI)
+        var carBody = utils.makeMesh('phong', carBodyGeometry, that.color)
+        that.mesh.add(carBody)
+      }
+
+      function makeWindow (coords) {
+        var windowColor = 0x000000
+        var shape = utils.makeShape(coords)
+        var geometry = utils.makeExtrudeGeometry(shape, 0.1)
+        geometry.rotateX(0.5 * Math.PI)
+        var mesh = utils.makeMesh('phong', geometry, windowColor)
+        return mesh
+      }
+    }
+    Car.prototype = {
+      setPosition: function (x,y,z) {
+        this.mesh.position.set(x,y,z)
+      },
+      forward: function  (speed) {
+        var speed = speed || 1
+        this.mesh.position.x += 1 * speed
+      },
+      backward: function  (speed) {
+        var speed = speed || 1
+        this.mesh.position.x -= 1 * speed
+      },
+      turnLeft: function (angle) {
+        this.mesh.rotation.y += angle
+      },
+      turnRight: function (angle) {
+        this.mesh.rotation.y += angle
+      }
+    }
+    var car  = new Car()
+    car.setPosition(145,0,145)
+    scene.add(car.mesh)
+
+
+    
+
   </script>
 </body>
 </html>
