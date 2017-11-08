@@ -36,6 +36,8 @@
     renderer = new THREE.WebGLRenderer({antialias:true})
     renderer.setSize(width, height)
     renderer.setClearColor(0x282828)
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
     document.body.appendChild(renderer.domElement)
 
     buildAuxSystem()
@@ -139,8 +141,7 @@
 
     function buildbuilding () {
       var planeGeometry = new THREE.BoxGeometry(320,6,320)
-      var planeMaterial = new THREE.MeshLambertMaterial({color: 0x6f5f6a})
-      var plane = new THREE.Mesh(planeGeometry, planeMaterial)
+      var plane = utils.makeMesh('lambert', planeGeometry, 0x6f5f6a)
       plane.position.y = -3
       scene.add(plane)
 
@@ -460,12 +461,20 @@
     }
     
     function buildLightSystem () {
-      var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1)
+      var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1.6)
       scene.add( hemisphereLight)
 
-      // var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.01 );
-      // directionalLight.position.set(0,100,0)
-      // scene.add( directionalLight )
+      var directionalLight = new THREE.DirectionalLight( 0xffffff , 0.2);
+      directionalLight.position.set( 300, 1000, 500 );
+      directionalLight.target.position.set( 0, 0, 0 );
+      directionalLight.castShadow = true;
+
+      var d = 300;
+      directionalLight.shadow.camera = new THREE.OrthographicCamera( -d, d, d, -d,  500, 1600 );
+      directionalLight.shadow.bias = 0.0001;
+      directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 2048;
+
+      scene.add(directionalLight)
 
     }
 

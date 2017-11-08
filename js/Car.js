@@ -1,7 +1,7 @@
 "use strict"
 
 function Car (color) {
-  var colors = [0x2cbab2, 0x47a700, 0xd60000, 0x251a91, 0x37ad0e, 0x4d4d4d, 0xce7e00, 0xe0a213, 0x87bcde]
+  var colors = [0x2cbab2, 0x47a700, 0xd60000, 0x087f87, 0x37ad0e, 0x4d4d4d, 0xce7e00, 0xe0a213, 0x87bcde]
   var index = Math.floor(Math.random() * colors.length)
 
   this.color = color || colors[index]
