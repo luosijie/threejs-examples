@@ -3,17 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <title>MiniCity</title>
+  <meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no">
   <style>
     body{
       padding: 0;
       margin: 0;
     }
+    .info{
+      margin: 20px 0;
+      position: absolute;
+      text-align: center;
+      opacity: 0.2;
+      width:100%;
+    }
+    .info a{
+      display: block;
+      font-size: 16px;
+      line-height: 28px;
+      color: #ffffff;
+      text-decoration: none;
+    }
+    a.title{
+      font-size: 20px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
+  <div class="info">
+    <a class="title" href="https://github.com/luosijie" target="_blank">
+      Mini City
+    </h3>
+    <a class="author" href="https://github.com/luosijie/threejs-examples" target="_blank">
+      Created By Jesse Luo
+    </a>
+  </div>
   <script src="js/libs/three.min.js"></script>
   <script src="js/libs/orbitControls.js"></script>
-  <script src="js/libs/stats.min.js"></script>
+  <!-- <script src="js/libs/stats.min.js"></script> -->
   <script src="js/utils.js"></script>
   <script src="js/textures.js"></script>
   <script src="js/Car.js"></script>
@@ -23,26 +50,25 @@
     var width, width
 
     var cars = []
+    // var stats
 
     var config = {
       isMobile: false,
-      antialias: true
+      background: 0x282828
     }
 
-    
-  
     width = window.innerWidth
     height = window.innerHeight
 
     scene = new THREE.Scene()
     camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
-    camera.position.set(300,300,300)
+    camera.position.set(330,330,330)
     camera.lookAt(scene.position)
     scene.add(camera)
 
-    renderer = new THREE.WebGLRenderer({antialias: config.antialias})
+    renderer = new THREE.WebGLRenderer({antialias: true})
     renderer.setSize(width, height)
-    renderer.setClearColor(0x282828)
+    renderer.setClearColor(config.background)
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
     document.body.appendChild(renderer.domElement)
@@ -63,7 +89,7 @@
       var n = navigator.userAgent;
       if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)){ 
         config.isMobile = true
-        config.antialias = false
+        camera.position.set(420,420,420)
       }
     }
     
@@ -204,8 +230,6 @@
         var greenGeometry = utils.makeExtrudeGeometry(greenShape, 3)
         var green = utils.makeMesh('lambert', greenGeometry, 0xc0c06a)
         scene.add(green)
-
-
       }
 
       function addFense () {
@@ -369,7 +393,6 @@
         frontRoof.position.y = 100
         hospital.add(frontRoof)
 
-
         var backMainCoords = [
           [-80, 20], [-80, 60], [80, 60], [80, 20], [-80, 20]
         ]
@@ -501,15 +524,15 @@
     }
 
     function buildAuxSystem () {
-      var stats = new Stats()
-      stats.setMode(0)
-      stats.domElement.style.position = 'absolute'
-      stats.domElement.style.left = '5px'
-      stats.domElement.style.top = '5px'
-      document.body.appendChild(stats.domElement)
+      // stats = new Stats()
+      // stats.setMode(0)
+      // stats.domElement.style.position = 'absolute'
+      // stats.domElement.style.left = '5px'
+      // stats.domElement.style.top = '5px'
+      // document.body.appendChild(stats.domElement)
 
-      var axisHelper = new THREE.AxesHelper(200)
-      scene.add(axisHelper)
+      // var axisHelper = new THREE.AxesHelper(200)
+      // scene.add(axisHelper)
 
       var gridHelper = new THREE.GridHelper(320, 32)
       scene.add(gridHelper)
@@ -546,14 +569,16 @@
         car.mesh.rotation.set(0,0,0)  
       }
     }
+
     function loop () {
+      // stats.update()
       cars.forEach(function(car){
         carMoving(car)
       })
-
       renderer.render(scene, camera)
       requestAnimationFrame(loop)
     }
+
     function onWindowResize () {
       window.addEventListener('resize', function () {
         width = window.innerWidth
