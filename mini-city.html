@@ -443,14 +443,12 @@
         var tree = new THREE.Object3D()
         
         var treeTrunkGeometry = new THREE.BoxGeometry(2,16,2)
-        var treeTrunkMaterial = new THREE.MeshLambertMaterial({color: 0x8a613a})
-        var treeTrunk = new THREE.Mesh(treeTrunkGeometry, treeTrunkMaterial)
+        var treeTrunk = utils.makeMesh('lambert', treeTrunkGeometry, 0x8a613a)
         treeTrunk.position.y = 8
         tree.add(treeTrunk)
 
         var treeLeafsGeometry = new THREE.BoxGeometry(8, 8, 8)
-        var treeLeafsMaterial = new THREE.MeshLambertMaterial({color: 0x9c9e5d})
-        var treeLeafs = new THREE.Mesh(treeLeafsGeometry, treeLeafsMaterial)
+        var treeLeafs = utils.makeMesh('lambert', treeLeafsGeometry, 0x9c9e5d)
         treeLeafs.position.y = 13
         tree.add( treeLeafs)
 
