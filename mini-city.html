@@ -23,6 +23,13 @@
     var width, width
 
     var cars = []
+
+    var config = {
+      isMobile: false,
+      antialias: true
+    }
+
+    
   
     width = window.innerWidth
     height = window.innerHeight
@@ -33,12 +40,14 @@
     camera.lookAt(scene.position)
     scene.add(camera)
 
-    renderer = new THREE.WebGLRenderer({antialias:true})
+    renderer = new THREE.WebGLRenderer({antialias: config.antialias})
     renderer.setSize(width, height)
     renderer.setClearColor(0x282828)
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
     document.body.appendChild(renderer.domElement)
+
+    checkUserAgent()
 
     buildAuxSystem()
     buildLightSystem()
@@ -49,8 +58,15 @@
 
     loop()
     onWindowResize()
+
+    function checkUserAgent() {
+      var n = navigator.userAgent;
+      if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)){ 
+        config.isMobile = true
+        config.antialias = false
+      }
+    }
     
-    var carTest
     function buildMovingCars () {
       var carsPosition = [
         [-130, 145, 0], [10, 145, 0], [145, 20, 0.5], [30, -145, 1], [-145, -60, 1.5]
@@ -258,6 +274,8 @@
         var frontMainMaterial = new THREE.MeshPhongMaterial({map: textures.window()})
         frontMainMaterial.map.repeat.set(0.1, 0.08)
         var frontMain = new THREE.Mesh(frontMainGeometry, frontMainMaterial)
+        frontMain.castShadow = true
+        frontMain.receiveShadow = true
         hospital.add(frontMain)
 
         var frontTopShape = frontMainShape
@@ -373,6 +391,7 @@
         var backMiddleShape = utils.makeShape(backMiddleCoords, backMiddleHolePath)
         var backMiddkeGeometry = utils.makeExtrudeGeometry(backMiddleShape, 165)
         var backMiddle = utils.makeMesh('lambert', backMiddkeGeometry, 0xffffff)
+
         backMiddle.rotation.x = -0.5 * Math.PI
         backMiddle.rotation.z = -0.5 * Math.PI
         backMiddle.position.y = 86
@@ -459,20 +478,25 @@
     }
     
     function buildLightSystem () {
-      var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1.6)
-      scene.add( hemisphereLight)
+      
+      if (!config.isMobile) {
+        var directionalLight = new THREE.DirectionalLight( 0xffffff , 1.1);
+        directionalLight.position.set( 300, 1000, 500 );
+        directionalLight.target.position.set( 0, 0, 0 );
+        directionalLight.castShadow = true;
 
-      var directionalLight = new THREE.DirectionalLight( 0xffffff , 0.2);
-      directionalLight.position.set( 300, 1000, 500 );
-      directionalLight.target.position.set( 0, 0, 0 );
-      directionalLight.castShadow = true;
+        var d = 300;
+        directionalLight.shadow.camera = new THREE.OrthographicCamera( -d, d, d, -d,  500, 1600 );
+        directionalLight.shadow.bias = 0.0001;
+        directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 1024;
+        scene.add(directionalLight)
 
-      var d = 300;
-      directionalLight.shadow.camera = new THREE.OrthographicCamera( -d, d, d, -d,  500, 1600 );
-      directionalLight.shadow.bias = 0.0001;
-      directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 2048;
-
-      scene.add(directionalLight)
+        var light = new THREE.AmbientLight( 0xffffff, 0.3 )
+        scene.add( light )
+      }else{
+        var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1.6)
+        scene.add( hemisphereLight)
+      }
 
     }
 
@@ -484,8 +508,8 @@
       stats.domElement.style.top = '5px'
       document.body.appendChild(stats.domElement)
 
-      // var axisHelper = new THREE.AxesHelper(200)
-      // scene.add(axisHelper)
+      var axisHelper = new THREE.AxesHelper(200)
+      scene.add(axisHelper)
 
       var gridHelper = new THREE.GridHelper(320, 32)
       scene.add(gridHelper)
