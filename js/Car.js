@@ -1,12 +1,13 @@
 "use strict"
 
 function Car (color) {
-  var colors = [0x2cbab2, 0x47a700, 0xd60000, 0x251a91, 0x37ad0e, 0x4d4d4d, 0xce7e00]
+  var colors = [0x2cbab2, 0x47a700, 0xd60000, 0x251a91, 0x37ad0e, 0x4d4d4d, 0xce7e00, 0xe0a213, 0x87bcde]
   var index = Math.floor(Math.random() * colors.length)
 
   this.color = color || colors[index]
   this.mesh = new THREE.Object3D()
   this.wheels = []
+  this.startAngle = 0
   
   var that = this
   addBody()
@@ -167,22 +168,21 @@ Car.prototype = {
     this._turn(angle, false, speed)
   },
   _turn: function (angle, direction, speed) {
-  	var originalAngle = this.mesh.rotation.y
-  	var currentAngle = 0
   	var direction = direction ? 1 : -1
   	if (speed) {
-  	  while(currentAngle <= angle) {
-	  	this.mesh.rotation.y += currentAngle * speed * direction
-	  	currentAngle += 0.1
-	  }
-	  if (angle - currentAngle < speed) {
-	  	
-	  	this.mesh.rotation.y = originalAngle + angle * direction
-	  }
-  	} else {
+      if(this.startAngle < angle) {
+  	    this.mesh.rotation.y += speed
+        this.startAngle += speed
+        if (angle - this.startAngle < speed) {
+          var originAngle = this.mesh.rotation.y - this.startAngle
+          this.mesh.rotation.y = originAngle + angle
+          this.startAngle = 0
+          return
+        }
+      }
+	  } else {
       this.mesh.rotation.y += angle * direction
   	}
-  	
   },
   _moving: function (speed, direction) {
     var rotation = this.mesh.rotation.y
