@@ -195,8 +195,8 @@ Car.prototype = {
     this._rotateWheels(speed)
   },
   _rotateWheels: function (speed) {
-  	for(var i = 0; i < this.wheels.length; i++){
-      this.wheels[i].rotation.z -= 0.1*speed
-    }
+    this.wheels.forEach(function (elem) {
+      elem.rotation.z -= 0.1*speed
+    })
   }
 }
