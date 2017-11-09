@@ -40,7 +40,7 @@
     </a>
   </div>
   <script src="js/libs/three.min.js"></script>
-  <script src="js/libs/orbitControls.js"></script>
+  <script src="js/libs/OrbitControls.js"></script>
   <!-- <script src="js/libs/stats.min.js"></script> -->
   <script src="js/utils.js"></script>
   <script src="js/textures.js"></script>
@@ -367,7 +367,6 @@
         frontPlatPillar2.position.set(55, 10, 55)
         hospital.add(frontPlatPillar2)
 
-
         var frontBorderVerticles = new THREE.Object3D()
         var frontBorderVerticleGeometry = new THREE.BoxGeometry(4, 106, 4)
         var frontBorderVerticleMesh = utils.makeMesh('phong', frontBorderVerticleGeometry, 0xffffff)
@@ -542,6 +541,7 @@
       controls.dampingFactor = 0.25
       controls.rotateSpeed = 0.35
     }
+    
     function carMoving (car) {
       var angle = car.mesh.rotation.y
       var x = car.mesh.position.x,
