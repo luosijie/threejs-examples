@@ -62,22 +62,20 @@ function Car (color) {
 
     var carLightGeometry = new THREE.CubeGeometry(2,2,2)
     var carLight = utils.makeMesh('phong', carLightGeometry, 0xffffff)
+    carLight.castShadow = false
 
-    var carLight1 = carLight.clone()
-    carLight1.position.set(12.5, 7.1, 6.1)
-    carLights.add(carLight1)
+    var carLightsPosition = [
+      [12.5, 7.1, 6.1], [12.5, 7.1, -6.1], [-14, 7.1, 6.1], [-14, 7.1, -6.1]
+    ]
 
-    var carLight2 = carLight.clone()
-    carLight2.position.set(12.5, 7.1, -6.1)
-    carLights.add(carLight2)
-
-    var carLight3 = carLight.clone()
-    carLight3.position.set(-12.5, 7.1, 6.1)
-    carLights.add(carLight3)
-
-    var carLight4 = carLight.clone()
-    carLight4.position.set(-12.5, 7.1, -6.1)
-    carLights.add(carLight4)
+    carLightsPosition.forEach(function (elem) {
+      var x = elem[0],
+          y = elem[1],
+          z = elem[2]
+      var carLightCopy= carLight.clone()
+      carLightCopy.position.set(x, y, z)
+      carLights.add(carLightCopy)
+    })
 
     var carLightFront = carLight.clone()
     carLightFront.scale.set(1,1.3,7.1)
@@ -146,6 +144,7 @@ function Car (color) {
     var geometry = utils.makeExtrudeGeometry(shape, 0.1)
     geometry.rotateX(0.5 * Math.PI)
     var mesh = utils.makeMesh('phong', geometry, windowColor)
+    mesh.castShadow = false
     return mesh
   }
 }
