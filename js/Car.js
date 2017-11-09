@@ -45,12 +45,14 @@ function Car (color) {
       wheel.add(wheelOuter)
 
       var wheelInner = utils.makeMesh('lambert', wheelOuterGeometry, 0xdddddd)
+      wheelInner.castShadow = false
       wheelInner.scale.set(0.8,0.8,1.1)
       wheel.add(wheelInner)
 
       var wheelCenterGeometry = new THREE.CylinderGeometry( 1, 1, 3.6, 4)
       wheelCenterGeometry.rotateX(0.5*Math.PI)
       var wheelCenter = utils.makeMesh('lambert', wheelCenterGeometry, 0xa7a7a7)
+      wheelCenter.castShadow = false
       wheel.add(wheelCenter)
 
       return wheel

@@ -91,6 +91,7 @@
       if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)){ 
         config.isMobile = true
         camera.position.set(420,420,420)
+        renderer.shadowMap.enabled = false
       }
     }
     
@@ -350,12 +351,13 @@
 
         var frontPlatVerticalGeometry = new THREE.BoxGeometry(150, 15, 3)
         var frontPlatVertical = utils.makeMesh('phong', frontPlatVerticalGeometry, 0x0792a5)
-        frontPlatVertical.position.set(-3, 27, 68.5)
+        frontPlatVertical.receiveShadow = false
+        frontPlatVertical.position.set(-3, 24, 68.5)
         hospital.add(frontPlatVertical)
 
         var frontPlatVerticalWhiteGeometry = new THREE.BoxGeometry(150, 3, 3)
         var frontPlatVerticalWhite = utils.makeMesh('phong', frontPlatVerticalWhiteGeometry, 0xffffff)
-        frontPlatVerticalWhite.position.set(-3, 36, 68.5)
+        frontPlatVerticalWhite.position.set(-3, 33, 68.5)
         hospital.add(frontPlatVerticalWhite)
 
         var frontPlatPillarGeometry = new THREE.CylinderGeometry(2, 2, 15, 32)
@@ -515,9 +517,12 @@
 
         var light = new THREE.AmbientLight( 0xffffff, 0.3 )
         scene.add( light )
-      }else{
-        var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1.6)
+      } else {
+        var hemisphereLight = new THREE.HemisphereLight( 0xffffff, 1)
         scene.add( hemisphereLight)
+
+        var light = new THREE.AmbientLight( 0xffffff, 0.15 )
+        scene.add( light )
       }
 
     }
@@ -573,7 +578,7 @@
     function loop () {
       // stats.update()
       cars.forEach(function(car){
-        carMoving(car)
+        carMoving(car) 
       })
       renderer.render(scene, camera)
       requestAnimationFrame(loop)
