@@ -60,35 +60,34 @@ function Car (color) {
   }
 
   function addLights () {
-    var carLights = new THREE.Object3D() 
-
-    var carLightGeometry = new THREE.CubeGeometry(2,2,2)
-    var carLight = utils.makeMesh('phong', carLightGeometry, 0xffffff)
-    carLight.castShadow = false
+    var carLightsGeometry = new THREE.Geometry()
+    var carLigetGeometry = new THREE.BoxGeometry(2,2,2)
 
     var carLightsPosition = [
       [12.5, 7.1, 6.1], [12.5, 7.1, -6.1], [-14, 7.1, 6.1], [-14, 7.1, -6.1]
     ]
-
     carLightsPosition.forEach(function (elem) {
       var x = elem[0],
           y = elem[1],
           z = elem[2]
-      var carLightCopy= carLight.clone()
-      carLightCopy.position.set(x, y, z)
-      carLights.add(carLightCopy)
+      var geometry = carLigetGeometry.clone()
+      geometry.translate(x, y, z)
+      carLightsGeometry.merge(geometry)
     })
 
-    var carLightFront = carLight.clone()
-    carLightFront.scale.set(1,1.3,7.1)
-    carLightFront.position.set(12.1, 3.3, 0)
-    carLights.add(carLightFront)
+    var carLightFrontGeometry = carLigetGeometry.clone()
+    carLightFrontGeometry.scale(1,1.3,7.1)
+    carLightFrontGeometry.translate(12.1, 3.3, 0)
+    carLightsGeometry.merge(carLightFrontGeometry)
 
-    var carLightBack = carLightFront.clone()
-    carLightBack.position.x = -14
-    carLights.add(carLightBack)
+    var carLightBackGeometry = carLightFrontGeometry.clone()
+    carLightBackGeometry.translate(-26, 0, 0)
+    carLightsGeometry.merge(carLightBackGeometry)
     
+    carLightsGeometry = new THREE.BufferGeometry().fromGeometry(carLightsGeometry)
+    var carLights = utils.makeMesh('phong', carLightsGeometry, 0xffffff)
     that.mesh.add(carLights)
+
   }
   
   function addWindows () {

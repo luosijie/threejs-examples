@@ -30,7 +30,7 @@ var utils = {
       amount: amount,
       bevelEnabled: false
     }
-    var geometry = new THREE.ExtrudeGeometry(shape, extrudeSetting)
+    var geometry = new THREE.ExtrudeBufferGeometry(shape, extrudeSetting)
     geometry.rotateX( -0.5 * Math.PI)
     return geometry
   },
