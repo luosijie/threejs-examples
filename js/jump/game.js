@@ -1,7 +1,9 @@
-var Game = function () {
+var Game = function (callback) {
 	// 基本参数
 	this.config = {
-  	background: 0x282828
+  	background: 0x282828, // 背景颜色
+    ground: -1, // 地面y坐标
+    fallingSpeed: 0.2, // 游戏失败掉落速度
   }
   // 场景设置
 	this.size = {
@@ -38,10 +40,16 @@ var Game = function () {
   	location: -1,
   	distanceS: 0
   }
+  this.fallingStat = {
+    speed: 0.2,
+    end: false
+  }
+  this.callback = callback
   
 }
 Game.prototype = {
   init: function () {
+    this._createHelpers()
   	this._setLight()
   	this._createCube()
   	this._createCube()
@@ -58,6 +66,10 @@ Game.prototype = {
   	window.addEventListener('resize', function () {
   		self._handleWindowResize()
   	})
+  },
+  _createHelpers: function () {
+    var axesHelper = new THREE.AxesHelper(10)
+    this.scene.add(axesHelper)
   },
   _reset: function () {
 	  this.scene = new THREE.Scene()
@@ -146,84 +158,84 @@ Game.prototype = {
     }
     
   },
+  _fallingRotate: function (dir) {
+    var self = this
+    var offset = self.falledStat.distance - self.cubeStat.width / 2
+    var rotateAxis = 'z' // 旋转轴
+    var rotateAdd = self.jumper.rotation[rotateAxis] + 0.1 // 旋转速度
+    var rotateTo = self.jumper.rotation[rotateAxis] < Math.PI/2 // 旋转结束的弧度
+    var fallingTo = self.config.ground + self.jumperStat.width / 2 + offset
+
+    if (dir === 'rightTop') {
+      rotateAxis = 'x'
+      rotateAdd = self.jumper.rotation[rotateAxis] - 0.1
+      rotateTo = self.jumper.rotation[rotateAxis] > -Math.PI/2
+      self.jumper.geometry.translate.z = offset
+
+    } else if (dir === 'rightBottom') {
+      rotateAxis = 'x'
+      rotateAdd = self.jumper.rotation[rotateAxis] + 0.1
+      rotateTo = self.jumper.rotation[rotateAxis] < Math.PI/2
+      self.jumper.geometry.translate.z = -offset
+    } else if (dir === 'leftBottom') {
+      rotateAxis = 'z'
+      rotateAdd = self.jumper.rotation[rotateAxis] - 0.1
+      rotateTo = self.jumper.rotation[rotateAxis] > -Math.PI/2
+      self.jumper.geometry.translate.x = -offset
+    } else if (dir === 'leftTop') {
+      rotateAxis = 'z'
+      rotateAdd = self.jumper.rotation[rotateAxis] + 0.1
+      rotateTo = self.jumper.rotation[rotateAxis] < Math.PI/2
+      self.jumper.geometry.translate.x = offset
+    } else if (dir === 'none') {
+      rotateTo = false
+      fallingTo = self.config.ground
+    } else {
+      throw Error('Arguments Error')
+    }
+    if (!self.fallingStat.end) {
+      if (rotateTo) {
+        self.jumper.rotation[rotateAxis] = rotateAdd
+      } else if (self.jumper.position.y > fallingTo) {
+        self.jumper.position.y -= self.config.fallingSpeed
+      } else {
+        self.fallingStat.end = true
+      }
+      self._render()
+      requestAnimationFrame(function(){
+        self._falling()
+      })  
+    } else {
+      self.callback()
+    }
+    
+    
+  },
   _falling: function () {
   	var self = this
-  	var fallingSpeed = 0.2
-  	var fallingTo = -1
-  	var offset = self.falledStat.distance - self.cubeStat.width / 2
   	if (self.falledStat.location == 0) {
-  		if (self.jumper.position.y > fallingTo) {
-        self.jumper.position.y -= fallingSpeed
-  		}	else {
-  			self._reset()
-  		}
+      self._fallingRotate('none')
   	} else if (self.falledStat.location === -10) {
   		if (self.cubeStat.nextDir == 'left') {
-  			self.jumper.geometry.translate.z = offset
-  			if (self.jumper.rotation.z < Math.PI/2) {
-  				self.jumper.rotation.z += 0.1
-  			} else if (self.jumper.position.y > fallingTo) {
-          self.jumper.position.y -= fallingSpeed
-  			} else {
-	  			self._reset()
-	  		}   
+  			self._fallingRotate('leftTop')
   		} else {
-  			self.jumper.geometry.translate.z = offset
-  			if (self.jumper.rotation.x > -Math.PI/2) {
-  				self.jumper.rotation.x -= 0.1
-  			} else if (self.jumper.position.y > fallingTo) {
-          self.jumper.position.y -= fallingSpeed
-  			} else {
-	  			self._reset()
-	  		}
+  			self._fallingRotate('rightTop')
   		} 		
   	} else if (self.falledStat.location === 10) {
   		if (self.cubeStat.nextDir == 'left') {
   			if (self.jumper.position.x < self.cubes[self.cubeStat.lastIndex].position.x) {
-  				self.jumper.geometry.translate.x = offset
-  				if (self.jumper.rotation.z < Math.PI/2) {
-	  				self.jumper.rotation.z += 0.1
-	  			} else if (self.jumper.position.y > fallingTo) {
-	          self.jumper.position.y -= fallingSpeed
-	  			} else {
-		  			self._reset()
-		  		}
+          self._fallingRotate('leftTop')
   			} else {
-  				self.jumper.geometry.translate.x = -offset
-	  			if (self.jumper.rotation.z > -Math.PI/2) {
-	  				self.jumper.rotation.z -= 0.1
-	  			} else if (self.jumper.position.y > fallingTo) {
-	          self.jumper.position.y -= fallingSpeed
-	  			} else {
-		  			self._reset()
-		  		}
+          self._fallingRotate('leftBottom')
 	  		}
   		} else {
   			if (self.jumper.position.z < self.cubes[self.cubeStat.lastIndex].position.z) {
-  				self.jumper.geometry.translate.z = offset
-  				if (self.jumper.rotation.x > Math.PI/2) {
-	  				self.jumper.rotation.x -= 0.1
-	  			} else if (self.jumper.position.y > fallingTo) {
-	          self.jumper.position.y -= fallingSpeed
-	  			} else {
-		  			self._reset()
-		  		}
+  				self._fallingRotate('rightTop')
   			} else {
-  				self.jumper.geometry.translate.z = -offset
-	  			if (self.jumper.rotation.x < Math.PI/2) {
-	  				self.jumper.rotation.x += 0.1
-	  			} else if (self.jumper.position.y > fallingTo) {
-	          self.jumper.position.y -= fallingSpeed
-	  			} else {
-		  			self._reset()
-		  		}
+          self._fallingRotate('rightBottom')
 	  		}
   		} 	
-  	}
-  	self._render()
-  	requestAnimationFrame(function(){
-      self._falling()
-  	})
+  	} 
   },
   _checkInCube: function () {
   	if (this.cubes.length > 1) {
@@ -253,6 +265,7 @@ Game.prototype = {
 	    } else {
 	    	result = 0
 	    }
+      console.log(result)
 	    this.falledStat.location = result
   	}
   },
@@ -305,6 +318,15 @@ Game.prototype = {
   	  }
         
   },
+  _createPlane: function () {
+    var geometry = new THREE.PlaneBufferGeometry(50, 50, 50)
+    var material = new THREE.MeshLambertMaterial({color: 0xc8cad4})
+    var mesh = new THREE.Mesh(geometry, material)
+    geometry.rotateX(-0.5 * Math.PI)
+    mesh.position.y = -1
+    this.scene.add(mesh)
+    this.plane = mesh
+  },
   _createJumper: function () {
     var material = new THREE.MeshLambertMaterial({color: 0x232323})
     var geometry = new THREE.CubeGeometry(this.jumperStat.width,this.jumperStat.height,this.jumperStat.deep)
@@ -315,7 +337,7 @@ Game.prototype = {
     return mesh
   },
   _createCube: function () {
-    var material = new THREE.MeshLambertMaterial({color: 0xFFFFFF})
+    var material = new THREE.MeshLambertMaterial({color: 0xbebebe})
     var geometry = new THREE.CubeGeometry(this.cubeStat.width,this.cubeStat.height,this.cubeStat.deep)
     var mesh = new THREE.Mesh(geometry, material)
     if( this.cubes.length ) {
@@ -325,9 +347,9 @@ Game.prototype = {
     	mesh.position.y = this.cubes[this.cubeStat.lastIndex].position.y
     	mesh.position.z = this.cubes[this.cubeStat.lastIndex].position.z
     	if (this.cubeStat.nextDir === 'left') {
-        mesh.position.x = this.cubes[this.cubeStat.lastIndex].position.x-3*Math.random() -6
+        mesh.position.x = this.cubes[this.cubeStat.lastIndex].position.x-4*Math.random() - 6
       } else {
-      	mesh.position.z = this.cubes[this.cubeStat.lastIndex].position.z-3*Math.random() -6
+      	mesh.position.z = this.cubes[this.cubeStat.lastIndex].position.z-4*Math.random() - 6
       } 
       this.cubeStat.lastIndex++
   	}
@@ -348,12 +370,6 @@ Game.prototype = {
     var directionalLight = new THREE.DirectionalLight( 0xffffff , 1.1);
     directionalLight.position.set( 300, 1000, 500 );
     directionalLight.target.position.set( 0, 0, 0 );
-    directionalLight.castShadow = true;
-
-    var d = 300;
-    directionalLight.shadow.camera = new THREE.OrthographicCamera( -d, d, d, -d,  500, 1600 );
-    directionalLight.shadow.bias = 0.0001;
-    directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 1024;
     this.scene.add(directionalLight)
 
     var light = new THREE.AmbientLight( 0xffffff, 0.3 )
@@ -369,8 +385,6 @@ Game.prototype = {
   	var renderer = new THREE.WebGLRenderer({antialias: true})
     renderer.setSize(this.size.width, this.size.height)
     renderer.setClearColor(this.config.background)
-    renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap
     document.body.appendChild(renderer.domElement)
     return renderer
   },
