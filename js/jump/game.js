@@ -4,38 +4,38 @@ var Game = function (callback) {
   	background: 0x282828, // 背景颜色
     ground: -1, // 地面y坐标
     fallingSpeed: 0.2, // 游戏失败掉落速度
+    cubeWidth: 4, // 方块宽度
+    cubeHeight: 2, // 方块高度
+    cubeDeep: 4, // 方块深度
+    jumperWidth: 1, // jumper宽度
+    jumperHeight: 2, // jumper高度
+    jumperDeep: 1, // jumper深度
   }
   // 场景设置
 	this.size = {
 		width: window.innerWidth,
 		height: window.innerHeight
 	}
-  this.scene = new THREE.Scene()
+  this.scene //
   this.cameraPos = {
   	current: new THREE.Vector3(0, 0, 0),
   	next: new THREE.Vector3()
   }
-  this.camera = this._setCamera()
-  this.renderer = this._setRenderer()
+  this.camera //
+  this.renderer //
   // 游戏元素
   this.cubes = []
   this.cubeStat = {
-  	width: 4, // x
-  	height: 2, // y
-  	deep: 4, // z
   	lastIndex: 0, // 最新生成的方块
   	nextDir: '' // 'left' 或 'right'
   }
   this.jumperStat = {
-  	width: 1, // x
-  	height: 2, // y
-  	deep: 1, // z
   	ready: false,
   	durTime: 3000,
   	xSpeed: 0,
   	ySpeed: 0
   }
-  this.jumper = this._createJumper()
+  this.jumper //
   this.falledStat = {
   	location: -1,
   	distanceS: 0
@@ -49,66 +49,45 @@ var Game = function (callback) {
 }
 Game.prototype = {
   init: function () {
-    this._createHelpers()
+    // this._createHelpers()
+    this._createScene()
+    this._setCamera()
+    this._setRenderer()
   	this._setLight()
-    this._createPlane()
   	this._createCube()
   	this._createCube()
+    this._createJumper()
   	this._render()
   	this._updateCamera()
 
     var self = this
+    // 监听鼠标按下的事件
   	document.addEventListener('mousedown', function () {
       self._handleMousedown()
   	})
+    // 监听鼠标松开的事件
   	document.addEventListener('mouseup', function () {
       self._handleMouseup()
   	})
+    // 监听窗口变化的事件
   	window.addEventListener('resize', function () {
   		self._handleWindowResize()
   	})
+  },
+  _createScene: function () {
+    this.scene = new THREE.Scene()
   },
   _createHelpers: function () {
     var axesHelper = new THREE.AxesHelper(10)
     this.scene.add(axesHelper)
   },
   restart: function () {
-	  this.scene = new THREE.Scene()
-	  this.cameraPos = {
-	  	current: new THREE.Vector3(0, 0, 0),
-	  	next: new THREE.Vector3()
-	  }
-	  this.cubes = []
-	  this.cubeStat = {
-	  	width: 4, // x
-	  	height: 2, // y
-	  	deep: 4, // z
-	  	lastIndex: 0, // 最新生成的方块
-	  	nextDir: '' // 'left' 或 'right'
-	  }
-	  this.jumperStat = {
-	  	width: 1, // x
-	  	height: 2, // y
-	  	deep: 1, // z
-	  	ready: false,
-	  	durTime: 3000,
-	  	xSpeed: 0,
-	  	ySpeed: 0
-	  }
-	  this.jumper = this._createJumper()
-	  this.falledStat = {
-	  	location: -1,
-	  	distanceS: 0
-	  }
-	  this._setLight()
-	  this._createCube()
-  	this._createCube()
-  	this._render()
-  	this._updateCamera()
+	  
   },
   _handleWindowResize: function () {
     this._setSize()
-    this.camera.aspect = this.size.width / this.size.height;
+    this.camera.aspect = this.size.width / this.size.height
+    console.log(this.camera.aspect)
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(this.size.width, this.size.height)
   },
@@ -116,8 +95,8 @@ Game.prototype = {
     var self = this
     if (!self.jumperStat.ready && self.jumper.scale.y > 0.02) { 
       self.jumper.scale.y -= 0.01
-      self.jumperStat.xSpeed += 0.003
-      self.jumperStat.ySpeed += 0.006
+      self.jumperStat.xSpeed += 0.004
+      self.jumperStat.ySpeed += 0.008
 	    self._render(self.scene, self.camera)
 	    requestAnimationFrame(function(){
 	    	self._handleMousedown()
@@ -129,11 +108,10 @@ Game.prototype = {
     self.jumperStat.ready = true
     if (self.jumper.position.y >= 1) {
     	if (self.cubeStat.nextDir === 'left') {
-    	  self.jumper.position.x -= self.jumperStat.xSpeed	
+    	  self.jumper.position.x -= self.jumperStat.xSpeed
     	} else {
     		self.jumper.position.z -= self.jumperStat.xSpeed
     	}
-    	
       self.jumper.position.y += self.jumperStat.ySpeed
       if ( self.jumper.scale.y < 1 ) {
       	self.jumper.scale.y += 0.02
@@ -161,11 +139,11 @@ Game.prototype = {
   },
   _fallingRotate: function (dir) {
     var self = this
-    var offset = self.falledStat.distance - self.cubeStat.width / 2
+    var offset = self.falledStat.distance - self.config.cubeWidth / 2
     var rotateAxis = 'z' // 旋转轴
     var rotateAdd = self.jumper.rotation[rotateAxis] + 0.1 // 旋转速度
     var rotateTo = self.jumper.rotation[rotateAxis] < Math.PI/2 // 旋转结束的弧度
-    var fallingTo = self.config.ground + self.jumperStat.width / 2 + offset
+    var fallingTo = self.config.ground + self.config.jumperWidth / 2 + offset
 
     if (dir === 'rightTop') {
       rotateAxis = 'x'
@@ -224,13 +202,13 @@ Game.prototype = {
   		} 		
   	} else if (self.falledStat.location === 10) {
   		if (self.cubeStat.nextDir == 'left') {
-  			if (self.jumper.position.x < self.cubes[self.cubeStat.lastIndex].position.x) {
+  			if (self.jumper.position.x < self.cubes[self.cubes.length - 1].position.x) {
           self._fallingRotate('leftTop')
   			} else {
           self._fallingRotate('leftBottom')
 	  		}
   		} else {
-  			if (self.jumper.position.z < self.cubes[self.cubeStat.lastIndex].position.z) {
+  			if (self.jumper.position.z < self.cubes[self.cubes.length - 1].position.z) {
   				self._fallingRotate('rightTop')
   			} else {
           self._fallingRotate('rightBottom')
@@ -245,24 +223,29 @@ Game.prototype = {
 	    	z: this.jumper.position.z
 	    }
 	    var pointA = {
-	    	x: this.cubes[this.cubeStat.lastIndex - 1].position.x,
-	    	z: this.cubes[this.cubeStat.lastIndex - 1].position.z
+	    	x: this.cubes[this.cubes.length - 1 - 1].position.x,
+	    	z: this.cubes[this.cubes.length - 1 - 1].position.z
 	    }
 	    var pointB = {
-	    	x: this.cubes[this.cubeStat.lastIndex].position.x,
-	    	z: this.cubes[this.cubeStat.lastIndex].position.z
+	    	x: this.cubes[this.cubes.length - 1].position.x,
+	    	z: this.cubes[this.cubes.length - 1].position.z
 	    }
-
-	    var distanceS = Math.sqrt(Math.pow((pointO.x - pointA.x),2) + Math.pow((pointO.z - pointA.z),2))
-	    var distanceL = Math.sqrt(Math.pow((pointO.x - pointB.x),2) + Math.pow((pointO.z - pointB.z),2))
-	    var should = this.cubeStat.width / 2 + this.jumperStat.width /2
+      var distanceS, distanceL
+      if (this.cubeStat.nextDir === 'left') {
+        distanceS = Math.abs(pointO.x - pointA.x)
+        distanceL = Math.abs(pointO.x - pointB.x)
+      } else {
+        distanceS = Math.abs(pointO.z - pointA.z)
+        distanceL = Math.abs(pointO.z - pointB.z)
+      }
+	    var should = this.config.cubeWidth / 2 + this.config.jumperWidth /2
 	    var result = false
 	    if (distanceS < should ) {
 	    	this.falledStat.distance = distanceS
-	    	result = distanceS < this.cubeStat.width / 2 ? -1 : -10
+	    	result = distanceS < this.config.cubeWidth / 2 ? -1 : -10
 	    } else if (distanceL < should) {
 	    	this.falledStat.distance = distanceL
-	    	result = distanceL < this.cubeStat.width / 2 ? 1 : 10
+	    	result = distanceL < this.config.cubeWidth / 2 ? 1 : 10
 	    } else {
 	    	result = 0
 	    }
@@ -318,46 +301,36 @@ Game.prototype = {
   	  }
         
   },
-  _createPlane: function () {
-    var geometry = new THREE.PlaneBufferGeometry(10,10, 10)
-    var material = new THREE.MeshLambertMaterial({color: 0x858585})
-    var mesh = new THREE.Mesh(geometry, material)
-    mesh.recieveShadow = true
-    geometry.rotateX(-0.5 * Math.PI)
-    mesh.position.y = -1
-    this.scene.add(mesh)
-  },
   _createJumper: function () {
     var material = new THREE.MeshLambertMaterial({color: 0x232323})
-    var geometry = new THREE.CubeGeometry(this.jumperStat.width,this.jumperStat.height,this.jumperStat.deep)
+    var geometry = new THREE.CubeGeometry(this.config.jumperWidth,this.config.jumperHeight,this.config.jumperDeep)
     geometry.translate(0,1,0)
     var mesh = new THREE.Mesh(geometry, material)
-    mesh.castShadow = true
     mesh.position.y = 1
     this.scene.add(mesh)
-    return mesh
+    this.jumper = mesh
   },
   _createCube: function () {
     var material = new THREE.MeshLambertMaterial({color: 0xbebebe})
-    var geometry = new THREE.CubeGeometry(this.cubeStat.width,this.cubeStat.height,this.cubeStat.deep)
+    var geometry = new THREE.CubeGeometry(this.config.cubeWidth,this.config.cubeHeight,this.config.cubeDeep)
     var mesh = new THREE.Mesh(geometry, material)
-    mesh.castShadow = true
-    mesh.recieveShadow = true
     if( this.cubes.length ) {
     	var random = Math.random()
     	this.cubeStat.nextDir =  random > 0.5 ? 'left' : 'right' 
-    	mesh.position.x = this.cubes[this.cubeStat.lastIndex].position.x
-    	mesh.position.y = this.cubes[this.cubeStat.lastIndex].position.y
-    	mesh.position.z = this.cubes[this.cubeStat.lastIndex].position.z
+    	mesh.position.x = this.cubes[this.cubes.length - 1].position.x
+    	mesh.position.y = this.cubes[this.cubes.length - 1].position.y
+    	mesh.position.z = this.cubes[this.cubes.length - 1].position.z
     	if (this.cubeStat.nextDir === 'left') {
-        mesh.position.x = this.cubes[this.cubeStat.lastIndex].position.x-4*Math.random() - 6
+        mesh.position.x = this.cubes[this.cubes.length - 1].position.x-4*Math.random() - 6
       } else {
-      	mesh.position.z = this.cubes[this.cubeStat.lastIndex].position.z-4*Math.random() - 6
+      	mesh.position.z = this.cubes[this.cubes.length - 1].position.z-4*Math.random() - 6
       } 
-      this.cubeStat.lastIndex++
   	}
-    
   	this.cubes.push(mesh)
+    if (this.cubes.length > 6) {
+      
+      this.scene.remove(this.cubes.shift())
+    }
     this.scene.add(mesh)
 
     if ( this.cubes.length > 1) {
@@ -370,16 +343,9 @@ Game.prototype = {
     this.renderer.render(this.scene, this.camera)
   },
   _setLight: function () {
-    var directionalLight = new THREE.DirectionalLight( 0xffffff , 1.2)
-    directionalLight.position.set( 1, 1.3, 0 )
-    directionalLight.target.position.set(0,0,0)
-    directionalLight.castShadow = true
+    var directionalLight = new THREE.DirectionalLight( 0xffffff , 1.1);
+    directionalLight.position.set( 3, 10, 5 )
     this.scene.add(directionalLight)
-
-    directionalLight.shadow.mapSize.width = 512
-    directionalLight.shadow.mapSize.height = 512
-    directionalLight.shadow.camera.near = 0.5
-    directionalLight.shadow.camera.far = 500
 
     var light = new THREE.AmbientLight( 0xffffff, 0.3 )
     this.scene.add( light )
@@ -388,16 +354,14 @@ Game.prototype = {
   	var camera = new THREE.OrthographicCamera(this.size.width / -80, this.size.width / 80, this.size.height / 80, this.size.height / -80, 0, 5000)
     camera.position.set(100, 100, 100)
     camera.lookAt(this.cameraPos.current)
-    return camera
+    this.camera = camera
   },
   _setRenderer: function () {
   	var renderer = new THREE.WebGLRenderer({antialias: true})
     renderer.setSize(this.size.width, this.size.height)
     renderer.setClearColor(this.config.background)
-    renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap
     document.body.appendChild(renderer.domElement)
-    return renderer
+    this.renderer = renderer
   },
   _setSize: function () {
   	this.size.width = window.innerWidth,
