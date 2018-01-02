@@ -51,6 +51,7 @@ Game.prototype = {
   init: function () {
     this._createHelpers()
   	this._setLight()
+    this._createPlane()
   	this._createCube()
   	this._createCube()
   	this._render()
@@ -71,7 +72,7 @@ Game.prototype = {
     var axesHelper = new THREE.AxesHelper(10)
     this.scene.add(axesHelper)
   },
-  _reset: function () {
+  restart: function () {
 	  this.scene = new THREE.Scene()
 	  this.cameraPos = {
 	  	current: new THREE.Vector3(0, 0, 0),
@@ -265,7 +266,6 @@ Game.prototype = {
 	    } else {
 	    	result = 0
 	    }
-      console.log(result)
 	    this.falledStat.location = result
   	}
   },
@@ -302,12 +302,12 @@ Game.prototype = {
   	  
   	  if (c.x > n.x  || c.z > n.z) {
   	  	
-  	  	self.cameraPos.current.x -= 0.07
-  	  	self.cameraPos.current.z -= 0.07
-  	  	if (self.cameraPos.current.x - self.cameraPos.next.x < 0.07) {
+  	  	self.cameraPos.current.x -= 0.1
+  	  	self.cameraPos.current.z -= 0.1
+  	  	if (self.cameraPos.current.x - self.cameraPos.next.x < 0.05) {
   	  		self.cameraPos.current.x = self.cameraPos.next.x
   	  	}
-  	  	if (self.cameraPos.current.z - self.cameraPos.next.z < 0.03) {
+  	  	if (self.cameraPos.current.z - self.cameraPos.next.z < 0.05) {
   	  		self.cameraPos.current.z = self.cameraPos.next.z
   	  	}
 	  	  self.camera.lookAt(new THREE.Vector3(c.x, 0, c.z))
@@ -319,19 +319,20 @@ Game.prototype = {
         
   },
   _createPlane: function () {
-    var geometry = new THREE.PlaneBufferGeometry(50, 50, 50)
-    var material = new THREE.MeshLambertMaterial({color: 0xc8cad4})
+    var geometry = new THREE.PlaneBufferGeometry(10,10, 10)
+    var material = new THREE.MeshLambertMaterial({color: 0x858585})
     var mesh = new THREE.Mesh(geometry, material)
+    mesh.recieveShadow = true
     geometry.rotateX(-0.5 * Math.PI)
     mesh.position.y = -1
     this.scene.add(mesh)
-    this.plane = mesh
   },
   _createJumper: function () {
     var material = new THREE.MeshLambertMaterial({color: 0x232323})
     var geometry = new THREE.CubeGeometry(this.jumperStat.width,this.jumperStat.height,this.jumperStat.deep)
     geometry.translate(0,1,0)
     var mesh = new THREE.Mesh(geometry, material)
+    mesh.castShadow = true
     mesh.position.y = 1
     this.scene.add(mesh)
     return mesh
@@ -340,6 +341,8 @@ Game.prototype = {
     var material = new THREE.MeshLambertMaterial({color: 0xbebebe})
     var geometry = new THREE.CubeGeometry(this.cubeStat.width,this.cubeStat.height,this.cubeStat.deep)
     var mesh = new THREE.Mesh(geometry, material)
+    mesh.castShadow = true
+    mesh.recieveShadow = true
     if( this.cubes.length ) {
     	var random = Math.random()
     	this.cubeStat.nextDir =  random > 0.5 ? 'left' : 'right' 
@@ -367,10 +370,16 @@ Game.prototype = {
     this.renderer.render(this.scene, this.camera)
   },
   _setLight: function () {
-    var directionalLight = new THREE.DirectionalLight( 0xffffff , 1.1);
-    directionalLight.position.set( 300, 1000, 500 );
-    directionalLight.target.position.set( 0, 0, 0 );
+    var directionalLight = new THREE.DirectionalLight( 0xffffff , 1.2)
+    directionalLight.position.set( 1, 1.3, 0 )
+    directionalLight.target.position.set(0,0,0)
+    directionalLight.castShadow = true
     this.scene.add(directionalLight)
+
+    directionalLight.shadow.mapSize.width = 512
+    directionalLight.shadow.mapSize.height = 512
+    directionalLight.shadow.camera.near = 0.5
+    directionalLight.shadow.camera.far = 500
 
     var light = new THREE.AmbientLight( 0xffffff, 0.3 )
     this.scene.add( light )
@@ -385,6 +394,8 @@ Game.prototype = {
   	var renderer = new THREE.WebGLRenderer({antialias: true})
     renderer.setSize(this.size.width, this.size.height)
     renderer.setClearColor(this.config.background)
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
     document.body.appendChild(renderer.domElement)
     return renderer
   },
