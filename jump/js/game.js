@@ -75,7 +75,8 @@ Game.prototype = {
       self._handleMousedown()
   	})
     // 监听鼠标松开的事件
-  	canvas.addEventListener(mouseEvents.up, function () {
+  	canvas.addEventListener(mouseEvents.up, function (evt) {
+      evt.preventDefault()
       self._handleMouseup()
   	})
     // 监听窗口变化的事件
