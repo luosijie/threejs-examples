@@ -4,11 +4,13 @@
 	<meta charset="UTF-8">
 	<title>Jump</title>
 	<meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no">
+	<link rel="shortcut icon" href="img/favicon.ico">
 	<style>
 		body{
 			padding: 0;
 			margin: 0;
 		}
+		
 		.mask{
 			display: none;
 			flex-direction: column;
@@ -58,9 +60,33 @@
 		button.restart:hover{
 			color:#232323;
 		}
+		.info{
+      margin: 20px 0;
+      position: absolute;
+      text-align: center;
+      opacity: 0.2;
+      width:100%;
+    }
+    .info a{
+      display: block;
+      font-size: 16px;
+      line-height: 28px;
+      color: #ffffff;
+      text-decoration: none;
+    }
+    a.title{
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .score-gaming{
+    	margin-top: 10px;
+			color: rgba(255,255,255,1);
+			font-size: 16px;
+		}
 	</style>
 </head>
 <body>
+  
   <div class="mask">
     <div class="content">	
       <div class="score-container">
@@ -68,8 +94,19 @@
 	    	<p class="score">0</h1>
 	    </div>
 	  	<button class="restart">
-	  		Restart
+	  		重新开始
 	  	</button>
+    </div>
+  </div>
+  <div class="info">
+    <a class="title" href="https://github.com/luosijie/threejs-examples" target="_blank">
+      Jump
+    </h3>
+    <a class="author" href="https://luosijie.github.io/" target="_blank">
+      Created By Jesse Luo
+    </a>
+    <div class="score-gaming">	
+      得分：<span class="score-current">0</span>
     </div>
   </div>
 	<script src="js/libs/three.min.js"></script>
