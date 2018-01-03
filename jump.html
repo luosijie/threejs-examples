@@ -19,6 +19,18 @@
 			height: 100%;
 			background: rgba(0,0,0,0.4);
 		}
+		.content{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			width: 500px;
+			height: 500px;
+			border-radius: 20px;
+			background: rgba(0,0,0,0.4);
+			border: 5px solid rgba(255,255,255,0.05);
+
+		}
 		.score-container{
 			color: #ffffff;
 			text-align: center;
@@ -50,13 +62,15 @@
 </head>
 <body>
   <div class="mask">
-    <div class="score-container">
-    	<p class="title">本次得分</>
-    	<p class="score">0</h1>
+    <div class="content">	
+      <div class="score-container">
+	    	<p class="title">本次得分</>
+	    	<p class="score">0</h1>
+	    </div>
+	  	<button class="restart">
+	  		Restart
+	  	</button>
     </div>
-  	<button class="restart">
-  		Restart
-  	</button>
   </div>
 	<script src="js/libs/three.min.js"></script>
 	<script src="js/jump/game.js"></script>

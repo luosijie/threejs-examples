@@ -1,6 +1,7 @@
-var Game = function (callback) {
+var Game = function (failedCallback) {
 	// 基本参数
 	this.config = {
+    isMobile: false,
   	background: 0x282828, // 背景颜色
     ground: -1, // 地面y坐标
     fallingSpeed: 0.2, // 游戏失败掉落速度
@@ -12,30 +13,29 @@ var Game = function (callback) {
     jumperDeep: 1, // jumper深度
   }
   // 场景设置
+  this.score = 0
 	this.size = {
 		width: window.innerWidth,
 		height: window.innerHeight
 	}
-  this.scene //
+  this.scene = new THREE.Scene()
   this.cameraPos = {
   	current: new THREE.Vector3(0, 0, 0),
   	next: new THREE.Vector3()
   }
-  this.camera //
-  this.renderer //
-  // 游戏元素
+  this.camera = new THREE.OrthographicCamera(this.size.width / -80, this.size.width / 80, this.size.height / 80, this.size.height / -80, 0, 5000)
+  this.renderer = new THREE.WebGLRenderer({antialias: true})
+  
+  // 游戏元素状态
   this.cubes = []
   this.cubeStat = {
-  	lastIndex: 0, // 最新生成的方块
   	nextDir: '' // 'left' 或 'right'
   }
   this.jumperStat = {
   	ready: false,
-  	durTime: 3000,
   	xSpeed: 0,
   	ySpeed: 0
   }
-  this.jumper //
   this.falledStat = {
   	location: -1,
   	distanceS: 0
@@ -44,13 +44,11 @@ var Game = function (callback) {
     speed: 0.2,
     end: false
   }
-  this.callback = callback
-  
+  this.callback = failedCallback
+  return this
 }
 Game.prototype = {
   init: function () {
-    // this._createHelpers()
-    this._createScene()
     this._setCamera()
     this._setRenderer()
   	this._setLight()
@@ -62,11 +60,12 @@ Game.prototype = {
 
     var self = this
     // 监听鼠标按下的事件
-  	document.addEventListener('mousedown', function () {
+    var canvas = document.querySelector('canvas')
+  	canvas.addEventListener('mousedown', function () {
       self._handleMousedown()
   	})
     // 监听鼠标松开的事件
-  	document.addEventListener('mouseup', function () {
+  	canvas.addEventListener('mouseup', function () {
       self._handleMouseup()
   	})
     // 监听窗口变化的事件
@@ -74,20 +73,35 @@ Game.prototype = {
   		self._handleWindowResize()
   	})
   },
-  _createScene: function () {
-    this.scene = new THREE.Scene()
+  restart: function () {
+    this.score = 0
+    this.cameraPos = {
+      current: new THREE.Vector3(0, 0, 0),
+      next: new THREE.Vector3()
+    }
+    this.fallingStat = {
+      speed: 0.2,
+      end: false
+    }
+    var length = this.cubes.length
+    for(var i=0; i < length; i++){
+      this.scene.remove(this.cubes.pop())
+    }
+    this.scene.remove(this.jumper)
+    // // self.cubes = []
+    this._createCube()
+    this._createCube()
+    this._createJumper()
+    this._render()
+    this._updateCamera()
   },
   _createHelpers: function () {
     var axesHelper = new THREE.AxesHelper(10)
     this.scene.add(axesHelper)
   },
-  restart: function () {
-	  
-  },
   _handleWindowResize: function () {
     this._setSize()
     this.camera.aspect = this.size.width / this.size.height
-    console.log(this.camera.aspect)
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(this.size.width, this.size.height)
   },
@@ -307,8 +321,8 @@ Game.prototype = {
     geometry.translate(0,1,0)
     var mesh = new THREE.Mesh(geometry, material)
     mesh.position.y = 1
-    this.scene.add(mesh)
     this.jumper = mesh
+    this.scene.add(this.jumper)
   },
   _createCube: function () {
     var material = new THREE.MeshLambertMaterial({color: 0xbebebe})
@@ -351,17 +365,13 @@ Game.prototype = {
     this.scene.add( light )
   },
   _setCamera: function () {
-  	var camera = new THREE.OrthographicCamera(this.size.width / -80, this.size.width / 80, this.size.height / 80, this.size.height / -80, 0, 5000)
-    camera.position.set(100, 100, 100)
-    camera.lookAt(this.cameraPos.current)
-    this.camera = camera
+    this.camera.position.set(100, 100, 100)
+    this.camera.lookAt(this.cameraPos.current)
   },
   _setRenderer: function () {
-  	var renderer = new THREE.WebGLRenderer({antialias: true})
-    renderer.setSize(this.size.width, this.size.height)
-    renderer.setClearColor(this.config.background)
-    document.body.appendChild(renderer.domElement)
-    this.renderer = renderer
+    this.renderer.setSize(this.size.width, this.size.height)
+    this.renderer.setClearColor(this.config.background)
+    document.body.appendChild(this.renderer.domElement)
   },
   _setSize: function () {
   	this.size.width = window.innerWidth,
