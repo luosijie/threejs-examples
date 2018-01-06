@@ -2,7 +2,7 @@ var Game = function () {
   // 基本参数
   this.config = {
     isMobile: false,
-  	background: 0x282828, // 背景颜色
+    background: 0x282828, // 背景颜色
     ground: -1, // 地面y坐标
     fallingSpeed: 0.2, // 游戏失败掉落速度
     cubeColor: 0xbebebe,
@@ -35,12 +35,12 @@ var Game = function () {
   }
   this.jumperStat = {
     ready: false, // 鼠标按完没有
-  	xSpeed: 0, // xSpeed根据鼠标按的时间进行赋值
-  	ySpeed: 0  // ySpeed根据鼠标按的时间进行赋值
+    xSpeed: 0, // xSpeed根据鼠标按的时间进行赋值
+    ySpeed: 0  // ySpeed根据鼠标按的时间进行赋值
   }
   this.falledStat = {
-  	location: -1, // jumper所在的位置
-  	distance: 0 // jumper和最近方块的距离
+    location: -1, // jumper所在的位置
+    distance: 0 // jumper和最近方块的距离
   }
   this.fallingStat = {
     speed: 0.2, // 游戏失败后垂直方向上的掉落速度
@@ -71,9 +71,9 @@ Game.prototype = {
     }
     // 事件绑定到canvas中
     var canvas = document.querySelector('canvas')
-  	canvas.addEventListener(mouseEvents.down, function () {
+    canvas.addEventListener(mouseEvents.down, function () {
       self._handleMousedown()
-  	})
+    })
     // 监听鼠标松开的事件
     canvas.addEventListener(mouseEvents.up, function (evt) {
       self._handleMouseup()
@@ -118,10 +118,10 @@ Game.prototype = {
   },
   // 检测是否手机端
   _checkUserAgent: function () {
-      var n = navigator.userAgent;
-      if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)){ 
-        this.config.isMobile = true
-      }
+    var n = navigator.userAgent;
+    if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)){ 
+      this.config.isMobile = true
+    }
   },
   // THREE.js辅助工具
   _createHelpers: function () {
@@ -148,10 +148,10 @@ Game.prototype = {
       self.jumper.scale.y -= 0.01
       self.jumperStat.xSpeed += 0.004
       self.jumperStat.ySpeed += 0.008
-	    self._render(self.scene, self.camera)
-	    requestAnimationFrame(function(){
-	    	self._handleMousedown()
-	    })
+      self._render(self.scene, self.camera)
+      requestAnimationFrame(function(){
+        self._handleMousedown()
+      })
     }
   },
   // 鼠标松开或触摸结束绑定的函数
@@ -165,7 +165,7 @@ Game.prototype = {
     	if (self.cubeStat.nextDir === 'left') {
     	  self.jumper.position.x -= self.jumperStat.xSpeed
     	} else {
-    		self.jumper.position.z -= self.jumperStat.xSpeed
+        self.jumper.position.z -= self.jumperStat.xSpeed
     	}
       // jumper在垂直方向上运动
       self.jumper.position.y += self.jumperStat.ySpeed
@@ -174,35 +174,33 @@ Game.prototype = {
       	self.jumper.scale.y += 0.02
       }
       // jumper在垂直方向上先上升后下降
-	    self.jumperStat.ySpeed -= 0.01
+      self.jumperStat.ySpeed -= 0.01
       // 每一次的变化，渲染器都要重新渲染，才能看到渲染效果
-	    self._render(self.scene, self.camera)
-	    requestAnimationFrame(function(){
-	    	self._handleMouseup()
-	    })	
+      self._render(self.scene, self.camera)
+      requestAnimationFrame(function(){
+        self._handleMouseup()
+      })	
     } else {
       // jumper掉落到方块水平位置，开始充值状态，并开始判断掉落是否成功
-    	self.jumperStat.ready = false
-    	self.jumperStat.xSpeed = 0
-    	self.jumperStat.ySpeed = 0
-    	self.jumper.position.y = 1
-    	self._checkInCube()
-    	if (self.falledStat.location === 1) {
+      self.jumperStat.ready = false
+      self.jumperStat.xSpeed = 0
+      self.jumperStat.ySpeed = 0
+      self.jumper.position.y = 1
+      self._checkInCube()
+      if (self.falledStat.location === 1) {
         // 掉落成功，进入下一步
         self.score++
-    		self._createCube()
-    	  self._updateCamera()
+        self._createCube()
+          self._updateCamera()
 
         if (self.successCallback) {
           self.successCallback(self.score)
         }
-
-    	} else {
+      } else {
         // 掉落失败，进入失败动画
     		self._falling()
-    	}
+      }
     }
-    
   },
   /**
    *游戏失败执行的碰撞效果
