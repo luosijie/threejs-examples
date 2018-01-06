@@ -14,7 +14,6 @@ var Game = function () {
     jumperHeight: 2, // jumper高度
     jumperDeep: 1, // jumper深度
   }
-
   // 游戏状态
   this.score = 0
   this.size = {
@@ -162,11 +161,11 @@ Game.prototype = {
     // 判断jumper是在方块水平面之上，是的话说明需要继续运动
     if (self.jumper.position.y >= 1) {
       // jumper根据下一个方块的位置来确定水平运动方向
-    	if (self.cubeStat.nextDir === 'left') {
-    	  self.jumper.position.x -= self.jumperStat.xSpeed
-    	} else {
+      if (self.cubeStat.nextDir === 'left') {
+        self.jumper.position.x -= self.jumperStat.xSpeed
+      } else {
         self.jumper.position.z -= self.jumperStat.xSpeed
-    	}
+      }
       // jumper在垂直方向上运动
       self.jumper.position.y += self.jumperStat.ySpeed
       // 运动伴随着缩放
@@ -191,14 +190,14 @@ Game.prototype = {
         // 掉落成功，进入下一步
         self.score++
         self._createCube()
-          self._updateCamera()
+        self._updateCamera()
 
         if (self.successCallback) {
           self.successCallback(self.score)
         }
       } else {
         // 掉落失败，进入失败动画
-    		self._falling()
+        self._falling()
       }
     }
   },
@@ -258,37 +257,36 @@ Game.prototype = {
         self.failedCallback()
       }
     }
-    
   },
   /**
    *游戏失败进入掉落阶段
    *通过确定掉落的位置来确定掉落效果
   **/
   _falling: function () {
-  	var self = this
-  	if (self.falledStat.location == 0) {
+    var self = this
+    if (self.falledStat.location == 0) {
       self._fallingRotate('none')
-  	} else if (self.falledStat.location === -10) {
-  		if (self.cubeStat.nextDir == 'left') {
-  			self._fallingRotate('leftTop')
-  		} else {
-  			self._fallingRotate('rightTop')
-  		} 		
-  	} else if (self.falledStat.location === 10) {
-  		if (self.cubeStat.nextDir == 'left') {
-  			if (self.jumper.position.x < self.cubes[self.cubes.length - 1].position.x) {
+    } else if (self.falledStat.location === -10) {
+      if (self.cubeStat.nextDir == 'left') {
+        self._fallingRotate('leftTop')
+      } else {
+        self._fallingRotate('rightTop')
+      } 		
+    } else if (self.falledStat.location === 10) {
+      if (self.cubeStat.nextDir == 'left') {
+        if (self.jumper.position.x < self.cubes[self.cubes.length - 1].position.x) {
           self._fallingRotate('leftTop')
-  			} else {
+        } else {
           self._fallingRotate('leftBottom')
-	  		}
-  		} else {
-  			if (self.jumper.position.z < self.cubes[self.cubes.length - 1].position.z) {
-  				self._fallingRotate('rightTop')
-  			} else {
+        }
+      } else {
+        if (self.jumper.position.z < self.cubes[self.cubes.length - 1].position.z) {
+          self._fallingRotate('rightTop')
+        } else {
           self._fallingRotate('rightBottom')
-	  		}
-  		} 	
-  	} 
+        }
+      } 	
+    } 
   },
   /**
    *判断jumper的掉落位置
@@ -300,21 +298,21 @@ Game.prototype = {
    *  0 : 掉落在空白区域，游戏失败
   **/
   _checkInCube: function () {
-  	if (this.cubes.length > 1) {
+    if (this.cubes.length > 1) {
       // jumper 的位置
       var pointO = {
-	    	x: this.jumper.position.x,
-	    	z: this.jumper.position.z
-	    }
+        x: this.jumper.position.x,
+        z: this.jumper.position.z
+      }
       // 当前方块的位置
-	    var pointA = {
-	    	x: this.cubes[this.cubes.length - 1 - 1].position.x,
-	    	z: this.cubes[this.cubes.length - 1 - 1].position.z
-	    }
+      var pointA = {
+        x: this.cubes[this.cubes.length - 1 - 1].position.x,
+        z: this.cubes[this.cubes.length - 1 - 1].position.z
+      }
       // 下一个方块的位置
-	    var pointB = {
-	    	x: this.cubes[this.cubes.length - 1].position.x,
-	    	z: this.cubes[this.cubes.length - 1].position.z
+      var pointB = {
+        x: this.cubes[this.cubes.length - 1].position.x,
+        z: this.cubes[this.cubes.length - 1].position.z
 	    }
       var distanceS, // jumper和当前方块的坐标轴距离
           distanceL  // jumper和下一个方块的坐标轴距离
@@ -326,53 +324,51 @@ Game.prototype = {
         distanceS = Math.abs(pointO.z - pointA.z)
         distanceL = Math.abs(pointO.z - pointB.z)
       }
-	    var should = this.config.cubeWidth / 2 + this.config.jumperWidth /2
-	    var result = 0
-	    if (distanceS < should ) {
+      var should = this.config.cubeWidth / 2 + this.config.jumperWidth /2
+      var result = 0
+      if (distanceS < should ) {
         // 落在当前方块，将距离储存起来，并继续判断是否可以站稳
-	    	this.falledStat.distance = distanceS
-	    	result = distanceS < this.config.cubeWidth / 2 ? -1 : -10
-	    } else if (distanceL < should) {
-	    	this.falledStat.distance = distanceL
+        this.falledStat.distance = distanceS
+        result = distanceS < this.config.cubeWidth / 2 ? -1 : -10
+      } else if (distanceL < should) {
+        this.falledStat.distance = distanceL
         // 落在下一个方块，将距离储存起来，并继续判断是否可以站稳
-	    	result = distanceL < this.config.cubeWidth / 2 ? 1 : 10
-	    } else {
-	    	result = 0
-	    }
-	    this.falledStat.location = result
-  	}
+        result = distanceL < this.config.cubeWidth / 2 ? 1 : 10
+      } else {
+        result = 0
+      }
+      this.falledStat.location = result
+    }
   },
   // 每成功一步, 重新计算摄像机的位置，保证游戏始终在画布中间进行
   _updateCameraPos: function () {
-  	var lastIndex = this.cubes.length - 1
+    var lastIndex = this.cubes.length - 1
     var pointA = {
       x: this.cubes[lastIndex].position.x,
       z: this.cubes[lastIndex].position.z
     }
     var pointB = {
-    	x: this.cubes[lastIndex - 1].position.x,
-    	z: this.cubes[lastIndex - 1].position.z
+      x: this.cubes[lastIndex - 1].position.x,
+      z: this.cubes[lastIndex - 1].position.z
     }
     var pointR = new THREE.Vector3()
     pointR.x = (pointA.x + pointB.x) / 2
     pointR.y = 0
     pointR.z = (pointA.z + pointB.z) / 2
-
     this.cameraPos.next = pointR
-
   },
   // 基于更新后的摄像机位置，重新设置摄像机坐标
   _updateCamera: function () {
-  	  var self = this
-  	  var c = {
-  	  	x: self.cameraPos.current.x,
-  	  	y: self.cameraPos.current.y,
-  	  	z: self.cameraPos.current.z
-  	  }
-  	  var n = {
-  	  	x: self.cameraPos.next.x,
-  	  	y: self.cameraPos.next.y,
-  	  	z: self.cameraPos.next.z
+      var self = this
+      var c = {
+        x: self.cameraPos.current.x,
+        y: self.cameraPos.current.y,
+        z: self.cameraPos.current.z
+      }
+      var n = {
+        x: self.cameraPos.next.x,
+        y: self.cameraPos.next.y,
+        z: self.cameraPos.next.z
   	  } 
   	  if (c.x > n.x  || c.z > n.z) {	  	
         self.cameraPos.current.x -= 0.1
