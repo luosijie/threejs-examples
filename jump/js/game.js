@@ -1,6 +1,6 @@
 var Game = function () {
-	// 基本参数
-	this.config = {
+  // 基本参数
+  this.config = {
     isMobile: false,
   	background: 0x282828, // 背景颜色
     ground: -1, // 地面y坐标
@@ -17,24 +17,24 @@ var Game = function () {
 
   // 游戏状态
   this.score = 0
-	this.size = {
-		width: window.innerWidth,
-		height: window.innerHeight
-	}
+  this.size = {
+    width: window.innerWidth,
+    height: window.innerHeight
+  }
   this.scene = new THREE.Scene() 
   this.cameraPos = {
-  	current: new THREE.Vector3(0, 0, 0), // 摄像机当前的坐标
-  	next: new THREE.Vector3() // 摄像机即将要移到的位置
+    current: new THREE.Vector3(0, 0, 0), // 摄像机当前的坐标
+    next: new THREE.Vector3() // 摄像机即将要移到的位置
   }
   this.camera = new THREE.OrthographicCamera(this.size.width / -80, this.size.width / 80, this.size.height / 80, this.size.height / -80, 0, 5000)
   this.renderer = new THREE.WebGLRenderer({antialias: true})
   
   this.cubes = [] // 方块数组
   this.cubeStat = {
-  	nextDir: '' // 下一个方块相对于当前方块的方向: 'left' 或 'right'
+    nextDir: '' // 下一个方块相对于当前方块的方向: 'left' 或 'right'
   }
   this.jumperStat = {
-  	ready: false, // 鼠标按完没有
+    ready: false, // 鼠标按完没有
   	xSpeed: 0, // xSpeed根据鼠标按的时间进行赋值
   	ySpeed: 0  // ySpeed根据鼠标按的时间进行赋值
   }
@@ -52,11 +52,11 @@ Game.prototype = {
     this._checkUserAgent() // 检测是否移动端
     this._setCamera() // 设置摄像机位置
     this._setRenderer() // 设置渲染器参数
-  	this._setLight() // 设置光照
-  	this._createCube() // 加一个方块
-  	this._createCube() // 再加一个方块
+    this._setLight() // 设置光照
+    this._createCube() // 加一个方块
+    this._createCube() // 再加一个方块
     this._createJumper() // 加入游戏者jumper
-  	this._updateCamera() // 更新相机坐标
+    this._updateCamera() // 更新相机坐标
 
     var self = this
     var mouseEvents = (self.config.isMobile) ?
@@ -75,13 +75,13 @@ Game.prototype = {
       self._handleMousedown()
   	})
     // 监听鼠标松开的事件
-  	canvas.addEventListener(mouseEvents.up, function (evt) {
+    canvas.addEventListener(mouseEvents.up, function (evt) {
       self._handleMouseup()
-  	})
+    })
     // 监听窗口变化的事件
-  	window.addEventListener('resize', function () {
-  		self._handleWindowResize()
-  	})
+    window.addEventListener('resize', function () {
+      self._handleWindowResize()
+    })
   },
   // 游戏失败重新开始的初始化配置
   restart: function () {
@@ -377,20 +377,20 @@ Game.prototype = {
   	  	z: self.cameraPos.next.z
   	  } 
   	  if (c.x > n.x  || c.z > n.z) {	  	
-  	  	self.cameraPos.current.x -= 0.1
-  	  	self.cameraPos.current.z -= 0.1
-  	  	if (self.cameraPos.current.x - self.cameraPos.next.x < 0.05) {
-  	  		self.cameraPos.current.x = self.cameraPos.next.x
-  	  	}
-  	  	if (self.cameraPos.current.z - self.cameraPos.next.z < 0.05) {
-  	  		self.cameraPos.current.z = self.cameraPos.next.z
-  	  	}
-	  	  self.camera.lookAt(new THREE.Vector3(c.x, 0, c.z))
-	      self._render()
-	  	  requestAnimationFrame(function(){
-	  	  	self._updateCamera()
-	  	  })
-  	  }
+        self.cameraPos.current.x -= 0.1
+        self.cameraPos.current.z -= 0.1
+        if (self.cameraPos.current.x - self.cameraPos.next.x < 0.05) {
+          self.cameraPos.current.x = self.cameraPos.next.x
+        }
+        if (self.cameraPos.current.z - self.cameraPos.next.z < 0.05) {
+          self.cameraPos.current.z = self.cameraPos.next.z
+        }
+        self.camera.lookAt(new THREE.Vector3(c.x, 0, c.z))
+        self._render()
+        requestAnimationFrame(function(){
+          self._updateCamera()
+        })
+      }
   },
   // 初始化jumper：游戏主角
   _createJumper: function () {
@@ -408,18 +408,18 @@ Game.prototype = {
     var geometry = new THREE.CubeGeometry(this.config.cubeWidth,this.config.cubeHeight,this.config.cubeDeep)
     var mesh = new THREE.Mesh(geometry, material)
     if( this.cubes.length ) {
-    	var random = Math.random()
-    	this.cubeStat.nextDir =  random > 0.5 ? 'left' : 'right' 
-    	mesh.position.x = this.cubes[this.cubes.length - 1].position.x
-    	mesh.position.y = this.cubes[this.cubes.length - 1].position.y
-    	mesh.position.z = this.cubes[this.cubes.length - 1].position.z
-    	if (this.cubeStat.nextDir === 'left') {
+      var random = Math.random()
+      this.cubeStat.nextDir =  random > 0.5 ? 'left' : 'right' 
+      mesh.position.x = this.cubes[this.cubes.length - 1].position.x
+      mesh.position.y = this.cubes[this.cubes.length - 1].position.y
+      mesh.position.z = this.cubes[this.cubes.length - 1].position.z
+      if (this.cubeStat.nextDir === 'left') {
         mesh.position.x = this.cubes[this.cubes.length - 1].position.x-4*Math.random() - 6
       } else {
-      	mesh.position.z = this.cubes[this.cubes.length - 1].position.z-4*Math.random() - 6
+        mesh.position.z = this.cubes[this.cubes.length - 1].position.z-4*Math.random() - 6
       } 
-  	}
-  	this.cubes.push(mesh)
+    }
+    this.cubes.push(mesh)
     // 当方块数大于6时，删除前面的方块，因为不会出现在画布中
     if (this.cubes.length > 6) {
       this.scene.remove(this.cubes.shift())
@@ -428,7 +428,7 @@ Game.prototype = {
     // 每新增一个方块，重新计算摄像机坐标
     if ( this.cubes.length > 1) {
       this._updateCameraPos()
-  	}
+    }
   },
   _render: function () {
     this.renderer.render(this.scene, this.camera)
@@ -451,7 +451,7 @@ Game.prototype = {
     document.body.appendChild(this.renderer.domElement)
   },
   _setSize: function () {
-  	this.size.width = window.innerWidth,
-  	this.size.height = window.innerHeight
+    this.size.width = window.innerWidth,
+    this.size.height = window.innerHeight
   }
 }
