@@ -218,7 +218,6 @@ Game.prototype = {
       rotateAdd = self.jumper.rotation[rotateAxis] - 0.1
       rotateTo = self.jumper.rotation[rotateAxis] > -Math.PI/2
       self.jumper.geometry.translate.z = offset
-
     } else if (dir === 'rightBottom') {
       rotateAxis = 'x'
       rotateAdd = self.jumper.rotation[rotateAxis] + 0.1
@@ -313,7 +312,7 @@ Game.prototype = {
       var pointB = {
         x: this.cubes[this.cubes.length - 1].position.x,
         z: this.cubes[this.cubes.length - 1].position.z
-	    }
+      }
       var distanceS, // jumper和当前方块的坐标轴距离
           distanceL  // jumper和下一个方块的坐标轴距离
       // 判断下一个方块相对当前方块的方向来确定计算距离的坐标轴
@@ -369,8 +368,8 @@ Game.prototype = {
         x: self.cameraPos.next.x,
         y: self.cameraPos.next.y,
         z: self.cameraPos.next.z
-  	  } 
-  	  if (c.x > n.x  || c.z > n.z) {	  	
+      } 
+      if (c.x > n.x  || c.z > n.z) {	  	
         self.cameraPos.current.x -= 0.1
         self.cameraPos.current.z -= 0.1
         if (self.cameraPos.current.x - self.cameraPos.next.x < 0.05) {
