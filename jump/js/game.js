@@ -130,7 +130,10 @@ Game.prototype = {
   // 窗口缩放绑定的函数
   _handleWindowResize: function () {
     this._setSize()
-    this.camera.aspect = this.size.width / this.size.height
+    this.camera.left = this.size.width / -80
+    this.camera.right = this.size.width / 80
+    this.camera.top = this.size.height / 80
+    this.camera.bottom = this.size.height / -80
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(this.size.width, this.size.height)
     this._render()

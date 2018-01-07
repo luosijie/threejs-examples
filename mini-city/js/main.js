@@ -17,7 +17,6 @@ scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
 camera.position.set(330,330,330)
 camera.lookAt(scene.position)
-scene.add(camera)
 
 renderer = new THREE.WebGLRenderer({antialias: true})
 renderer.setSize(width, height)
