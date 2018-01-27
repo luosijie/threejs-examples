@@ -1,7 +1,7 @@
 var textures = {
-  window: function () {
-    var canvas = document.createElement( 'canvas' );
-    var ctx = canvas.getContext( '2d' );
+  window: function() {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
 
     canvas.width = 32
     canvas.height = 32
@@ -27,7 +27,7 @@ var textures = {
     canvasTexture.wrapS = THREE.RepeatWrapping;
     canvasTexture.wrapT = THREE.RepeatWrapping;
     canvasTexture.needsUpdate = true;
-    
+
     return canvasTexture;
   }
 }
