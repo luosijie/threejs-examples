@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>mall</title>
+  <meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <link rel="stylesheet" href="css/mini-city.css">
+</head>
+
+<body>
+  <div class="info">
+    <canvas id="canvas"></canvas>
+    <div class="svg-container">
+      <svg id="svg_shapes" version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 800 600" style="enable-background:new 0 0 800 600;" xml:space="preserve">
+        <style type="text/css">
+        .st0 {
+          fill: #F2F2F2;
+        }
+
+        .st1 {
+          fill: #7CBD6B;
+        }
+
+        .st2 {
+          fill: #963968;
+        }
+
+        .st3 {
+          fill: #71C764;
+        }
+
+        .st4 {
+          fill: #D3B6DE;
+        }
+
+        .st5 {
+          fill: #D73F89;
+        }
+
+        .st6 {
+          fill: #76C464;
+        }
+
+        .st7 {
+          fill: #5A85CC;
+        }
+
+        .st8 {
+          fill: #CA5B3B;
+        }
+
+        .st9 {
+          fill: #2D5933;
+        }
+
+        .st10 {
+          fill: #3697AC;
+        }
+
+        .st11 {
+          fill: #736C66;
+        }
+
+        .st12 {
+          fill: #E3A353;
+        }
+        </style>
+        <!-- <path id="svg_24" d="m159.04742,20.63495c0,0 34.92069,37.30164 34.92069,37.30164c0,0 0,-41.30041 -0.31703,-42.06355c0.31703,0.76314 84.4594,0.79365 84.12711,0c0.31703,0 0.31703,35.71434 0,35.71434c0,0.00141 32.15227,-31.83524 31.74608,-32.53973c0.25942,0.53423 89.71244,90.18906 89.68268,89.68267c0.25324,0.25325 -10.40264,10.71967 -11.11113,10.31748c0.54074,0.25291 25.82883,0.79365 25.39686,0c0.51226,0 0.31703,268.26507 0,268.25437c0,0.01357 -85.45457,0 -85.71441,-0.79365c0.25804,0.79365 0.31703,-38.10411 -0.79365,-38.0953c0.79365,0.79061 -42.60627,0.79366 -42.85721,0c0.28742,0 0.31703,-58.81836 0,-59.5239c0,0.68996 -11.60863,0.79366 -11.90478,0c0.31703,0 0.31703,-7.14286 -0.79365,-7.93652c0.79365,0.78663 -146.5086,0.79366 -146.82562,0c0.31487,0 0.31702,-146.85974 0,-147.61927c0,0.76585 38.89786,0.79366 38.0953,0c0.71669,0 -56.59674,-62.46932 -59.5239,-59.5239c0.14132,0.14132 55.87266,-53.17468 55.87266,-53.17468z" stroke-opacity="null" stroke-width="1.5" stroke="null" fill="#f2f2f2" /> -->
+        <path id="svg_2" d="m264.26802,48.60431l65.51724,0l0,48.27586l-65.51724,0l0,-48.27586z" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" fill-opacity="0" fill="#000000" />
+        <path id="svg_4" d="m201.90463,23.01591l65.87312,0l0,47.61912l-65.87312,0l0,-47.61912z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#3f7f00" />
+        <path id="svg_5" d="m130.47595,235.71465l94.44459,0l0,42.06355l-94.44459,0l0,-42.06355z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_6" d="m129.6823,182.53996l84.12711,0l0,41.2699l-84.12711,0l0,-41.2699z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_8" d="m219.80411,92.65886l46.34404,0l0,33.33339l-46.34404,0l0,-33.33339z" transform="rotate(-45 242.97611999511716,109.32554626464845) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_9" d="m247.58191,118.84937l46.34404,0l0,33.33339l-46.34404,0l0,-33.33339z" transform="rotate(-45 270.7539367675781,135.51606750488284) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_10" d="m262.43225,52.51962l68.23071,0l0,21.54825l-68.23071,0l0,-21.54825z" transform="rotate(-45 296.54760742187494,63.29375076293946) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_11" d="m279.89261,71.56727l68.23071,0l0,21.54825l-68.23071,0l0,-21.54825z" transform="rotate(-45 314.0079650878906,82.34140014648436) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_12" d="m300.52756,91.40858l68.23071,0l0,21.54825l-68.23071,0l0,-21.54825z" transform="rotate(-45 334.6429138183594,102.18270874023433) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_13" d="m321.95618,112.83718l68.23071,0l0,21.54825l-68.23071,0l0,-21.54825z" transform="rotate(-45 356.07153320312494,123.61131286621094) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill-opacity="null" fill="#3f7f00" />
+        <path id="svg_14" d="m129.6823,139.68275l39.6826,0l0,34.12704l-39.6826,0l0,-34.12704z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#bf005f" />
+        <path id="svg_15" d="m175.7141,139.68275l37.30164,0l0,34.12704l-37.30164,0l0,-34.12704z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#007f3f" />
+        <path id="svg_16" d="m274.12698,175.39709l46.03181,0l0,26.98417l-46.03181,0l0,-26.98417z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#7f003f" />
+        <path id="svg_17" d="m116.72078,68.75301l66.7961,0l0,30.35135l-66.7961,0l0,-30.35135z" transform="rotate(45 150.11883544921872,83.92868041992188) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#7f003f" />
+        <path id="svg_18" d="m336.03183,205.55586l69.04772,0l0,31.74608l-69.04772,0l0,-31.74608z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#5656ff" />
+        <path id="svg_19" d="m336.03183,274.60361l69.04772,0l0,20.63496l-69.04772,0l0,-20.63496z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#5656ff" />
+        <path id="svg_20" d="m336.03183,305.42343l69.04772,0l0,74.60332l-69.04772,0l0,-74.60332z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#007f3f" />
+        <path id="svg_21" d="m138.1494,51.02033l66.7961,0l0,21.3722l-66.7961,0l0,-21.3722z" transform="rotate(45 171.5474548339844,61.70642852783203) " stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#7f003f" />
+        <path id="svg_23" d="m337.61912,200.0003c0,0 66.66677,0 66.66677,0c0,0 2.38096,-71.42868 2.38096,-71.42868c0,0 -23.02959,0 -23.33294,0c0.30335,0 -31.82833,32.93901 -32.53973,31.74608c0.15812,0.63553 -13.26811,0.79365 -13.49208,0c0.10362,0 0.31703,39.6826 0.31703,39.6826z" stroke-opacity="null" stroke-width="1.5" stroke="null" fill="#bf5f00" />
+        <path id="svg_25" d="m281.26984,216.67462l38.88895,0l0,64.28581l-38.88895,0l0,-64.28581z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#7f003f" />
+        <path id="svg_26" d="m293.96826,293.91617l26.19052,0l0,46.82546l-26.19052,0l0,-46.82546z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#7f003f" />H
+      </svg>
+    </div>
+  </div>
+  <script src="../js/libs/three.min.js"></script>
+  <script src="../js/libs/OrbitControls.js"></script>
+  <!-- 用于将svg转为threejs shape -->
+  <script src="https://johnson2heng.github.io/three.js-demo/lib/js/libs/d3-threeD.js"></script>
+  <!-- <script src="js/libs/stats.min.js"></script> -->
+  <script src="js/main.js">
+  </script>
+</body>
+
+</html>
