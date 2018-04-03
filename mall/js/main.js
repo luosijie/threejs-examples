@@ -1,6 +1,7 @@
 var scene, camera
 var renderer
 var width, width
+var canvas
 
 var cars = []
 // var stats
@@ -9,40 +10,63 @@ var config = {
   isMobile: false,
   background: 0xffffff
 }
-
 width = window.innerWidth
 height = window.innerHeight
+canvas = document.querySelector('#canvas')
 
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
 camera.position.set(330, 330, 330)
 camera.lookAt(scene.position)
 
-renderer = new THREE.WebGLRenderer({ 
-  canvas: document.querySelector('#canvas'),
-  antialias: true 
+renderer = new THREE.WebGLRenderer({
+  canvas: canvas,
+  antialias: true
 })
+
 renderer.setSize(width, height)
 renderer.setClearColor(config.background)
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
+// 用于选取元素的参数
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2(), INTERSECTED;
+
+var mall = new THREE.Object3D()
 var svgShapes = document.querySelector('#svg_shapes')
+
 var paths = svgShapes.querySelectorAll('path')
 paths.forEach(elem => {
   var d = elem.getAttribute('d')
   var shape = transformSVGPathExposed(d)
   var svgGeometry = new THREE.ExtrudeGeometry(shape, {
-    amount: 10,
+    amount: 25,
     stes: 1,
     bevelEnabled: false
   })
-  var svgMaterial = new THREE.MeshPhongMaterial({color: 0x333333, shininess: 100})
+  var transform = elem.getAttribute('transform')
+  var angle = 0
+  if (transform) {
+    if (/rotate/.test(transform)) {
+      angle = transform.match(/rotate\((\S+)/)[1]
+      angle = parseInt(angle) / 180
+    }
+
+  }
+  svgGeometry.rotateX(Math.PI / 2)
+  var color = elem.getAttribute('fill')
+  var svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
   var svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
-  scene.add(svgMesh)
-
+  svgMesh.rotation.y = Math.PI * angle
+  mall.add(svgMesh)
 })
+mall.translateX(-250)
+mall.translateY(25)
+mall.translateZ(-250)
+scene.add(mall)
 
+document.addEventListener('click', elementClick, false)
 
 checkUserAgent()
 
@@ -51,6 +75,13 @@ buildLightSystem()
 
 loop()
 onWindowResize()
+
+function elementClick(e) {
+  e.preventDefault()
+  mouse.x = (e.clientX / renderer.domElement.clientWidth) * 2 - 1
+  mouse.y = (e.clientY / renderer.domElement.clientWidth) * 2 - 1
+  console.log(mouse)
+}
 
 function checkUserAgent() {
   var n = navigator.userAgent;
@@ -106,12 +137,29 @@ function buildAuxSystem() {
   controls.dampingFactor = 0.25
   controls.rotateSpeed = 0.35
 }
-
+console.log('---------------', scene.children)
 function loop() {
   // stats.update()
   cars.forEach(function(car) {
     carMoving(car)
   })
+  raycaster.setFromCamera(mouse, camera)
+  var intersects = raycaster.intersectObjects(mall.children)
+  if (intersects.length > 0) {
+    if (INTERSECTED != intersects[0].object) {
+      if (INTERSECTED) 
+        INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+      INTERSECTED = intersects[0].object;
+      console.log('==================', INTERSECTED)
+      INTERSECTED.material.color.setHex(0xff0000);
+      // INTERSECTED.material.emissive.setHex(0xff0000);
+    }
+  } else {
+    if (INTERSECTED) {
+       INTERSECTED.material.color.setHex(0x00ff00);
+    }
+    INTERSECTED = null;
+  }
   renderer.render(scene, camera)
   requestAnimationFrame(loop)
 }
