@@ -17,8 +17,8 @@ canvas = document.querySelector('#canvas')
 scene = new THREE.Scene()
 camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
 camera.position.set(330, 330, 330)
-camera.lookAt(scene.position)
-
+camera.lookAt(new THREE.Vector3(1000, 0, 100))
+console.log("-----", scene.position)
 renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true
@@ -59,12 +59,8 @@ paths.forEach(elem => {
   var svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
   var svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
   svgMesh.rotation.y = Math.PI * angle
-  mall.add(svgMesh)
+  scene.add(svgMesh)
 })
-mall.translateX(-250)
-mall.translateY(25)
-mall.translateZ(-250)
-scene.add(mall)
 
 document.addEventListener('click', elementClick, false)
 
@@ -152,7 +148,7 @@ function loop() {
       INTERSECTED = intersects[0].object;
       console.log('==================', INTERSECTED)
       INTERSECTED.material.color.setHex(0xff0000);
-      // INTERSECTED.material.emissive.setHex(0xff0000);
+      INTERSECTED.material.emissive.setHex(0xff0000);
     }
   } else {
     if (INTERSECTED) {
