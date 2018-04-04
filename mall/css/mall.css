@@ -39,3 +39,12 @@ a.title{
   left: 90px;
   transform: scale(1.8);
 }
+.from{
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 0;
+}
+.from a{
+  color: black;
+}
