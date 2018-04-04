@@ -31,6 +31,7 @@ a.title{
   border: 1px solid #f2f2f2;
   overflow: hidden;
   border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 .svg-container svg{
   position: absolute;

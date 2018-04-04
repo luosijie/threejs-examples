@@ -1,40 +1,35 @@
-var container;
 var camera, scene, raycaster, renderer;
-var mouse = new THREE.Vector2(),
-  INTERSECTED;
-var radius = 100,
-  theta = 0;
-var mall = new THREE.Object3D();
+var mouse = new THREE.Vector2(), // 二维坐标用来转化鼠标参数
+    INTERSECTED; // 被选中的物体
+var mall = new THREE.Object3D(); // 建一个空对象用来放场景物体
+
 init();
 buildLightSystem();
 buildAuxSystem();
 buildMall();
 animate();
+addLabel()
 
 function init() {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-  var info = document.createElement('div');
-  info.style.position = 'absolute';
-  info.style.top = '10px';
-  info.style.width = '100%';
-  info.style.textAlign = 'center';
-  container.appendChild(info);
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xf0f0f0);
+  // 初始化相机配置
   camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
   camera.position.set(300, 300, 300);
   camera.lookAt(scene.position);
   raycaster = new THREE.Raycaster();
+  // 初始化
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  container.appendChild(renderer.domElement);
+  document.body.appendChild(renderer.domElement);
   document.addEventListener('mousemove', onDocumentMouseMove, false);
   window.addEventListener('resize', onWindowResize, false);
 }
 
-// 构建商场建筑
+/**
+ * 构建商场建筑
+ **/
 function buildMall() {
   // 获取html中的svg地图路径
   var svgShapes = document.querySelector('#svg_shapes')
@@ -55,13 +50,26 @@ function buildMall() {
     var color = elem.getAttribute('fill')
     var svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
     var svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
+    svgMesh.name = elem.getAttribute('name')
     mall.add(svgMesh)
-    console.log("222", svgMesh);
   })
   mall.translateX(-200)
   mall.translateZ(-200)
-  mall.translateY(35)
+  mall.translateY(25)
   scene.add(mall)
+}
+
+function addLabel() {
+  var material = new THREE.MeshPhongMaterial({ color: 0x000000 })
+  mall.children.forEach(elem => {
+    var geometry = new THREE.BoxGeometry(2,20,2)
+    var Mesh = new THREE.Mesh(geometry, material);
+    Mesh.position.y = 30
+    console.log(elem)
+    Mesh.position.x = elem.geometry.boundingSphere.center.x - 200
+    Mesh.position.z = elem.geometry.boundingSphere.center.z - 200
+    scene.add(Mesh)
+  })
 }
 /**
  * 辅助系统: 网格和坐标
@@ -71,6 +79,10 @@ function buildAuxSystem() {
   scene.add(axisHelper)
   var gridHelper = new THREE.GridHelper(600, 60)
   scene.add(gridHelper)
+  var controls = new THREE.OrbitControls(camera, renderer.domElement)
+  controls.enableDamping = true
+  controls.dampingFactor = 0.25
+  controls.rotateSpeed = 0.35
 }
 /**
  * 光照系统
@@ -104,21 +116,16 @@ function onDocumentMouseMove(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
-//
+
 function animate() {
   requestAnimationFrame(animate);
   render();
 }
 
 function render() {
-  // theta += 0.1;
-  // camera.position.x = radius * Math.sin(THREE.Math.degToRad(theta));
-  // camera.position.y = radius * Math.sin(THREE.Math.degToRad(theta));
-  // camera.position.z = radius * Math.cos(THREE.Math.degToRad(theta));
-  // camera.lookAt(scene.position);
-  // camera.updateMatrixWorld();
-  // find intersections
+  // 鼠标位置向摄像机位置发射一条射线
   raycaster.setFromCamera(mouse, camera);
+  // 设置射线影响的范围
   var intersects = raycaster.intersectObjects(mall.children);
   if (intersects.length > 0) {
     if (INTERSECTED != intersects[0].object) {
