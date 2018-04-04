@@ -34,8 +34,8 @@ function buildMall() {
   // 获取html中的svg地图路径
   var svgShapes = document.querySelector('#svg_shapes')
   var paths = svgShapes.querySelectorAll('path')
-  paths.forEach(elem => {
-    var d = elem.getAttribute('d')
+  for (var i = 0; i < paths.length; i++) {
+    var d = paths[i].getAttribute('d')
     // 使用插件将svg路径转化为THREE.js形状
     var shape = transformSVGPathExposed(d)
     // 将形状挤出
@@ -47,12 +47,31 @@ function buildMall() {
     // 由于平面转3D是竖直方向的, 需要旋转为水平方向
     svgGeometry.rotateX(Math.PI / 2)
     // 获取svg平面图每个模块对应的颜色
-    var color = elem.getAttribute('fill')
+    var color = paths[i].getAttribute('fill')
     var svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
     var svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
-    svgMesh.name = elem.getAttribute('name')
+    svgMesh.name = paths[i].getAttribute('name')
     mall.add(svgMesh)
-  })
+  }
+  // paths.forEach(elem => {
+  //   var d = elem.getAttribute('d')
+  //   // 使用插件将svg路径转化为THREE.js形状
+  //   var shape = transformSVGPathExposed(d)
+  //   // 将形状挤出
+  //   var svgGeometry = new THREE.ExtrudeGeometry(shape, {
+  //     amount: 25,
+  //     stes: 1,
+  //     bevelEnabled: false
+  //   })
+  //   // 由于平面转3D是竖直方向的, 需要旋转为水平方向
+  //   svgGeometry.rotateX(Math.PI / 2)
+  //   // 获取svg平面图每个模块对应的颜色
+  //   var color = elem.getAttribute('fill')
+  //   var svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
+  //   var svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
+  //   svgMesh.name = elem.getAttribute('name')
+  //   mall.add(svgMesh)
+  // })
   mall.translateX(-200)
   mall.translateZ(-200)
   mall.translateY(25)
