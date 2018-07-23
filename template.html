@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MiniCity</title>
+  <style>
+    body{
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <script src="js/libs/three.min.js"></script>
+  <script src="js/libs/orbitControls.js"></script>
+  <script src="js/libs/stats.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script>
+    var scene, camera
+    var renderer
+    var width, width
+  
+    width = window.innerWidth
+    height = window.innerHeight
+
+    scene = new THREE.Scene()
+    camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
+    camera.position.set(300,300,300)
+    camera.lookAt(scene.position)
+    scene.add(camera)
+
+    renderer = new THREE.WebGLRenderer()
+    renderer.setSize(width, height)
+    renderer.setClearColor(0x282828)
+    document.body.appendChild(renderer.domElement)
+
+    createAuxSystem()
+    loop()
+    onWindowResize()
+    
+    function createAuxSystem () {
+      var stats = new Stats()
+      stats.setMode(0)
+      stats.domElement.style.position = 'absolute'
+      stats.domElement.style.left = '5px'
+      stats.domElement.style.top = '5px'
+      document.body.appendChild(stats.domElement)
+
+      var axisHelper = new THREE.AxesHelper(200)
+      scene.add(axisHelper)
+
+      var gridHelper = new THREE.GridHelper(300, 30)
+      scene.add(gridHelper)
+
+      var controls = new THREE.OrbitControls(camera, renderer.domElement)
+      controls.enableDamping = true 
+      controls.dampingFactor = 0.25
+      controls.rotateSpeed = 0.35
+    }
+
+    function loop () {
+      renderer.render(scene, camera)
+      requestAnimationFrame(loop)
+    }
+
+    function onWindowResize () {
+      window.addEventListener('resize', function () {
+        width = window.innerWidth
+        height = window.innerHeight
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix()
+
+        renderer.setSize(width, height)
+      })
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+body{
+  padding: 0;
+  margin: 0;
+}
+.info{
+  margin: 20px 0;
+  position: absolute;
+  text-align: center;
+  /*opacity: 0.2;*/
+  width:100%;
+}
+.info a{
+  display: block;
+  font-size: 16px;
+  line-height: 28px;
+  color: #ffffff;
+  text-decoration: none;
+}
+a.title{
+  font-size: 20px;
+  font-weight: bold;
+}
+.svg-container{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  width: 240px;
+  height: 300px;
+  overflow: hidden;
+  border: 1px solid #f2f2f2;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.svg-container svg{
+  position: absolute;
+  top: 100px;
+  left: 90px;
+  transform: scale(1.8);
+}
+.from{
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 0;
+}
+.from a{
+  color: black;
+}

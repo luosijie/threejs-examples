@@ -1,18 +1,7 @@
-# test
+<div align="center">
+  <img src="https://github.com/luosijie/threejs-examples/blob/master/img/logo.png" alt="logo">
+  <h3>Three.js Example</h3>
+  <p>This is a place where I post sketches, experiments and the like based on Three.js</p>
+  <h3><a href="https://luosijie.github.io/threejs-examples/">Live</a></h3>
+</div>
 
-> A Vue.js project
-
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-```
-
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
