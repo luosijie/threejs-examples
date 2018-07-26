@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="info">
-            <img src="/static/img/logo.png" alt="Three.js Examples" class="logo">
+            <img src="static/img/logo.png" alt="Three.js Examples" class="logo">
             <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
             <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
         </div>
@@ -21,11 +21,11 @@ export default {
         return {
             workList: [
                 { link: '', img: '' },
-                { link: '/mini-city', img: '/static/img/threejs-example-mini-city.png' },
+                { link: '/mini-city', img: 'static/img/threejs-example-mini-city.png' },
                 { link: '', img: '' },
-                { link: '/jump', img: '/static/img/threejs-example-jump.png' },
+                { link: '/jump', img: 'static/img/threejs-example-jump.png' },
                 { link: '', img: '' },
-                { link: '/mall', img: '/static/img/threejs-example-mall.png' }
+                { link: '/mall', img: 'static/img/threejs-example-mall.png' }
             ]
         }
     }
