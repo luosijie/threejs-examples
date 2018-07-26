@@ -1,4 +1,4 @@
-var Game = function() {
+const Game = function() {
     // 基本参数
     this.config = {
         isMobile: false,
@@ -12,7 +12,7 @@ var Game = function() {
         jumperColor: 0x232323,
         jumperWidth: 1, // jumper宽度
         jumperHeight: 2, // jumper高度
-        jumperDeep: 1, // jumper深度
+        jumperDeep: 1 // jumper深度
     }
     // 游戏状态
     this.score = 0
@@ -57,16 +57,16 @@ Game.prototype = {
         this._createJumper() // 加入游戏者jumper
         this._updateCamera() // 更新相机坐标
 
-        var self = this
-        var mouseEvents = (self.config.isMobile) ? {
+        const self = this
+        const mouseEvents = (self.config.isMobile) ? {
             down: 'touchstart',
-            up: 'touchend',
+            up: 'touchend'
         } : {
             down: 'mousedown',
-            up: 'mouseup',
+            up: 'mouseup'
         }
         // 事件绑定到canvas中
-        var canvas = document.querySelector('canvas')
+        const canvas = document.querySelector('canvas')
         canvas.addEventListener(mouseEvents.down, function() {
             self._handleMousedown()
         })
@@ -91,8 +91,8 @@ Game.prototype = {
             end: false
         }
         // 删除所有方块
-        var length = this.cubes.length
-        for (var i = 0; i < length; i++) {
+        const length = this.cubes.length
+        for (let i = 0; i < length; i++) {
             this.scene.remove(this.cubes.pop())
         }
         // 删除jumper
@@ -114,14 +114,14 @@ Game.prototype = {
     },
     // 检测是否手机端
     _checkUserAgent: function() {
-        var n = navigator.userAgent;
+        const n = navigator.userAgent;
         if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)) {
             this.config.isMobile = true
         }
     },
     // THREE.js辅助工具
     _createHelpers: function() {
-        var axesHelper = new THREE.AxesHelper(10)
+        const axesHelper = new THREE.AxesHelper(10)
         this.scene.add(axesHelper)
     },
     // 窗口缩放绑定的函数
@@ -155,7 +155,7 @@ Game.prototype = {
     },
     // 鼠标松开或触摸结束绑定的函数
     _handleMouseup: function() {
-        var self = this
+        const self = this
         // 标记鼠标已经松开
         self.jumperStat.ready = true
         // 判断jumper是在方块水平面之上，是的话说明需要继续运动
@@ -189,7 +189,7 @@ Game.prototype = {
             if (self.falledStat.location === 1) {
                 // 掉落成功，进入下一步
                 self.score++
-                    self._createCube()
+                self._createCube()
                 self._updateCamera()
 
                 if (self.successCallback) {
@@ -206,12 +206,12 @@ Game.prototype = {
      *@param {String} dir 传入一个参数用于控制倒下的方向：'rightTop','rightBottom','leftTop','leftBottom','none'
      **/
     _fallingRotate: function(dir) {
-        var self = this
-        var offset = self.falledStat.distance - self.config.cubeWidth / 2
-        var rotateAxis = 'z' // 旋转轴
-        var rotateAdd = self.jumper.rotation[rotateAxis] + 0.1 // 旋转速度
-        var rotateTo = self.jumper.rotation[rotateAxis] < Math.PI / 2 // 旋转结束的弧度
-        var fallingTo = self.config.ground + self.config.jumperWidth / 2 + offset
+        const self = this
+        const offset = self.falledStat.distance - self.config.cubeWidth / 2
+        let rotateAxis = 'z' // 旋转轴
+        let rotateAdd = self.jumper.rotation[rotateAxis] + 0.1 // 旋转速度
+        let rotateTo = self.jumper.rotation[rotateAxis] < Math.PI / 2 // 旋转结束的弧度
+        let fallingTo = self.config.ground + self.config.jumperWidth / 2 + offset
 
         if (dir === 'rightTop') {
             rotateAxis = 'x'
@@ -262,7 +262,7 @@ Game.prototype = {
      *通过确定掉落的位置来确定掉落效果
      **/
     _falling: function() {
-        var self = this
+        const self = this
         if (self.falledStat.location == 0) {
             self._fallingRotate('none')
         } else if (self.falledStat.location === -10) {
@@ -299,21 +299,21 @@ Game.prototype = {
     _checkInCube: function() {
         if (this.cubes.length > 1) {
             // jumper 的位置
-            var pointO = {
+            const pointO = {
                 x: this.jumper.position.x,
                 z: this.jumper.position.z
             }
             // 当前方块的位置
-            var pointA = {
+            const pointA = {
                 x: this.cubes[this.cubes.length - 1 - 1].position.x,
                 z: this.cubes[this.cubes.length - 1 - 1].position.z
             }
             // 下一个方块的位置
-            var pointB = {
+            const pointB = {
                 x: this.cubes[this.cubes.length - 1].position.x,
                 z: this.cubes[this.cubes.length - 1].position.z
             }
-            var distanceS, // jumper和当前方块的坐标轴距离
+            let distanceS, // jumper和当前方块的坐标轴距离
                 distanceL // jumper和下一个方块的坐标轴距离
             // 判断下一个方块相对当前方块的方向来确定计算距离的坐标轴
             if (this.cubeStat.nextDir === 'left') {
@@ -323,8 +323,8 @@ Game.prototype = {
                 distanceS = Math.abs(pointO.z - pointA.z)
                 distanceL = Math.abs(pointO.z - pointB.z)
             }
-            var should = this.config.cubeWidth / 2 + this.config.jumperWidth / 2
-            var result = 0
+            let should = this.config.cubeWidth / 2 + this.config.jumperWidth / 2
+            let result = 0
             if (distanceS < should) {
                 // 落在当前方块，将距离储存起来，并继续判断是否可以站稳
                 this.falledStat.distance = distanceS
@@ -341,16 +341,16 @@ Game.prototype = {
     },
     // 每成功一步, 重新计算摄像机的位置，保证游戏始终在画布中间进行
     _updateCameraPos: function() {
-        var lastIndex = this.cubes.length - 1
-        var pointA = {
+        const lastIndex = this.cubes.length - 1
+        const pointA = {
             x: this.cubes[lastIndex].position.x,
             z: this.cubes[lastIndex].position.z
         }
-        var pointB = {
+        const pointB = {
             x: this.cubes[lastIndex - 1].position.x,
             z: this.cubes[lastIndex - 1].position.z
         }
-        var pointR = new THREE.Vector3()
+        const pointR = new THREE.Vector3()
         pointR.x = (pointA.x + pointB.x) / 2
         pointR.y = 0
         pointR.z = (pointA.z + pointB.z) / 2
@@ -358,13 +358,13 @@ Game.prototype = {
     },
     // 基于更新后的摄像机位置，重新设置摄像机坐标
     _updateCamera: function() {
-        var self = this
-        var c = {
+        const self = this
+        const c = {
             x: self.cameraPos.current.x,
             y: self.cameraPos.current.y,
             z: self.cameraPos.current.z
         }
-        var n = {
+        const n = {
             x: self.cameraPos.next.x,
             y: self.cameraPos.next.y,
             z: self.cameraPos.next.z
@@ -387,21 +387,21 @@ Game.prototype = {
     },
     // 初始化jumper：游戏主角
     _createJumper: function() {
-        var material = new THREE.MeshLambertMaterial({ color: this.config.jumperColor })
-        var geometry = new THREE.CubeGeometry(this.config.jumperWidth, this.config.jumperHeight, this.config.jumperDeep)
+        const material = new THREE.MeshLambertMaterial({ color: this.config.jumperColor })
+        const geometry = new THREE.CubeGeometry(this.config.jumperWidth, this.config.jumperHeight, this.config.jumperDeep)
         geometry.translate(0, 1, 0)
-        var mesh = new THREE.Mesh(geometry, material)
+        const mesh = new THREE.Mesh(geometry, material)
         mesh.position.y = 1
         this.jumper = mesh
         this.scene.add(this.jumper)
     },
     // 新增一个方块, 新的方块有2个随机方向
     _createCube: function() {
-        var material = new THREE.MeshLambertMaterial({ color: this.config.cubeColor })
-        var geometry = new THREE.CubeGeometry(this.config.cubeWidth, this.config.cubeHeight, this.config.cubeDeep)
-        var mesh = new THREE.Mesh(geometry, material)
+        const material = new THREE.MeshLambertMaterial({ color: this.config.cubeColor })
+        const geometry = new THREE.CubeGeometry(this.config.cubeWidth, this.config.cubeHeight, this.config.cubeDeep)
+        const mesh = new THREE.Mesh(geometry, material)
         if (this.cubes.length) {
-            var random = Math.random()
+            const random = Math.random()
             this.cubeStat.nextDir = random > 0.5 ? 'left' : 'right'
             mesh.position.x = this.cubes[this.cubes.length - 1].position.x
             mesh.position.y = this.cubes[this.cubes.length - 1].position.y
@@ -427,11 +427,11 @@ Game.prototype = {
         this.renderer.render(this.scene, this.camera)
     },
     _setLight: function() {
-        var directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
         directionalLight.position.set(3, 10, 5)
         this.scene.add(directionalLight)
 
-        var light = new THREE.AmbientLight(0xffffff, 0.3)
+        const light = new THREE.AmbientLight(0xffffff, 0.3)
         this.scene.add(light)
     },
     _setCamera: function() {
@@ -444,7 +444,9 @@ Game.prototype = {
         document.body.appendChild(this.renderer.domElement)
     },
     _setSize: function() {
-        this.size.width = window.innerWidth,
-            this.size.height = window.innerHeight
+        this.size.width = window.innerWidth
+        this.size.height = window.innerHeight
     }
 }
+
+export default Game
