@@ -1,81 +1,47 @@
 <template>
     <div class="container">
-        <a class="title" href="https://github.com/luosijie/threejs-examples" target="_blank">
-            Mini City
-        </a>
-        <a class="author" href="https://luosijie.github.io/" target="_blank">
-            Created By Jesse Luo
-        </a>
+        <div class="info">
+            <a class="title" href="https://github.com/luosijie/threejs-examples" target="_blank">
+                Mini City
+            </a>
+            <a class="author" href="https://luosijie.github.io/" target="_blank">
+                Created By Jesse Luo
+            </a>
+        </div>
+        <canvas/>
     </div>
 </template>
 <script>
-import Car from './js/Car';
-import textures from './js/textures.js';
-import utils from './js/utils.js';
+import Car from './js/Car'
+import textures from './js/textures.js'
+import treesPosition from './config/treesPosition'
+import utils from './js/utils.js'
 export default {
     name: 'HelloWorld',
     data() {
         return {
-            workList: [
-                { link: '', img: '' },
-                { link: '/mini-city', img: '/static/img/threejs-example-mini-city.png' },
-                { link: '', img: '' },
-                { link: '/jump', img: '/static/img/threejs-example-jump.png' },
-                { link: '', img: '' },
-                { link: '/mall', img: '/static/img/threejs-example-mall.png' }
-            ]
-        }
-    },
-    mounted() {
-        let scene, camera
-        let renderer
-        let width, height
-
-        let cars = []
-        // let stats
-
-        let config = {
-            isMobile: false,
-            background: 0x282828
-        }
-
-        width = window.innerWidth
-        height = window.innerHeight
-
-        scene = new THREE.Scene()
-        camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
-        camera.position.set(330, 330, 330)
-        camera.lookAt(scene.position)
-
-        renderer = new THREE.WebGLRenderer({ antialias: true })
-        renderer.setSize(width, height)
-        renderer.setClearColor(config.background)
-        renderer.shadowMap.enabled = true
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap
-        document.body.appendChild(renderer.domElement)
-
-        checkUserAgent()
-
-        buildAuxSystem()
-        buildLightSystem()
-        buildbuilding()
-        buildRoad()
-        buildStaticCars()
-        buildMovingCars()
-
-        loop()
-        onWindowResize()
-
-        function checkUserAgent() {
-            let n = navigator.userAgent;
-            if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)) {
-                config.isMobile = true
-                camera.position.set(420, 420, 420)
-                renderer.shadowMap.enabled = false
+            scene: null,
+            camera: null,
+            renderer: null,
+            cars: [],
+            width: '',
+            height: '',
+            config: {
+                isMobile: false,
+                background: 0x282828
             }
         }
-
-        function buildMovingCars() {
+    },
+    methods: {
+        checkUserAgent() {
+            let n = navigator.userAgent;
+            if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i)) {
+                this.config.isMobile = true
+                this.camera.position.set(420, 420, 420)
+                this.renderer.shadowMap.enabled = false
+            }
+        },
+        buildMovingCars() {
             let carsPosition = [
                 [-130, 145, 0],
                 [10, 145, 0],
@@ -83,37 +49,35 @@ export default {
                 [30, -145, 1],
                 [-145, -60, 1.5]
             ]
-            carsPosition.forEach(function(elem) {
+            carsPosition.forEach(elem => {
                 let car = new Car()
                 let x = elem[0],
                     z = elem[1],
                     r = elem[2]
                 car.setPosition(x, 0, z)
                 car.mesh.rotation.y = r * Math.PI
-                cars.push(car)
-                scene.add(car.mesh)
+                this.cars.push(car)
+                this.scene.add(car.mesh)
             })
-        }
-
-        function buildStaticCars() {
+        },
+        buildStaticCars() {
             let carsPosition = [
                 [-84, 82, 1.5],
                 [-58, 82, 1.5],
                 [-32, 82, 1.5],
                 [84, 82, 1.5]
             ]
-            carsPosition.forEach(function(elem) {
+            carsPosition.forEach(elem => {
                 let car = new Car()
                 let x = elem[0],
                     z = elem[1],
                     r = elem[2]
                 car.setPosition(x, 0, z)
                 car.mesh.rotation.y = r * Math.PI
-                scene.add(car.mesh)
+                this.scene.add(car.mesh)
             })
-        }
-
-        function buildRoad() {
+        },
+        buildRoad() {
             let road = new THREE.Object3D()
             let roadColor = 0xffffff
             let roadBorderOuterCoords = [
@@ -180,14 +144,14 @@ export default {
             let roadLines = utils.makeMesh('phong', roadLinesGeometry, roadColor)
             road.add(roadLines)
 
-            scene.add(road)
-        }
-
-        function buildbuilding() {
+            this.scene.add(road)
+        },
+        buildbuilding() {
+            let _this = this;
             let planeGeometry = new THREE.BoxBufferGeometry(320, 6, 320)
             let plane = utils.makeMesh('lambert', planeGeometry, 0x6f5f6a)
             plane.position.y = -3
-            scene.add(plane)
+            this.scene.add(plane)
 
             addFense()
             addGreen()
@@ -226,14 +190,14 @@ export default {
                     let lamp = createLamp()
                     lamp.rotation.y = r * Math.PI
                     lamp.position.set(x, 0, z)
-                    scene.add(lamp)
+                    _this.scene.add(lamp)
                 })
             }
 
             function addHospital() {
                 let hospital = createHospital()
                 hospital.position.z = -20
-                scene.add(hospital)
+                _this.scene.add(hospital)
             }
 
             function addGreen() {
@@ -256,7 +220,7 @@ export default {
 
                 let greenGeometry = utils.makeExtrudeGeometry(greenShape, 3)
                 let green = utils.makeMesh('lambert', greenGeometry, 0xc0c06a)
-                scene.add(green)
+                _this.scene.add(green)
             }
 
             function addFense() {
@@ -279,60 +243,16 @@ export default {
 
                 let fenseGeometry = utils.makeExtrudeGeometry(fenseShape, 3)
                 let fense = utils.makeMesh('lambert', fenseGeometry, 0xe5cabf)
-                scene.add(fense)
+                _this.scene.add(fense)
             }
 
             function addTrees() {
-                let treesPosition = [
-                    [-110, -110],
-                    [-90, -110],
-                    [-70, -110],
-                    [-50, -110],
-                    [-30, -110],
-                    [-10, -110],
-                    [10, -110],
-                    [30, -110],
-                    [50, -110],
-                    [70, -110],
-                    [90, -110],
-                    [-110, 110],
-                    [-110, 90],
-                    [-110, 70],
-                    [-110, 50],
-                    [-110, 30],
-                    [-110, 10],
-                    [-110, -10],
-                    [-110, -30],
-                    [-110, -50],
-                    [-110, -70],
-                    [-110, -90],
-                    [110, 110],
-                    [90, 110],
-                    [70, 110],
-                    [50, 110],
-                    [30, 110],
-                    [-30, 110],
-                    [-50, 110],
-                    [-70, 110],
-                    [-90, 110],
-                    [110, -110],
-                    [110, -90],
-                    [110, -70],
-                    [110, -50],
-                    [110, -30],
-                    [110, -10],
-                    [110, 10],
-                    [110, 30],
-                    [110, 50],
-                    [110, 70],
-                    [110, 90]
-                ]
                 treesPosition.forEach(function(elem) {
                     let x = elem[0],
                         y = 1,
                         z = elem[1]
                     let tree = createTree(x, y, z)
-                    scene.add(tree)
+                    _this.scene.add(tree)
                 })
             }
 
@@ -605,11 +525,10 @@ export default {
 
                 return tree
             }
-        }
+        },
+        buildLightSystem() {
 
-        function buildLightSystem() {
-
-            if (!config.isMobile) {
+            if (!this.config.isMobile) {
                 let directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
                 directionalLight.position.set(300, 1000, 500);
                 directionalLight.target.position.set(0, 0, 0);
@@ -619,41 +538,29 @@ export default {
                 directionalLight.shadow.camera = new THREE.OrthographicCamera(-d, d, d, -d, 500, 1600);
                 directionalLight.shadow.bias = 0.0001;
                 directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 1024;
-                scene.add(directionalLight)
+                this.scene.add(directionalLight)
 
                 let light = new THREE.AmbientLight(0xffffff, 0.3)
-                scene.add(light)
+                this.scene.add(light)
             } else {
                 let hemisphereLight = new THREE.HemisphereLight(0xffffff, 1)
-                scene.add(hemisphereLight)
+                this.scene.add(hemisphereLight)
 
                 let light = new THREE.AmbientLight(0xffffff, 0.15)
-                scene.add(light)
+                this.scene.add(light)
             }
-
-        }
-
-        function buildAuxSystem() {
-            // stats = new Stats()
-            // stats.setMode(0)
-            // stats.domElement.style.position = 'absolute'
-            // stats.domElement.style.left = '5px'
-            // stats.domElement.style.top = '5px'
-            // document.body.appendChild(stats.domElement)
-
-            // let axisHelper = new THREE.AxesHelper(200)
-            // scene.add(axisHelper)
-
+        },
+        // 构建辅助系统
+        buildAuxSystem() {
             let gridHelper = new THREE.GridHelper(320, 32)
-            scene.add(gridHelper)
+            this.scene.add(gridHelper)
 
-            let controls = new THREE.OrbitControls(camera, renderer.domElement)
+            let controls = new THREE.OrbitControls(this.camera, this.renderer.domElement)
             controls.enableDamping = true
             controls.dampingFactor = 0.25
             controls.rotateSpeed = 0.35
-        }
-
-        function carMoving(car) {
+        },
+        carMoving(car) {
             let angle = car.mesh.rotation.y
             let x = car.mesh.position.x,
                 z = car.mesh.position.z
@@ -679,28 +586,58 @@ export default {
                 car.setPosition(-145, 0, 145)
                 car.mesh.rotation.set(0, 0, 0)
             }
-        }
+        },
+        onWindowResize() {
+            window.addEventListener('resize', () => {
+                this.width = window.innerWidth
+                this.height = window.innerHeight
 
-        function loop() {
+                this.camera.aspect = this.width / this.height;
+                this.camera.updateProjectionMatrix()
+
+                this.renderer.setSize(this.width, this.height)
+            })
+        },
+        loop() {
             // stats.update()
-            cars.forEach(function(car) {
-                carMoving(car)
+            this.cars.forEach(car => {
+                this.carMoving(car)
             })
-            renderer.render(scene, camera)
-            requestAnimationFrame(loop)
+            this.renderer.render(this.scene, this.camera)
+            requestAnimationFrame(this.loop)
         }
+    },
+    mounted() {
 
-        function onWindowResize() {
-            window.addEventListener('resize', function() {
-                width = window.innerWidth
-                height = window.innerHeight
+        this.width = window.innerWidth
+        this.height = window.innerHeight
 
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix()
+        this.scene = new THREE.Scene()
+        this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 5000)
+        this.camera.position.set(330, 330, 330)
+        this.camera.lookAt(this.scene.position)
 
-                renderer.setSize(width, height)
-            })
-        }
+        this.renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            canvas: document.querySelector('canvas')
+        });
+        this.renderer.setSize(this.width, this.height)
+        this.renderer.setClearColor(this.config.background)
+        this.renderer.shadowMap.enabled = true
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        // document.body.appendChild(this.renderer.domElement)
+
+        this.checkUserAgent()
+
+        this.buildAuxSystem()
+        this.buildLightSystem()
+        this.buildbuilding()
+        this.buildRoad()
+        this.buildStaticCars()
+        this.buildMovingCars()
+
+        this.loop()
+        this.onWindowResize()
     }
 }
 
@@ -711,8 +648,10 @@ export default {
     margin: 20px 0;
     position: absolute;
     text-align: center;
-    opacity: 0.2;
     width: 100%;
+    .info {
+        opacity: 0.2;
+    }
     a {
         display: block;
         font-size: 16px;

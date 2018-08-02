@@ -26,7 +26,10 @@ const Game = function() {
         next: new THREE.Vector3() // 摄像机即将要移到的位置
     }
     this.camera = new THREE.OrthographicCamera(this.size.width / -80, this.size.width / 80, this.size.height / 80, this.size.height / -80, 0, 5000)
-    this.renderer = new THREE.WebGLRenderer({ antialias: true })
+    this.renderer = new THREE.WebGLRenderer({ 
+        antialias: true,
+        canvas: document.querySelector('canvas')
+    })
 
     this.cubes = [] // 方块数组
     this.cubeStat = {
@@ -441,7 +444,6 @@ Game.prototype = {
     _setRenderer: function() {
         this.renderer.setSize(this.size.width, this.size.height)
         this.renderer.setClearColor(this.config.background)
-        document.body.appendChild(this.renderer.domElement)
     },
     _setSize: function() {
         this.size.width = window.innerWidth

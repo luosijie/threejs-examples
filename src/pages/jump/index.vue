@@ -22,6 +22,7 @@
                 得分：<span class="score-current">0</span>
             </div>
         </div>
+        <canvas/>
     </div>
 </template>
 <script>
