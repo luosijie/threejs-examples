@@ -11,12 +11,12 @@ import svgString from './config/svgString';
 export default {
     data() {
         return {
-            scene: null,
-            camera: null,
-            raycaster: null,
-            renderer: null,
-            mall: null,
-            mouse: null,
+            scene: null, // 场景
+            camera: null, // 摄像机
+            raycaster: null, // 射线
+            renderer: null, // 渲染器
+            mall: null, // 商场
+            mouse: null, // 鼠标位置
             INTERSECTED: null // 被选中的物体
         }
     },
