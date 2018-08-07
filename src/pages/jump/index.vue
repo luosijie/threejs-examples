@@ -1,12 +1,12 @@
 <template>
     <div class="container">
-        <div class="mask">
+        <div class="mask" v-if="finalPanelShow">
             <div class="content">
                 <div class="score-container">
                     <p class="title">本次得分</p>
-                    <p class="score">0</p>
+                    <p class="score">{{score}}</p>
                 </div>
-                <button class="restart">
+                <button class="restart" @click="restart">
                     重新开始
                 </button>
             </div>
@@ -19,7 +19,7 @@
               Created By Jesse Luo
             </a>
             <div class="score-gaming">
-                得分：<span class="score-current">0</span>
+                得分：<span class="score-current">{{score}}</span>
             </div>
         </div>
         <canvas/>
@@ -28,42 +28,39 @@
 <script>
 import Game from './js/game.js';
 export default {
-    name: 'jump',
     data() {
-        return {}
+        return {
+            game: null,
+            score: 0,
+            finalPanelShow: false
+        }
+    },
+    methods: {
+        // 游戏重新开始，执行函数
+        restart() {
+            this.finalPanelShow = false
+            this.game.restart()
+        },
+        // 游戏失败执行函数
+        failed() {
+            console.log('失败了');
+            this.score = this.game.score
+            this.finalPanelShow = true
+        },
+        // 游戏成功，更新分数
+        success(score) {
+            this.score = score
+        }
     },
     mounted() {
-        const game = new Game()
-        game.init()
-        game.addSuccessFn(success)
-        game.addFailedFn(failed)
-
-        let mask = document.querySelector('.mask')
-        let restartButton = document.querySelector('.restart')
-        let score = document.querySelector('.score')
-
-        restartButton.addEventListener('click', restart)
-
-        // 游戏重新开始，执行函数
-        function restart() {
-            mask.style.display = 'none'
-            game.restart()
-        }
-        // 游戏失败执行函数
-        function failed() {
-            score.innerText = game.score
-            mask.style.display = 'flex'
-        }
-        // 游戏成功，更新分数
-        function success(score) {
-            var scoreCurrent = document.querySelector('.score-current')
-            scoreCurrent.innerText = score
-        }
+        this.game = new Game()
+        this.game.addSuccessFn(this.success)
+        this.game.addFailedFn(this.failed)
+        this.game.init()
     }
 }
 
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .container {
     width: 100%; // height: 100%;
@@ -83,7 +80,7 @@ body {
 }
 
 .mask {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;

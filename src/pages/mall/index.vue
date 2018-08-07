@@ -2,7 +2,7 @@
     <div class="container">
         <div class="from"><a href="https://github.com/luosijie/threejs-examples/tree/master/mall">项目地址</a></div>
         <canvas id="canvas"></canvas>
-        <div class="svg-container">
+        <div class="svg-container" v-html="svgString">
         </div>
     </div>
 </template>
@@ -18,6 +18,12 @@ export default {
             mall: null, // 商场
             mouse: null, // 鼠标位置
             INTERSECTED: null // 被选中的物体
+        }
+    },
+    computed: {
+        // svg字符串
+        svgString() {
+            return svgString
         }
     },
     methods: {
@@ -48,14 +54,14 @@ export default {
          **/
         buildMall() {
             // 获取html中的svg地图路径
-            let svgShapes = document.querySelector('#svg_shapes')
-            let paths = svgShapes.querySelectorAll('path')
+            const svgShapes = document.querySelector('#svg_shapes')
+            const paths = svgShapes.querySelectorAll('path')
             for (let i = 0; i < paths.length; i++) {
-                let d = paths[i].getAttribute('d')
+                const d = paths[i].getAttribute('d')
                 // 使用插件将svg路径转化为THREE.js形状
-                let shape = transformSVGPathExposed(d)
+                const shape = transformSVGPathExposed(d)
                 // 将形状挤出
-                let svgGeometry = new THREE.ExtrudeGeometry(shape, {
+                const svgGeometry = new THREE.ExtrudeGeometry(shape, {
                     amount: 25,
                     stes: 1,
                     bevelEnabled: false
@@ -63,9 +69,9 @@ export default {
                 // 由于平面转3D是竖直方向的, 需要旋转为水平方向
                 svgGeometry.rotateX(Math.PI / 2)
                 // 获取svg平面图每个模块对应的颜色
-                let color = paths[i].getAttribute('fill')
-                let svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
-                let svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
+                const color = paths[i].getAttribute('fill')
+                const svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
+                const svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
                 svgMesh.name = paths[i].getAttribute('name')
                 this.mall.add(svgMesh)
             }
@@ -165,8 +171,6 @@ export default {
         }
     },
     mounted() {
-        const svgContainer = document.querySelector('.svg-container')
-        svgContainer.innerHTML = svgString
         this.mouse = new THREE.Vector2() // 二维坐标用来转化鼠标参数
         this.mall = new THREE.Object3D() // 建一个空对象用来放场景物体
 
@@ -180,7 +184,6 @@ export default {
 }
 
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .container {
     // margin: 20px 0;
