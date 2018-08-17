@@ -23,8 +23,13 @@ export default new Router({
         },
         {
             path: '/mall',
-            name: 'index',
+            name: 'mall',
             component: (resolve) => require(['@/pages/mall'], resolve)
+        },
+        {
+            path: '/test',
+            name: 'test',
+            component: (resolve) => require(['@/pages/test'], resolve)
         }
     ]
 })

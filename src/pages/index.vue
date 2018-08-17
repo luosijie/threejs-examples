@@ -24,7 +24,7 @@ export default {
                 { link: '/mini-city', img: 'static/img/threejs-example-mini-city.png' },
                 { link: '', img: '' },
                 { link: '/jump', img: 'static/img/threejs-example-jump.png' },
-                { link: '', img: '' },
+                { link: '/test', img: '' },
                 { link: '/mall', img: 'static/img/threejs-example-mall.png' }
             ]
         }
