@@ -33,7 +33,7 @@ export default {
         },
         // 设置摄像机参数
         setCamera() {
-            this.camera.position.set(3, 3, 3);
+            this.camera.position.set(10, 10, 10);
             this.camera.lookAt(this.scene.position);
         },
         // 渲染
@@ -41,19 +41,49 @@ export default {
             this.renderer.render(this.scene, this.camera);
         },
         addGeometry() {
-            var geometry = new THREE.BoxGeometry(1, 1, 1);
-            var material = new THREE.MeshPhongMaterial({ color: 0x156289 });
-            var cube = new THREE.Mesh(geometry, material);
-            this.scene.add(cube);
+            const shape = new THREE.Shape();
+            shape.moveTo(0, 0);
+            shape.lineTo(0, 1);
+            shape.lineTo(1, 1);
+            shape.lineTo(1, 0);
+            shape.lineTo(0, 0);
+
+            const d = 'M8.7,2.4V2.2V2.2H8.6H6.3V2V2H6.2H3.7V1.8V1.8H3.6H1h0H0.9v0.1v3.1V5H1h8.2V3.1H8.7V2.4z M5.5,4L5.2,4.1H4.8l0-0.2l-0.3,0V3.3l0.6-0.1l0-0.1l0.4,0L5.5,4L5.5,4z';
+            const pathShape = transformSVGPathExposed(d);
+            const extrudeSettings = {
+                amount: 2,
+                bevelEnabled: false
+                // curveSegments: 1,
+                // depth: 1
+            };
+
+            const geometry = new THREE.ExtrudeGeometry(pathShape, extrudeSettings);
+            const material = new THREE.MeshPhongMaterial({ color: 0x156289 });
+            const mesh = new THREE.Mesh(geometry, material);
+            this.scene.add(mesh);
+
+        },
+        loop() {
+            requestAnimationFrame(this.loop);
+            this.render();
+        },
+        // 辅助控制系统
+        control() {
+            const canvas = document.querySelector('canvas');
+            let controls = new THREE.OrbitControls(this.camera, canvas);
+            controls.enableDamping = true
+            controls.dampingFactor = 0.25
+            controls.rotateSpeed = 0.35
         }
     },
     mounted() {
         this.init();
+        this.control();
         this.setCamera();
         buildAuxSystem(this.scene);
         buildLightSystem(this.scene);
         this.addGeometry();
-        this.render();
+        this.loop();
     }
 }
 

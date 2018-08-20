@@ -29,9 +29,4 @@ export function buildAuxSystem(scene) {
     // 网格辅助
     let gridHelper = new THREE.GridHelper(60, 60)
     scene.add(gridHelper)
-
-    // let controls = new THREE.OrbitControls(this.camera, this.renderer.domElement)
-    // controls.enableDamping = true
-    // controls.dampingFactor = 0.25
-    // controls.rotateSpeed = 0.35
 };
