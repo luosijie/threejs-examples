@@ -18,7 +18,7 @@ export default new Router({
         },
         {
             path: '/mini-city',
-            name: 'index',
+            name: 'mini-city',
             component: (resolve) => require(['@/pages/mini-city'], resolve)
         },
         {

@@ -1,6 +1,8 @@
 <template>
     <div class="container">
-        <div class="from"><a href="https://github.com/luosijie/threejs-examples/tree/master/mall">项目地址</a></div>
+        <div class="from">
+            <a href="https://github.com/luosijie/threejs-examples/tree/master/mall">项目地址</a>
+        </div>
         <canvas id="canvas"></canvas>
         <div class="svg-container" v-html="svgString">
         </div>
@@ -17,7 +19,8 @@ export default {
             renderer: null, // 渲染器
             mall: null, // 商场
             mouse: null, // 鼠标位置
-            INTERSECTED: null // 被选中的物体
+            INTERSECTED: null, // 被选中的物体
+            labels: [] // 商铺标签
         }
     },
     computed: {
@@ -31,20 +34,23 @@ export default {
          * 初始化3D环境
          **/
         init() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
             this.scene = new THREE.Scene();
             this.scene.background = new THREE.Color(0xf0f0f0);
             // 初始化相机配置
-            this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+            this.camera = new THREE.PerspectiveCamera(70, width / height, 1, 10000);
             this.camera.position.set(300, 300, 300);
             this.camera.lookAt(this.scene.position);
+            // 初始化射线
             this.raycaster = new THREE.Raycaster();
             // 初始化
             this.renderer = new THREE.WebGLRenderer({
-                antialias: true,
+                alpha: true,
                 canvas: document.querySelector('canvas')
-            })
+            });
             this.renderer.setPixelRatio(window.devicePixelRatio);
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.setSize(window.innerWidth, window.innerHeight - 10);
             // document.body.appendChild(renderer.domElement);
             document.addEventListener('mousemove', this.onDocumentMouseMove, false);
             window.addEventListener('resize', this.onWindowResize, false);
@@ -62,8 +68,8 @@ export default {
                 const shape = transformSVGPathExposed(d)
                 // 将形状挤出
                 const svgGeometry = new THREE.ExtrudeGeometry(shape, {
-                    amount: 25,
-                    stes: 1,
+                    depth: 25,
+                    steps: 1,
                     bevelEnabled: false
                 })
                 // 由于平面转3D是竖直方向的, 需要旋转为水平方向
@@ -87,13 +93,37 @@ export default {
             let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
             this.mall.children.forEach(elem => {
-                let geometry = new THREE.BoxGeometry(2, 20, 2)
-                let Mesh = new THREE.Mesh(geometry, material);
-                Mesh.position.y = 30
-                Mesh.position.x = elem.geometry.boundingSphere.center.x - 200
-                Mesh.position.z = elem.geometry.boundingSphere.center.z - 200
-                this.scene.add(Mesh)
-            })
+                const text = this.createText();
+                text.position.y = 40;
+                text.position.x = elem.geometry.boundingSphere.center.x - 200;
+                text.position.z = elem.geometry.boundingSphere.center.z - 200;
+                this.labels.push(text);
+                this.scene.add(text)
+            });
+        },
+        // 添加canvas文字测试
+        createText(text = 'example') {
+            const canvas = document.createElement('canvas');
+
+            canvas.width = 256;
+            canvas.height = 64;
+
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#796e8c';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font='120px Arial';
+            ctx.fillStyle = '#000000';
+            ctx.fillText(text, 0, 120);
+
+            const canvasTexture = new THREE.CanvasTexture(canvas);
+
+            const spriteMaterail = new THREE.SpriteMaterial({
+                map: canvasTexture,
+                color: 0xffffff
+            });
+            const sprite = new THREE.Sprite(spriteMaterail);
+            return sprite;
         },
         /**
          * 构建辅助系统: 网格和坐标
@@ -128,6 +158,17 @@ export default {
 
         },
         /**
+         * 获取物体到相机的距离
+         **/
+        getLabelScale(position) {
+            if (!position) {
+                return;
+            }
+            const distance = this.camera.position.distanceTo(position);
+            // console.log('距离相机的距离', distance);
+            return distance / 18;
+        },
+        /**
          * 根据浏览器窗口变化动态更新尺寸
          **/
         onWindowResize() {
@@ -147,6 +188,12 @@ export default {
             requestAnimationFrame(this.loop);
             this.render();
         },
+        setLabelScale() {
+            this.labels.forEach(elem => {
+                const scale = this.getLabelScale(elem.position);
+                elem.scale.set(scale, scale, 1);
+            });
+        },
         /**
          * 渲染画布
          **/
@@ -157,7 +204,7 @@ export default {
             let intersects = this.raycaster.intersectObjects(this.mall.children);
             if (intersects.length > 0) {
                 if (this.INTERSECTED != intersects[0].object) {
-                    if (this.INTERSECTED) 
+                    if (this.INTERSECTED)
                         this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
                     this.INTERSECTED = intersects[0].object;
                     this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
@@ -167,6 +214,8 @@ export default {
                 if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
                 this.INTERSECTED = null;
             }
+            // this.renderer.clear();
+            this.setLabelScale();
             this.renderer.render(this.scene, this.camera);
         }
     },
@@ -179,18 +228,27 @@ export default {
         this.buildAuxSystem();
         this.buildMall();
         this.loop();
-        this.addLabel()
+        this.addLabel();
     }
 }
 
 </script>
 <style lang="scss" scoped>
+#canvas {
+    width: 100%;
+    height: 100%;
+}
+
 .container {
     // margin: 20px 0;
     position: absolute;
     text-align: center;
     /*opacity: 0.2;*/
     width: 100%;
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .info a {
@@ -219,6 +277,7 @@ a.title {
     border-radius: 6px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
+
 .from {
     position: absolute;
     width: 100%;
