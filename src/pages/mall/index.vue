@@ -102,19 +102,19 @@ export default {
             });
         },
         // 添加canvas文字测试
-        createText(text = 'example') {
+        createText(text = '麦当劳') {
             const canvas = document.createElement('canvas');
 
-            canvas.width = 256;
-            canvas.height = 64;
+            canvas.width = 64;
+            canvas.height = 32;
 
             const ctx = canvas.getContext('2d');
 
             ctx.fillStyle = '#796e8c';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font='120px Arial';
+            ctx.font='16px Arial';
             ctx.fillStyle = '#000000';
-            ctx.fillText(text, 0, 120);
+            ctx.fillText(text, 0, 16);
 
             const canvasTexture = new THREE.CanvasTexture(canvas);
 
@@ -168,6 +168,15 @@ export default {
             // console.log('距离相机的距离', distance);
             return distance / 18;
         },
+        getPointScale(position, pointRect) {
+            if (!position) return;
+            const distance = this.camera.position.distanceTo(position);
+            const top = Math.tan(this.camera.fov / 2 * Math.PI / 180) * distance;
+            const merterPerPixel = 2 * top / window.innerHeight;
+            const scaleX = pointRect.w * merterPerPixel;
+            const scaleY = pointRect.h * merterPerPixel;
+            return [scaleX, scaleY, 1.0];
+        },
         /**
          * 根据浏览器窗口变化动态更新尺寸
          **/
@@ -190,8 +199,16 @@ export default {
         },
         setLabelScale() {
             this.labels.forEach(elem => {
-                const scale = this.getLabelScale(elem.position);
-                elem.scale.set(scale, scale, 1);
+                const position = elem.position;
+                const canvas = elem.material.map.image;
+                const pointRect = {
+                    w: canvas.width,
+                    h: canvas.height
+                }
+                // const scale = this.getLabelScale(elem.position);
+                const scale = this.getPointScale(position, pointRect);
+                // console.log('当前缩放:::', scale);
+                elem.scale.set(scale[0], scale[1], 1);
             });
         },
         /**

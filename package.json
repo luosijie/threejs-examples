@@ -1,6 +1,10 @@
 {
     "name": "test",
     "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
     "description": "A Vue.js project",
     "author": "luosijie <luo_sj@163.com>",
     "private": true,
