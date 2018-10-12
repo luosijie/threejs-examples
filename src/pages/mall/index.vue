@@ -13,6 +13,8 @@ import svgString from './config/svgString';
 export default {
     data() {
         return {
+            width: null,
+            height: null,
             scene: null, // 场景
             camera: null, // 摄像机
             raycaster: null, // 射线
@@ -30,24 +32,14 @@ export default {
         }
     },
     methods: {
-        // isPoiRect(sprite1, sprite2) {
-        //     const x1 = sprite1.x;
-        //     const y1 = sprite1.y;
-        //     const width1 = sprite1.w;
-        //     const height1 = sprite1.h;
-        // },
-        /**
          * 初始化3D环境
-         **/
+         */
         init() {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
             this.scene = new THREE.Scene();
             this.scene.background = new THREE.Color(0xf0f0f0);
-            // 初始化相机配置
-            this.camera = new THREE.PerspectiveCamera(70, width / height, 1, 10000);
-            this.camera.position.set(300, 300, 300);
-            this.camera.lookAt(this.scene.position);
+            this.setCamera();
             // 初始化射线
             this.raycaster = new THREE.Raycaster();
             // 初始化
@@ -61,9 +53,19 @@ export default {
             document.addEventListener('mousemove', this.onDocumentMouseMove, false);
             window.addEventListener('resize', this.onWindowResize, false);
         },
-        /**
+        setCamera() {
+            // perspectiveCamera
+            // this.camera = new THREE.PerspectiveCamera(70, this.width / this.height, 1, 10000);
+            // this.camera.position.set(300, 300, 300);
+            // this.camera.lookAt(this.scene.position);
+
+            // othograchicCamera
+            this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 20000);
+            this.camera.position.set(1000, 1000, 1000);
+        },
+        /*
          * 构建商场
-         **/
+         */
         buildMall() {
             // 获取html中的svg地图路径
             const svgShapes = document.querySelector('#svg_shapes')
@@ -92,19 +94,19 @@ export default {
             this.mall.translateY(25)
             this.scene.add(this.mall)
         },
-        /**
-         * 添加每个店面的标签: 暂时用小方块代替
-         **/
+        /*
+         * 添加每个店面的标签
+         */
         addLabel() {
             let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
             this.mall.children.forEach(elem => {
                 const text = this.createText();
-                text.position.y = 40;
+                text.position.y = 30;
                 text.position.x = elem.geometry.boundingSphere.center.x - 200;
                 text.position.z = elem.geometry.boundingSphere.center.z - 200;
                 this.labels.push(text);
-                this.scene.add(text)
+                this.scene.add(text);
             });
         },
         // 添加canvas文字测试
@@ -133,9 +135,9 @@ export default {
             const sprite = new THREE.Sprite(spriteMaterail);
             return sprite;
         },
-        /**
+        /*
          * 构建辅助系统: 网格和坐标
-         **/
+         */
         buildAuxSystem() {
             let axisHelper = new THREE.AxesHelper(2000)
             this.scene.add(axisHelper)
@@ -146,9 +148,9 @@ export default {
             controls.dampingFactor = 0.25
             controls.rotateSpeed = 0.35
         },
-        /**
+        /*
          * 光照系统
-         **/
+         */
         buildLightSystem() {
             let directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
             directionalLight.position.set(300, 1000, 500);
@@ -165,9 +167,9 @@ export default {
             this.scene.add(light)
 
         },
-        /**
+        /*
          * 获取物体到相机的距离
-         **/
+         */
         getLabelScale(position) {
             if (!position) {
                 return;
@@ -177,17 +179,21 @@ export default {
             return distance / 18;
         },
         getPointScale(position, pointRect) {
-            if (!position) return;
-            const distance = this.camera.position.distanceTo(position);
-            const top = Math.tan(this.camera.fov / 2 * Math.PI / 180) * distance;
-            const merterPerPixel = 2 * top / window.innerHeight;
-            const scaleX = pointRect.w * merterPerPixel;
-            const scaleY = pointRect.h * merterPerPixel;
-            return [scaleX, scaleY, 1.0];
+            // for perspectiveCamera
+            // if (!position) return;
+            // const distance = this.camera.position.distanceTo(position);
+            // const top = Math.tan(this.camera.fov / 2 * Math.PI / 180) * distance;
+            // const merterPerPixel = 2 * top / window.innerHeight;
+            // const scaleX = pointRect.w * merterPerPixel;
+            // const scaleY = pointRect.h * merterPerPixel;
+            // return [scaleX, scaleY, 1.0];
+
+            // for orthographicCamera
+            return [50.0, 50.0, 1.0];
         },
-        /**
+        /*
          * 根据浏览器窗口变化动态更新尺寸
-         **/
+         */
         onWindowResize() {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
@@ -198,9 +204,9 @@ export default {
             this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         },
-        /**
+        /*
          * 动画循环
-         **/
+         */
         loop() {
             requestAnimationFrame(this.loop);
             this.render();
@@ -215,13 +221,13 @@ export default {
                 }
                 // const scale = this.getLabelScale(elem.position);
                 const scale = this.getPointScale(position, pointRect);
-                // console.log('当前缩放:::', scale);
+                console.log('当前缩放:::', position);
                 elem.scale.set(scale[0], scale[1], 1);
             });
         },
-        /**
+        /*
          * 渲染画布
-         **/
+         */
         render() {
             // 鼠标位置向摄像机位置发射一条射线
             this.raycaster.setFromCamera(this.mouse, this.camera);
