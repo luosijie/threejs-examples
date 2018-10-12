@@ -3,7 +3,7 @@
         <div class="from">
             <a href="https://github.com/luosijie/threejs-examples/tree/master/mall">项目地址</a>
         </div>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas"/>
         <div class="svg-container" v-html="svgString">
         </div>
     </div>
@@ -30,6 +30,12 @@ export default {
         }
     },
     methods: {
+        // isPoiRect(sprite1, sprite2) {
+        //     const x1 = sprite1.x;
+        //     const y1 = sprite1.y;
+        //     const width1 = sprite1.w;
+        //     const height1 = sprite1.h;
+        // },
         /**
          * 初始化3D环境
          **/
@@ -105,16 +111,18 @@ export default {
         createText(text = '麦当劳') {
             const canvas = document.createElement('canvas');
 
-            canvas.width = 64;
+            canvas.width = 128;
             canvas.height = 32;
 
             const ctx = canvas.getContext('2d');
 
-            ctx.fillStyle = '#796e8c';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font='16px Arial';
+            // ctx.fillStyle = '#796e8c';
+            // ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font='20px Arial';
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.strokeText(text, 0, 20);
             ctx.fillStyle = '#000000';
-            ctx.fillText(text, 0, 16);
+            ctx.fillText(text, 0, 20);
 
             const canvasTexture = new THREE.CanvasTexture(canvas);
 
