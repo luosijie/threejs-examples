@@ -32,8 +32,7 @@ export default {
         }
     },
     methods: {
-         * 初始化3D环境
-         */
+        // 初始化3D环境
         init() {
             this.width = window.innerWidth;
             this.height = window.innerHeight;
