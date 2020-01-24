@@ -32,6 +32,7 @@ export default {
         }
     },
     methods: {
+        /*
          * 初始化3D环境
          */
         init() {
