@@ -99,15 +99,33 @@ export default {
          * 添加每个店面的标签
          */
         addLabel() {
+            const width = window.innerWidth
+            const height = window.innerHeight
             let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
             this.mall.children.forEach(elem => {
-                const text = this.createText();
-                text.position.y = 30;
-                text.position.x = elem.geometry.boundingSphere.center.x - 200;
-                text.position.z = elem.geometry.boundingSphere.center.z - 200;
-                this.labels.push(text);
-                this.scene.add(text);
+                const y = -elem.geometry.boundingSphere.center.y + 50
+                const x = elem.geometry.boundingSphere.center.x - 200
+                const z = elem.geometry.boundingSphere.center.z - 200
+                const vector = new THREE.Vector3(x, y, z)
+                const position = vector.project(this.camera)
+                let p = document.getElementById(elem.uuid)
+                if (!p) {
+                    p = document.createElement('p')
+                    p.id = elem.uuid
+                    p.innerText = 'name'
+                    p.style.position = 'absolute'
+                }
+                p.style.left = (vector.x + 1) / 2 * width + 'px'
+                p.style.top = -(vector.y - 1) / 2 * height + 'px'
+                document.body.appendChild(p)
+                console.log('elem', elem)
+                // const text = this.createText();
+                // text.position.y = y
+                // text.position.x = x
+                // text.position.z = z
+                // this.labels.push(text);
+                // this.scene.add(text);
             });
         },
         // 添加canvas文字测试
@@ -222,7 +240,6 @@ export default {
                 }
                 // const scale = this.getLabelScale(elem.position);
                 const scale = this.getPointScale(position, pointRect);
-                console.log('当前缩放:::', position);
                 elem.scale.set(scale[0], scale[1], 1);
             });
         },
@@ -249,6 +266,7 @@ export default {
             // this.renderer.clear();
             this.setLabelScale();
             this.renderer.render(this.scene, this.camera);
+            this.addLabel();
         }
     },
     mounted() {
@@ -260,7 +278,6 @@ export default {
         this.buildAuxSystem();
         this.buildMall();
         this.loop();
-        this.addLabel();
     }
 }
 
