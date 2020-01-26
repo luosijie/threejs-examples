@@ -104,21 +104,25 @@ export default {
             let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
             this.mall.children.forEach(elem => {
-                const y = -elem.geometry.boundingSphere.center.y + 50
+                const y = -elem.geometry.boundingSphere.center.y + 20
                 const x = elem.geometry.boundingSphere.center.x - 200
                 const z = elem.geometry.boundingSphere.center.z - 200
                 const vector = new THREE.Vector3(x, y, z)
                 const position = vector.project(this.camera)
-                let p = document.getElementById(elem.uuid)
-                if (!p) {
-                    p = document.createElement('p')
-                    p.id = elem.uuid
-                    p.innerText = 'name'
-                    p.style.position = 'absolute'
+                let span = document.getElementById(elem.uuid)
+                if (!span) {
+                    span = document.createElement('span')
+                    span.id = elem.uuid
+                    span.innerText = 'name'
+                    span.style.cssText = `
+                        position: absolute;
+                        font-size: 12px;
+                        line-height: 12px;
+                    `
                 }
-                p.style.left = (vector.x + 1) / 2 * width + 'px'
-                p.style.top = -(vector.y - 1) / 2 * height + 'px'
-                document.body.appendChild(p)
+                span.style.left = (vector.x + 1) / 2 * width + 'px'
+                span.style.top = -(vector.y - 1) / 2 * height + 'px'
+                document.body.appendChild(span)
                 console.log('elem', elem)
                 // const text = this.createText();
                 // text.position.y = y
