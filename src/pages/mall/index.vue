@@ -4,14 +4,16 @@
             <a href="https://github.com/luosijie/threejs-examples/tree/master/mall">项目地址</a>
         </div>
         <canvas id="canvas"/>
-        <div class="svg-container" v-html="svgString">
-        </div>
+        <!-- <div class="svg-container" v-html="svgString">
+        </div>-->
     </div>
 </template>
 <script>
-import svgString from './config/svgString';
+// import svgString from './config/svgString';
+import chinaJson from './config/china.json'
+import * as d3geo from 'd3-geo'
 export default {
-    data() {
+    data () {
         return {
             width: null,
             height: null,
@@ -27,15 +29,15 @@ export default {
     },
     computed: {
         // svg字符串
-        svgString() {
-            return svgString
-        }
+        // svgString() {
+        //     return svgString
+        // }
     },
     methods: {
         /*
          * 初始化3D环境
          */
-        init() {
+        init () {
             this.width = window.innerWidth;
             this.height = window.innerHeight;
             this.scene = new THREE.Scene();
@@ -54,51 +56,62 @@ export default {
             document.addEventListener('mousemove', this.onDocumentMouseMove, false);
             window.addEventListener('resize', this.onWindowResize, false);
         },
-        setCamera() {
+        setCamera () {
             // perspectiveCamera
-            // this.camera = new THREE.PerspectiveCamera(70, this.width / this.height, 1, 10000);
-            // this.camera.position.set(300, 300, 300);
+            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 1000);
+            const center = [108.0, 37.5]
+            console.log('center', ...center)
+            this.camera.position.set(300, 300, 300);
             // this.camera.lookAt(this.scene.position);
+            this.camera.lookAt(center[0], 0, center[1]);
 
             // othograchicCamera
-            this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 20000);
+            // this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 20000);
             this.camera.position.set(1000, 1000, 1000);
         },
         /*
          * 构建商场
          */
-        buildMall() {
+        buildMall () {
             // 获取html中的svg地图路径
-            const svgShapes = document.querySelector('#svg_shapes')
-            const paths = svgShapes.querySelectorAll('path')
-            for (let i = 0; i < paths.length; i++) {
-                const d = paths[i].getAttribute('d')
-                // 使用插件将svg路径转化为THREE.js形状
-                const shape = transformSVGPathExposed(d)
-                // 将形状挤出
-                const svgGeometry = new THREE.ExtrudeGeometry(shape, {
-                    depth: 25,
-                    steps: 1,
-                    bevelEnabled: false
-                })
-                // 由于平面转3D是竖直方向的, 需要旋转为水平方向
-                svgGeometry.rotateX(Math.PI / 2)
-                // 获取svg平面图每个模块对应的颜色
-                const color = paths[i].getAttribute('fill')
-                const svgMaterial = new THREE.MeshPhongMaterial({ color: color, shininess: 100 })
-                const svgMesh = new THREE.Mesh(svgGeometry, svgMaterial)
-                svgMesh.name = paths[i].getAttribute('name')
-                this.mall.add(svgMesh)
-            }
-            this.mall.translateX(-200)
-            this.mall.translateZ(-200)
-            this.mall.translateY(25)
-            this.scene.add(this.mall)
+            // const svgShapes = document.querySelector('#svg_shapes')
+            // const paths = svgShapes.querySelectorAll('path')
+            // const features = chinaJson.features
+            const projection = d3geo.geoMercator()
+                .center([108.0, 37.5])
+                .scale(700)
+                .translate([window.innerWidth / 2, window.innerHeight / 2])
+            // projection.fitEÎxtent([[0,0],[0,0]],chinaJson)
+
+            console.log('china-json', projection)
+            // const extrudeSettings = {
+            //     steps: 2,
+            //     depth: 16,
+            //     bevelEnabled: true,
+            //     bevelThickness: 1,
+            //     bevelSize: 1,
+            //     bevelOffset: 0,
+            //     bevelSegments: 1
+            // };
+            // features.forEach(elem => {
+            //     if (elem.properties.type === 'shop') {
+            //         const coordinates = elem.geometry.coordinates[0]
+            //         const shape = new THREE.Shape()
+            //         shape.moveTo(...coordinates[0])
+            //         for (let i = 1; i < coordinates.length; i++) {
+            //             shape.lineTo(...coordinates[i])
+            //         }
+            //         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+            //         const material = new THREE.MeshPhongMaterial({ color: '#ffffff', shininess: 100 })
+            //         const mesh = new THREE.Mesh(geometry, material)
+            //         this.mall.add(mesh)
+            //     }
+            // })
         },
         /*
          * 添加每个店面的标签
          */
-        addLabel() {
+        addLabel () {
             const width = window.innerWidth
             const height = window.innerHeight
             let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
@@ -116,8 +129,8 @@ export default {
                     span.innerText = 'name'
                     span.style.cssText = `
                         position: absolute;
-                        font-size: 12px;
-                        line-height: 12px;
+                        font-size: 10px;
+                        line-height: 10px;
                     `
                 }
                 span.style.left = (vector.x + 1) / 2 * width + 'px'
@@ -133,7 +146,7 @@ export default {
             });
         },
         // 添加canvas文字测试
-        createText(text = '麦当劳') {
+        createText (text = '麦当劳') {
             const canvas = document.createElement('canvas');
 
             canvas.width = 128;
@@ -143,7 +156,7 @@ export default {
 
             // ctx.fillStyle = '#796e8c';
             // ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.font='20px Arial';
+            ctx.font = '20px Arial';
             ctx.strokeStyle = '#FFFFFF';
             ctx.strokeText(text, 0, 20);
             ctx.fillStyle = '#000000';
@@ -161,7 +174,7 @@ export default {
         /*
          * 构建辅助系统: 网格和坐标
          */
-        buildAuxSystem() {
+        buildAuxSystem () {
             let axisHelper = new THREE.AxesHelper(2000)
             this.scene.add(axisHelper)
             let gridHelper = new THREE.GridHelper(600, 60)
@@ -174,14 +187,18 @@ export default {
         /*
          * 光照系统
          */
-        buildLightSystem() {
+        buildLightSystem () {
             let directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
             directionalLight.position.set(300, 1000, 500);
             directionalLight.target.position.set(0, 0, 0);
             directionalLight.castShadow = true;
 
             let d = 300;
-            directionalLight.shadow.camera = new THREE.OrthographicCamera(-d, d, d, -d, 500, 1600);
+            const fov = 45 //拍摄距离  视野角值越大，场景中的物体越小
+            const near = 1 //相机离视体积最近的距离
+            const far = 1000//相机离视体积最远的距离
+            const aspect = window.innerWidth / window.innerHeight; //纵横比
+            directionalLight.shadow.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
             directionalLight.shadow.bias = 0.0001;
             directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 1024;
             this.scene.add(directionalLight)
@@ -190,18 +207,7 @@ export default {
             this.scene.add(light)
 
         },
-        /*
-         * 获取物体到相机的距离
-         */
-        getLabelScale(position) {
-            if (!position) {
-                return;
-            }
-            const distance = this.camera.position.distanceTo(position);
-            // console.log('距离相机的距离', distance);
-            return distance / 18;
-        },
-        getPointScale(position, pointRect) {
+        getPointScale (position, pointRect) {
             // for perspectiveCamera
             // if (!position) return;
             // const distance = this.camera.position.distanceTo(position);
@@ -217,12 +223,12 @@ export default {
         /*
          * 根据浏览器窗口变化动态更新尺寸
          */
-        onWindowResize() {
+        onWindowResize () {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         },
-        onDocumentMouseMove(event) {
+        onDocumentMouseMove (event) {
             event.preventDefault();
             this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -230,11 +236,11 @@ export default {
         /*
          * 动画循环
          */
-        loop() {
+        loop () {
             requestAnimationFrame(this.loop);
             this.render();
         },
-        setLabelScale() {
+        setLabelScale () {
             this.labels.forEach(elem => {
                 const position = elem.position;
                 const canvas = elem.material.map.image;
@@ -250,7 +256,7 @@ export default {
         /*
          * 渲染画布
          */
-        render() {
+        render () {
             // 鼠标位置向摄像机位置发射一条射线
             this.raycaster.setFromCamera(this.mouse, this.camera);
             // 设置射线影响的范围
@@ -270,10 +276,10 @@ export default {
             // this.renderer.clear();
             this.setLabelScale();
             this.renderer.render(this.scene, this.camera);
-            this.addLabel();
+            // this.addLabel();
         }
     },
-    mounted() {
+    mounted () {
         this.mouse = new THREE.Vector2() // 二维坐标用来转化鼠标参数
         this.mall = new THREE.Object3D() // 建一个空对象用来放场景物体
 
@@ -340,5 +346,4 @@ a.title {
         color: black;
     }
 }
-
 </style>
