@@ -12,6 +12,7 @@
 // import svgString from './config/svgString';
 import chinaJson from './config/china.json'
 import * as d3geo from 'd3-geo'
+// import threeGeoJSON from '@/ext/threeGeoJSON.js'
 export default {
     data () {
         return {
@@ -56,57 +57,39 @@ export default {
             document.addEventListener('mousemove', this.onDocumentMouseMove, false);
             window.addEventListener('resize', this.onWindowResize, false);
         },
-        setCamera () {
-            // perspectiveCamera
-            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 1000);
-            const center = [108.0, 37.5]
-            console.log('center', ...center)
-            this.camera.position.set(300, 300, 300);
-            // this.camera.lookAt(this.scene.position);
-            this.camera.lookAt(center[0], 0, center[1]);
-
-            // othograchicCamera
-            // this.camera = new THREE.OrthographicCamera(this.width / -2, this.width / 2, this.height / 2, this.height / -2, 1, 20000);
-            this.camera.position.set(1000, 1000, 1000);
+        drawMap () {
+            console.log('china-json', chinaJson)
+            const projection = d3geo.geoMercator().center([108.0, 37.5]).scale(80).translate([0, 0]);
+            const center = projection([108.0, 37.5])
+            chinaJson.features.forEach(elem => {
+                const coordinates = elem.geometry.coordinates[0][0]
+                const shape = new THREE.Shape()
+                for (let i = 0; i < coordinates.length; i++) {
+                    const [x, y] = projection(coordinates[i])
+                    if (i === 0) {
+                        shape.moveTo(x, -y)
+                    }
+                    shape.lineTo(x, -y);
+                }
+                const extrudeSettings = {
+                    depth: 8,
+                    bevelEnabled: false
+                };
+                const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+                const material = new THREE.MeshBasicMaterial({ color: '#000' })
+                const mesh = new THREE.Mesh(geometry, material)
+                this.mall.add(mesh)
+                // elem.geometry.mercator = coordinates.map(p => {
+                //     return projection(p);
+                // })
+                // console.log('mercator', elem.geometry.mercator)
+            })
+            this.scene.add(this.mall)
         },
-        /*
-         * 构建商场
-         */
-        buildMall () {
-            // 获取html中的svg地图路径
-            // const svgShapes = document.querySelector('#svg_shapes')
-            // const paths = svgShapes.querySelectorAll('path')
-            // const features = chinaJson.features
-            const projection = d3geo.geoMercator()
-                .center([108.0, 37.5])
-                .scale(700)
-                .translate([window.innerWidth / 2, window.innerHeight / 2])
-            // projection.fitEÎxtent([[0,0],[0,0]],chinaJson)
-
-            console.log('china-json', projection)
-            // const extrudeSettings = {
-            //     steps: 2,
-            //     depth: 16,
-            //     bevelEnabled: true,
-            //     bevelThickness: 1,
-            //     bevelSize: 1,
-            //     bevelOffset: 0,
-            //     bevelSegments: 1
-            // };
-            // features.forEach(elem => {
-            //     if (elem.properties.type === 'shop') {
-            //         const coordinates = elem.geometry.coordinates[0]
-            //         const shape = new THREE.Shape()
-            //         shape.moveTo(...coordinates[0])
-            //         for (let i = 1; i < coordinates.length; i++) {
-            //             shape.lineTo(...coordinates[i])
-            //         }
-            //         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
-            //         const material = new THREE.MeshPhongMaterial({ color: '#ffffff', shininess: 100 })
-            //         const mesh = new THREE.Mesh(geometry, material)
-            //         this.mall.add(mesh)
-            //     }
-            // })
+        setCamera () {
+            this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
+            this.camera.position.set(0, 100, 100);
+            this.camera.lookAt(0, 0, 0);
         },
         /*
          * 添加每个店面的标签
@@ -260,23 +243,24 @@ export default {
             // 鼠标位置向摄像机位置发射一条射线
             this.raycaster.setFromCamera(this.mouse, this.camera);
             // 设置射线影响的范围
-            let intersects = this.raycaster.intersectObjects(this.mall.children);
-            if (intersects.length > 0) {
-                if (this.INTERSECTED != intersects[0].object) {
-                    if (this.INTERSECTED)
-                        this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
-                    this.INTERSECTED = intersects[0].object;
-                    this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
-                    this.INTERSECTED.material.emissive.setHex(0xff0000);
-                }
-            } else {
-                if (this.INTERSECTED) this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
-                this.INTERSECTED = null;
-            }
-            // this.renderer.clear();
+            // let intersects = this.raycaster.intersectObjects(this.mall.children);
+            // if (intersects.length > 0) {
+            //     if (this.INTERSECTED !== intersects[0].object) {
+            //         if (this.INTERSECTED) {
+            //             this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
+            //         }
+            //         this.INTERSECTED = intersects[0].object;
+            //         this.INTERSECTED.currentHex = this.INTERSECTED.material.emissive.getHex();
+            //         this.INTERSECTED.material.emissive.setHex(0xff0000);
+            //     }
+            // } else {
+            //     if (this.INTERSECTED) {
+            //         this.INTERSECTED.material.emissive.setHex(this.INTERSECTED.currentHex);
+            //     }
+            //     this.INTERSECTED = null;
+            // }
             this.setLabelScale();
             this.renderer.render(this.scene, this.camera);
-            // this.addLabel();
         }
     },
     mounted () {
@@ -286,7 +270,7 @@ export default {
         this.init();
         this.buildLightSystem();
         this.buildAuxSystem();
-        this.buildMall();
+        this.drawMap()
         this.loop();
     }
 }
