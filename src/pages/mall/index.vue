@@ -22,17 +22,11 @@ export default {
             camera: null, // 摄像机
             raycaster: null, // 射线
             renderer: null, // 渲染器
-            mall: null, // 商场
+            mapFill: null, // 商场
             mouse: null, // 鼠标位置
             INTERSECTED: null, // 被选中的物体
             labels: [] // 商铺标签
         }
-    },
-    computed: {
-        // svg字符串
-        // svgString() {
-        //     return svgString
-        // }
     },
     methods: {
         /*
@@ -42,7 +36,14 @@ export default {
             this.width = window.innerWidth;
             this.height = window.innerHeight;
             this.scene = new THREE.Scene();
-            this.scene.background = new THREE.Color(0xf0f0f0);
+            this.scene.background = new THREE.Color(0xf0f0f0)
+            // 建一个空对象存放对象
+            this.mapFill = new THREE.Object3D()
+            this.mapFill.rotateX(-Math.PI / 2)
+            // 建一个空对象存放对象描边
+            this.mapStroke = new THREE.Object3D()
+            this.mapStroke.rotateX(-Math.PI / 2)
+            // 设置相机参数
             this.setCamera();
             // 初始化射线
             this.raycaster = new THREE.Raycaster();
@@ -64,31 +65,35 @@ export default {
             chinaJson.features.forEach(elem => {
                 const coordinates = elem.geometry.coordinates[0][0]
                 const shape = new THREE.Shape()
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    color: 0xffffff
+                })
+                const linGeometry = new THREE.Geometry()
                 for (let i = 0; i < coordinates.length; i++) {
                     const [x, y] = projection(coordinates[i])
                     if (i === 0) {
                         shape.moveTo(x, -y)
                     }
                     shape.lineTo(x, -y);
+                    linGeometry.vertices.push(new THREE.Vector3(x, -y, 4.1))
                 }
                 const extrudeSettings = {
-                    depth: 8,
+                    depth: 4,
                     bevelEnabled: false
                 };
                 const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
-                const material = new THREE.MeshBasicMaterial({ color: '#000' })
+                const material = new THREE.MeshBasicMaterial({ color: '#d13a34', transparent: true, opacity: 0.6 })
                 const mesh = new THREE.Mesh(geometry, material)
-                this.mall.add(mesh)
-                // elem.geometry.mercator = coordinates.map(p => {
-                //     return projection(p);
-                // })
-                // console.log('mercator', elem.geometry.mercator)
+                this.mapFill.add(mesh)
+                const line = new THREE.Line(linGeometry, lineMaterial)
+                this.mapStroke.add(line)
             })
-            this.scene.add(this.mall)
+            this.scene.add(this.mapFill)
+            this.scene.add(this.mapStroke)
         },
         setCamera () {
             this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
-            this.camera.position.set(0, 100, 100);
+            this.camera.position.set(0, 80, 60);
             this.camera.lookAt(0, 0, 0);
         },
         /*
@@ -99,7 +104,7 @@ export default {
             const height = window.innerHeight
             let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
-            this.mall.children.forEach(elem => {
+            this.mapFill.children.forEach(elem => {
                 const y = -elem.geometry.boundingSphere.center.y + 20
                 const x = elem.geometry.boundingSphere.center.x - 200
                 const z = elem.geometry.boundingSphere.center.z - 200
@@ -243,7 +248,7 @@ export default {
             // 鼠标位置向摄像机位置发射一条射线
             this.raycaster.setFromCamera(this.mouse, this.camera);
             // 设置射线影响的范围
-            // let intersects = this.raycaster.intersectObjects(this.mall.children);
+            // let intersects = this.raycaster.intersectObjects(this.mapFill.children);
             // if (intersects.length > 0) {
             //     if (this.INTERSECTED !== intersects[0].object) {
             //         if (this.INTERSECTED) {
@@ -265,7 +270,6 @@ export default {
     },
     mounted () {
         this.mouse = new THREE.Vector2() // 二维坐标用来转化鼠标参数
-        this.mall = new THREE.Object3D() // 建一个空对象用来放场景物体
 
         this.init();
         this.buildLightSystem();
