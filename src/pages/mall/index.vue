@@ -39,10 +39,8 @@ export default {
             this.scene.background = new THREE.Color(0xf0f0f0)
             // 建一个空对象存放对象
             this.mapFill = new THREE.Object3D()
-            this.mapFill.rotateX(-Math.PI / 2)
             // 建一个空对象存放对象描边
             this.mapStroke = new THREE.Object3D()
-            this.mapStroke.rotateX(-Math.PI / 2)
             // 设置相机参数
             this.setCamera();
             // 初始化射线
@@ -61,7 +59,7 @@ export default {
         drawMap () {
             console.log('china-json', chinaJson)
             const projection = d3geo.geoMercator().center([108.0, 37.5]).scale(80).translate([0, 0]);
-            const center = projection([108.0, 37.5])
+            // const center = projection([108.0, 37.5])
             chinaJson.features.forEach(elem => {
                 const coordinates = elem.geometry.coordinates[0][0]
                 const shape = new THREE.Shape()
@@ -84,6 +82,10 @@ export default {
                 const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
                 const material = new THREE.MeshBasicMaterial({ color: '#d13a34', transparent: true, opacity: 0.6 })
                 const mesh = new THREE.Mesh(geometry, material)
+                mesh.properties = elem.properties
+                if (mesh.properties.centroid) {
+                    mesh.properties.centroid = projection(mesh.properties.centroid)
+                }
                 this.mapFill.add(mesh)
                 const line = new THREE.Line(linGeometry, lineMaterial)
                 this.mapStroke.add(line)
@@ -93,7 +95,7 @@ export default {
         },
         setCamera () {
             this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
-            this.camera.position.set(0, 80, 60);
+            this.camera.position.set(0, -70, 90);
             this.camera.lookAt(0, 0, 0);
         },
         /*
@@ -103,18 +105,22 @@ export default {
             const width = window.innerWidth
             const height = window.innerHeight
             let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
+            // console.log('map-fill', this.mapFill)
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
             this.mapFill.children.forEach(elem => {
-                const y = -elem.geometry.boundingSphere.center.y + 20
-                const x = elem.geometry.boundingSphere.center.x - 200
-                const z = elem.geometry.boundingSphere.center.z - 200
+                if (!elem.properties.centroid) return
+                // const y = elem.geometry.boundingSphere.center.y
+                // const x = elem.geometry.boundingSphere.center.x
+                const y = -elem.properties.centroid[1]
+                const x = elem.properties.centroid[0]
+                const z = 4
                 const vector = new THREE.Vector3(x, y, z)
                 const position = vector.project(this.camera)
                 let span = document.getElementById(elem.uuid)
                 if (!span) {
                     span = document.createElement('span')
                     span.id = elem.uuid
-                    span.innerText = 'name'
+                    span.innerText = elem.properties.name
                     span.style.cssText = `
                         position: absolute;
                         font-size: 10px;
@@ -124,7 +130,6 @@ export default {
                 span.style.left = (vector.x + 1) / 2 * width + 'px'
                 span.style.top = -(vector.y - 1) / 2 * height + 'px'
                 document.body.appendChild(span)
-                console.log('elem', elem)
                 // const text = this.createText();
                 // text.position.y = y
                 // text.position.x = x
@@ -226,6 +231,7 @@ export default {
          */
         loop () {
             requestAnimationFrame(this.loop);
+            this.addLabel()
             this.render();
         },
         setLabelScale () {
