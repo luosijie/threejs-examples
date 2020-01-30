@@ -73,7 +73,7 @@ export default {
                         shape.moveTo(x, -y)
                     }
                     shape.lineTo(x, -y);
-                    linGeometry.vertices.push(new THREE.Vector3(x, -y, 4.1))
+                    linGeometry.vertices.push(new THREE.Vector3(x, -y, 4.01))
                 }
                 const extrudeSettings = {
                     depth: 4,
@@ -98,45 +98,61 @@ export default {
             this.camera.position.set(0, -70, 90);
             this.camera.lookAt(0, 0, 0);
         },
-        /*
-         * 添加每个店面的标签
-         */
-        addLabel () {
+        // 显示名称
+        showName () {
             const width = window.innerWidth
             const height = window.innerHeight
-            let material = new THREE.MeshPhongMaterial({ color: 0x000000 })
-            // console.log('map-fill', this.mapFill)
+            let canvas = document.querySelector('#name')
+            if (!canvas) {
+                canvas = document.createElement('canvas')
+                canvas.id = 'name'
+                document.body.appendChild(canvas)
+            }
+            canvas.width = width;
+            canvas.height = height;
+            canvas.style.cssText = `
+                position: absolute;
+                left: 0;
+                top:0;
+                pointer-events: none;
+            `
+            const ctx = canvas.getContext('2d');
+            const offCanvas = document.createElement('canvas')
+            offCanvas.width = width
+            offCanvas.height = height
+            const ctxOffCanvas = canvas.getContext('2d');
+            ctxOffCanvas.font = '16.5px Arial';
+            ctxOffCanvas.strokeStyle = '#FFFFFF';
+            ctxOffCanvas.fillStyle = '#000000';
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
             this.mapFill.children.forEach(elem => {
                 if (!elem.properties.centroid) return
-                // const y = elem.geometry.boundingSphere.center.y
-                // const x = elem.geometry.boundingSphere.center.x
                 const y = -elem.properties.centroid[1]
                 const x = elem.properties.centroid[0]
                 const z = 4
                 const vector = new THREE.Vector3(x, y, z)
                 const position = vector.project(this.camera)
-                let span = document.getElementById(elem.uuid)
-                if (!span) {
-                    span = document.createElement('span')
-                    span.id = elem.uuid
-                    span.innerText = elem.properties.name
-                    span.style.cssText = `
-                        position: absolute;
-                        font-size: 10px;
-                        line-height: 10px;
-                    `
-                }
-                span.style.left = (vector.x + 1) / 2 * width + 'px'
-                span.style.top = -(vector.y - 1) / 2 * height + 'px'
-                document.body.appendChild(span)
-                // const text = this.createText();
-                // text.position.y = y
-                // text.position.x = x
-                // text.position.z = z
-                // this.labels.push(text);
-                // this.scene.add(text);
+                // let span = document.getElementById(elem.uuid)
+                const name = elem.properties.name
+                // if (!span) {
+                //     span = document.createElement('span')
+                //     span.id = elem.uuid
+                //     span.innerText = name
+                //     span.style.cssText = `
+                //         position: absolute;
+                //         font-size: 10px;
+                //         line-height: 10px;
+                //     `
+                //     document.body.appendChild(span)
+                // }
+                const left = (vector.x + 1) / 2 * width
+                const top = -(vector.y - 1) / 2 * height
+                // span.style.left = left + 'px'
+                // span.style.top = top + 'px'
+                ctxOffCanvas.strokeText(name, left, top);
+                ctxOffCanvas.fillText(name, left, top);
             });
+            ctx.drawImage(offCanvas, 0, 0)
         },
         // 添加canvas文字测试
         createText (text = '麦当劳') {
@@ -231,21 +247,8 @@ export default {
          */
         loop () {
             requestAnimationFrame(this.loop);
-            this.addLabel()
+            this.showName()
             this.render();
-        },
-        setLabelScale () {
-            this.labels.forEach(elem => {
-                const position = elem.position;
-                const canvas = elem.material.map.image;
-                const pointRect = {
-                    w: canvas.width,
-                    h: canvas.height
-                }
-                // const scale = this.getLabelScale(elem.position);
-                const scale = this.getPointScale(position, pointRect);
-                elem.scale.set(scale[0], scale[1], 1);
-            });
         },
         /*
          * 渲染画布
@@ -270,7 +273,6 @@ export default {
             //     }
             //     this.INTERSECTED = null;
             // }
-            this.setLabelScale();
             this.renderer.render(this.scene, this.camera);
         }
     },
