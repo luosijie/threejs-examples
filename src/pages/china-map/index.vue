@@ -1,7 +1,8 @@
 <template>
     <div class="container">
         <div class="from">
-            <a href="https://github.com/luosijie/threejs-examples/tree/master/mall">项目地址</a>
+            <a href="https://luosijie.github.io/threejs-examples/">home</a>
+            <a href="https://github.com/luosijie/threejs-examples/tree/master/china-map">code</a>
         </div>
         <canvas id="canvas"/>
         <!-- <div class="svg-container" v-html="svgString">
@@ -46,8 +47,7 @@ export default {
         },
         initMap () {
             console.log('china-json', chinaJson)
-            const projection = d3geo.geoMercator().center([108.0, 37.5]).scale(80).translate([0, 0]);
-            // const center = projection([108.0, 37.5])
+            const projection = d3geo.geoMercator().center([104.0, 37.5]).scale(80).translate([0, 0]);
             chinaJson.features.forEach(elem => {
                 const coordinates = elem.geometry.coordinates[0][0]
                 const shape = new THREE.Shape()

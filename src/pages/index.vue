@@ -7,7 +7,7 @@
         </div>
         <div class="works">
             <div v-for="(item, index) in workList" :key="index">
-                <router-link :to="item.link">
+                <router-link :to="item.link" v-if="item.img">
                     <img :src="item.img">
                 </router-link>
             </div>
@@ -16,7 +16,7 @@
 </template>
 <script>
 export default {
-    name: 'HelloWorld',
+    name: 'home',
     data() {
         return {
             workList: [
@@ -25,7 +25,7 @@ export default {
                 { link: '', img: '' },
                 { link: '/jump', img: 'static/img/threejs-example-jump.png' },
                 { link: '/test', img: '' },
-                { link: '/mall', img: 'static/img/threejs-example-mall.png' }
+                { link: '/china-map', img: 'static/img/threejs-example-china-map.png' }
             ]
         }
     }
@@ -82,6 +82,8 @@ export default {
             height: 100%;
             img {
                 width: 100%;
+                height: 100%;
+                object-fit: cover;
                 transition: all 0.1s linear;
                 -webkit-transition: all 0.1s linear;
             }

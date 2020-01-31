@@ -22,6 +22,11 @@ export default new Router({
             component: (resolve) => require(['@/pages/mini-city'], resolve)
         },
         {
+            path: '/china-map',
+            name: 'mall',
+            component: (resolve) => require(['@/pages/china-map'], resolve)
+        },
+        {
             path: '/mall',
             name: 'mall',
             component: (resolve) => require(['@/pages/mall'], resolve)
