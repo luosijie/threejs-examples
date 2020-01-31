@@ -1,12 +1,11 @@
 <template>
     <div class="container">
         <div class="from">
-            <a href="https://luosijie.github.io/threejs-examples/">home</a>
-            <a href="https://github.com/luosijie/threejs-examples/tree/master/china-map">code</a>
+            <router-link to="/">home</router-link>
+            <a href="https://github.com/luosijie/threejs-examples/tree/master/src/pages/china-map">code</a>
         </div>
         <canvas id="canvas"/>
-        <!-- <div class="svg-container" v-html="svgString">
-        </div>-->
+        <canvas id="name"/>
     </div>
 </template>
 <script>
@@ -23,7 +22,7 @@ export default {
     },
     methods: {
         // 初始化3D环境
-        init () {
+        initEnvironment () {
             this.scene = new THREE.Scene();
             this.scene.background = new THREE.Color(0xf0f0f0)
             // 建一个空对象存放对象
@@ -34,25 +33,26 @@ export default {
             this.renderer = new THREE.WebGLRenderer({
                 alpha: true,
                 canvas: document.querySelector('canvas')
-            });
-            this.renderer.setPixelRatio(window.devicePixelRatio);
-            this.renderer.setSize(window.innerWidth, window.innerHeight - 10);
-            document.addEventListener('mousemove', this.onDocumentMouseMove, false);
-            window.addEventListener('resize', this.onWindowResize, false);
+            })
+            this.renderer.setPixelRatio(window.devicePixelRatio)
+            this.renderer.setSize(window.innerWidth, window.innerHeight - 10)
+            document.addEventListener('mousemove', this.onDocumentMouseMove, false)
+            window.addEventListener('resize', this.onWindowResize, false)
+            // 构建光照系统
+            this.buildLightSystem()
+            // 构建辅助系统
+            this.buildAuxSystem()
         },
         initMap () {
-            console.log('china-json', chinaJson)
+            console.log('json', chinaJson)
             const projection = d3geo.geoMercator().center([104.0, 37.5]).scale(80).translate([0, 0]);
             chinaJson.features.forEach(elem => {
                 const province = new THREE.Object3D()
-                // const coordinates = elem.geometry.coordinates[0][0]
                 const coordinates = elem.geometry.coordinates
                 coordinates.forEach(multiPolygon => {
                     multiPolygon.forEach(polygon => {
                         const shape = new THREE.Shape()
-                        const lineMaterial = new THREE.LineBasicMaterial({
-                            color: 0xffffff
-                        })
+                        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff })
                         const linGeometry = new THREE.Geometry()
                         for (let i = 0; i < polygon.length; i++) {
                             const [x, y] = projection(polygon[i])
@@ -77,7 +77,8 @@ export default {
                 // 设置省份元素属性
                 province.properties = elem.properties
                 if (elem.properties.centroid) {
-                    province.properties.centroid = projection(elem.properties.centroid)
+                    const [x, y] = projection(elem.properties.centroid)
+                    province.properties._centroid = [x, y]
                 }
                 this.map.add(province)
             })
@@ -93,19 +94,9 @@ export default {
             const width = window.innerWidth
             const height = window.innerHeight
             let canvas = document.querySelector('#name')
-            if (!canvas) {
-                canvas = document.createElement('canvas')
-                canvas.id = 'name'
-                document.body.appendChild(canvas)
-            }
+            if (!canvas) return
             canvas.width = width;
             canvas.height = height;
-            canvas.style.cssText = `
-                position: absolute;
-                left: 0;
-                top:0;
-                pointer-events: none;
-            `
             const ctx = canvas.getContext('2d');
             const offCanvas = document.createElement('canvas')
             offCanvas.width = width
@@ -115,12 +106,11 @@ export default {
             ctxOffCanvas.strokeStyle = '#FFFFFF';
             ctxOffCanvas.fillStyle = '#000000';
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
-            const elems = this.map.children
             const texts = [];
-            elems.forEach((elem, index) => {
-                if (!elem.properties.centroid) return
-                const y = -elem.properties.centroid[1]
-                const x = elem.properties.centroid[0]
+            this.map.children.forEach((elem, index) => {
+                if (!elem.properties._centroid) return
+                const y = -elem.properties._centroid[1]
+                const x = elem.properties._centroid[0]
                 const z = 4
                 const vector = new THREE.Vector3(x, y, z)
                 const position = vector.project(this.camera)
@@ -143,7 +133,6 @@ export default {
                         (texts[i].top + texts[i].height) < text.top
                     ) {
                         show = true
-                        // return
                     } else {
                         show = false
                         break
@@ -151,11 +140,10 @@ export default {
                 }
                 if (show) {
                     texts.push(text)
-                    ctxOffCanvas.strokeText(name, left, top);
-                    ctxOffCanvas.fillText(name, left, top);
+                    ctxOffCanvas.strokeText(name, left, top)
+                    ctxOffCanvas.fillText(name, left, top)
                 }
             })
-            // console.log('texts', texts)
             ctx.drawImage(offCanvas, 0, 0)
         },
         // 构建辅助系统: 网格和坐标
@@ -211,11 +199,9 @@ export default {
         }
     },
     mounted () {
-        this.init()
-        this.buildLightSystem()
-        this.buildAuxSystem()
+        this.initEnvironment()
         this.initMap()
-        this.loop();
+        this.loop()
     }
 }
 
@@ -235,6 +221,14 @@ export default {
     canvas {
         width: 100%;
         height: 100%;
+    }
+    #name {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
     }
 }
 
