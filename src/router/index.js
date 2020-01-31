@@ -27,11 +27,6 @@ export default new Router({
             component: (resolve) => require(['@/pages/china-map'], resolve)
         },
         {
-            path: '/mall',
-            name: 'mall',
-            component: (resolve) => require(['@/pages/mall'], resolve)
-        },
-        {
             path: '/test',
             name: 'test',
             component: (resolve) => require(['@/pages/test'], resolve)
