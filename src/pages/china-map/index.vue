@@ -10,18 +10,15 @@
     </div>
 </template>
 <script>
-// import svgString from './config/svgString';
 import chinaJson from './config/china.json'
 import * as d3geo from 'd3-geo'
-// import threeGeoJSON from '@/ext/threeGeoJSON.js'
 export default {
     data () {
         return {
             scene: null, // 场景
             camera: null, // 摄像机
             renderer: null, // 渲染器
-            mapFill: null, // 对象
-            mapStroke: null // 描边
+            map: null // 地图容器
         }
     },
     methods: {
@@ -30,9 +27,7 @@ export default {
             this.scene = new THREE.Scene();
             this.scene.background = new THREE.Color(0xf0f0f0)
             // 建一个空对象存放对象
-            this.mapFill = new THREE.Object3D()
-            // 建一个空对象存放对象描边
-            this.mapStroke = new THREE.Object3D()
+            this.map = new THREE.Object3D()
             // 设置相机参数
             this.setCamera();
             // 初始化
@@ -49,37 +44,44 @@ export default {
             console.log('china-json', chinaJson)
             const projection = d3geo.geoMercator().center([104.0, 37.5]).scale(80).translate([0, 0]);
             chinaJson.features.forEach(elem => {
-                const coordinates = elem.geometry.coordinates[0][0]
-                const shape = new THREE.Shape()
-                const lineMaterial = new THREE.LineBasicMaterial({
-                    color: 0xffffff
+                const province = new THREE.Object3D()
+                // const coordinates = elem.geometry.coordinates[0][0]
+                const coordinates = elem.geometry.coordinates
+                coordinates.forEach(multiPolygon => {
+                    multiPolygon.forEach(polygon => {
+                        const shape = new THREE.Shape()
+                        const lineMaterial = new THREE.LineBasicMaterial({
+                            color: 0xffffff
+                        })
+                        const linGeometry = new THREE.Geometry()
+                        for (let i = 0; i < polygon.length; i++) {
+                            const [x, y] = projection(polygon[i])
+                            if (i === 0) {
+                                shape.moveTo(x, -y)
+                            }
+                            shape.lineTo(x, -y);
+                            linGeometry.vertices.push(new THREE.Vector3(x, -y, 4.01))
+                        }
+                        const extrudeSettings = {
+                            depth: 4,
+                            bevelEnabled: false
+                        };
+                        const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+                        const material = new THREE.MeshBasicMaterial({ color: '#d13a34', transparent: true, opacity: 0.6 })
+                        const mesh = new THREE.Mesh(geometry, material)
+                        province.add(mesh)
+                        const line = new THREE.Line(linGeometry, lineMaterial)
+                        province.add(line)
+                    })
                 })
-                const linGeometry = new THREE.Geometry()
-                for (let i = 0; i < coordinates.length; i++) {
-                    const [x, y] = projection(coordinates[i])
-                    if (i === 0) {
-                        shape.moveTo(x, -y)
-                    }
-                    shape.lineTo(x, -y);
-                    linGeometry.vertices.push(new THREE.Vector3(x, -y, 4.01))
-                }
-                const extrudeSettings = {
-                    depth: 4,
-                    bevelEnabled: false
-                };
-                const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
-                const material = new THREE.MeshBasicMaterial({ color: '#d13a34', transparent: true, opacity: 0.6 })
-                const mesh = new THREE.Mesh(geometry, material)
-                mesh.properties = elem.properties
+                // 设置省份元素属性
+                province.properties = elem.properties
                 if (elem.properties.centroid) {
-                    mesh.properties.centroid = projection(elem.properties.centroid)
+                    province.properties.centroid = projection(elem.properties.centroid)
                 }
-                this.mapFill.add(mesh)
-                const line = new THREE.Line(linGeometry, lineMaterial)
-                this.mapStroke.add(line)
+                this.map.add(province)
             })
-            this.scene.add(this.mapFill)
-            this.scene.add(this.mapStroke)
+            this.scene.add(this.map)
         },
         setCamera () {
             this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
@@ -113,7 +115,7 @@ export default {
             ctxOffCanvas.strokeStyle = '#FFFFFF';
             ctxOffCanvas.fillStyle = '#000000';
             // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
-            const elems = this.mapFill.children
+            const elems = this.map.children
             const texts = [];
             elems.forEach((elem, index) => {
                 if (!elem.properties.centroid) return
