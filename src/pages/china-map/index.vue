@@ -38,19 +38,19 @@ export default {
             this.renderer.setSize(window.innerWidth, window.innerHeight - 10)
             document.addEventListener('mousemove', this.onDocumentMouseMove, false)
             window.addEventListener('resize', this.onWindowResize, false)
-            // 构建光照系统
-            this.buildLightSystem()
-            // 构建辅助系统
-            this.buildAuxSystem()
         },
         initMap () {
             console.log('json', chinaJson)
+            // d3-geo转化坐标
             const projection = d3geo.geoMercator().center([104.0, 37.5]).scale(80).translate([0, 0]);
+            // 遍历省份构建模型
             chinaJson.features.forEach(elem => {
+                // 新建一个省份容器：用来存放省份对应的模型和轮廓线
                 const province = new THREE.Object3D()
                 const coordinates = elem.geometry.coordinates
                 coordinates.forEach(multiPolygon => {
                     multiPolygon.forEach(polygon => {
+                        // 这里的坐标要做2次使用：1次用来构建模型，1次用来构建轮廓线
                         const shape = new THREE.Shape()
                         const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff })
                         const linGeometry = new THREE.Geometry()
@@ -69,12 +69,12 @@ export default {
                         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
                         const material = new THREE.MeshBasicMaterial({ color: '#d13a34', transparent: true, opacity: 0.6 })
                         const mesh = new THREE.Mesh(geometry, material)
-                        province.add(mesh)
                         const line = new THREE.Line(linGeometry, lineMaterial)
+                        province.add(mesh)
                         province.add(line)
                     })
                 })
-                // 设置省份元素属性
+                // 将geojson的properties放到模型中，后面会用到
                 province.properties = elem.properties
                 if (elem.properties.centroid) {
                     const [x, y] = projection(elem.properties.centroid)
@@ -98,22 +98,32 @@ export default {
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
+            // 新建一个离屏canvas
             const offCanvas = document.createElement('canvas')
             offCanvas.width = width
             offCanvas.height = height
             const ctxOffCanvas = canvas.getContext('2d');
+            // 设置canvas字体样式
             ctxOffCanvas.font = '16.5px Arial';
             ctxOffCanvas.strokeStyle = '#FFFFFF';
             ctxOffCanvas.fillStyle = '#000000';
-            // 遍历场景中的元素, 在元素上方添加方块: 未来添加具体标签
+            // texts用来存储显示的名称，重叠的部分就不会放到里面
             const texts = [];
+            /**
+             * 遍历省份数据，有2个核心功能
+             * 1. 将3维坐标转化成2维坐标
+             * 2. 后面遍历到的数据，要和前面的数据做碰撞对比，重叠的就不绘制
+             * */
             this.map.children.forEach((elem, index) => {
                 if (!elem.properties._centroid) return
+                // 找到中心点
                 const y = -elem.properties._centroid[1]
                 const x = elem.properties._centroid[0]
                 const z = 4
+                // 转化为二维坐标
                 const vector = new THREE.Vector3(x, y, z)
                 const position = vector.project(this.camera)
+                // 构建文本的基本属性：名称，left, top, width, height -> 碰撞对比需要这些坐标数据
                 const name = elem.properties.name
                 const left = (vector.x + 1) / 2 * width
                 const top = -(vector.y - 1) / 2 * height
@@ -124,6 +134,7 @@ export default {
                     width: ctxOffCanvas.measureText(name).width,
                     height: 16.5
                 }
+                // 碰撞对比
                 let show = true
                 for (let i = 0; i < texts.length; i++) {
                     if (
@@ -144,6 +155,7 @@ export default {
                     ctxOffCanvas.fillText(name, left, top)
                 }
             })
+            // 离屏canvas绘制到canvas中
             ctx.drawImage(offCanvas, 0, 0)
         },
         // 构建辅助系统: 网格和坐标
@@ -199,7 +211,12 @@ export default {
         }
     },
     mounted () {
+        // 初始化3D环境
         this.initEnvironment()
+        // 构建光照系统
+        this.buildLightSystem()
+        // 构建辅助系统
+        this.buildAuxSystem()
         this.initMap()
         this.loop()
     }
