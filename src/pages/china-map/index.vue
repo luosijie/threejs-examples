@@ -9,7 +9,7 @@ import * as THREE from 'three'
 import chinaJson from './config/china.json'
 import * as d3geo from 'd3-geo'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { onMounted, nextTick } from 'vue'
+import { onMounted } from 'vue'
 import { Scene, Object3D } from 'three'
 
 const scene = new Scene()
@@ -29,7 +29,7 @@ const initEnvironment = () => {
         canvas: document.querySelector('canvas')
     })
     renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(window.innerWidth, window.innerHeight - 10)
+    renderer.setSize(window.innerWidth, window.innerHeight)
     document.addEventListener('mousemove', onDocumentMouseMove, false)
     window.addEventListener('resize', onWindowResize, false)
 }
