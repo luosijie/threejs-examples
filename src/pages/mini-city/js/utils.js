@@ -1,7 +1,8 @@
+import * as THREE from 'three'
 let utils = {
-    makeShape: function() {
+    makeShape: function () {
         let shape
-        if (window.THREE && arguments.length) {
+        if (arguments.length) {
             let arry = arguments[0]
             shape = new THREE.Shape()
             shape.moveTo(arry[0][0], arry[0][1])
@@ -24,22 +25,22 @@ let utils = {
             console.error('Something wrong!')
         }
     },
-    makeExtrudeGeometry: function(shape, amount) {
+    makeExtrudeGeometry: function (shape, depth) {
         let extrudeSetting = {
             steps: 1,
-            amount: amount,
+            depth,
             bevelEnabled: false
         }
-        let geometry = new THREE.ExtrudeBufferGeometry(shape, extrudeSetting)
+        let geometry = new THREE.ExtrudeGeometry(shape, extrudeSetting)
         geometry.rotateX(-0.5 * Math.PI)
         return geometry
     },
-    makeShapeGeometry: function(shapeCoords) {
+    makeShapeGeometry: function (shapeCoords) {
         let shape = this.makeShape(shapeCoords)
         let geometry = new THREE.ShapeGeometry(shape)
         return geometry
     },
-    makeMesh: function(type, geometry, color) {
+    makeMesh: function (type, geometry, color) {
         let material
         let mesh
         if (type === 'lambert') {

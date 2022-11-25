@@ -42,4 +42,4 @@ let treesPosition = [
     [110, 70],
     [110, 90]
 ]
-export default treesPosition;
+export default treesPosition

@@ -1,7 +1,8 @@
+import * as THREE from 'three'
 let textures = {
-    window: function() {
-        let canvas = document.createElement('canvas');
-        let ctx = canvas.getContext('2d');
+    window: function () {
+        let canvas = document.createElement('canvas')
+        let ctx = canvas.getContext('2d')
 
         canvas.width = 32
         canvas.height = 32
@@ -24,12 +25,12 @@ let textures = {
         ctx.fillRect(17, 17, 13, 13)
 
         let canvasTexture = new THREE.Texture(canvas)
-        canvasTexture.wrapS = THREE.RepeatWrapping;
-        canvasTexture.wrapT = THREE.RepeatWrapping;
-        canvasTexture.needsUpdate = true;
+        canvasTexture.wrapS = THREE.RepeatWrapping
+        canvasTexture.wrapT = THREE.RepeatWrapping
+        canvasTexture.needsUpdate = true
 
-        return canvasTexture;
+        return canvasTexture
     }
 }
 
-export default textures;
+export default textures

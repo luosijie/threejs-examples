@@ -22,5 +22,5 @@ const svgString = `
     <path name="麦当劳" id="svg_26" d="m293.96826,293.91617l26.19052,0l0,46.82546l-26.19052,0l0,-46.82546z" stroke-opacity="null" stroke-linecap="null" stroke-linejoin="null" stroke-width="1.5" stroke="null" fill="#7f003f" />
 </svg>
 `
-export default svgString;
+export default svgString
        

@@ -1,34 +1,32 @@
 <template>
     <div class="container">
-        <div class="from">
-            <router-link to="/">home</router-link>
-            <a href="https://github.com/luosijie/threejs-examples/tree/master/src/pages/china-map">code</a>
-        </div>
         <canvas id="canvas"/>
-        <canvas id="name"/>
     </div>
 </template>
 <script>
+import * as THREE from 'three'
 import chinaJson from './config/china.json'
 import * as d3geo from 'd3-geo'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+
+let scene
+let map
 export default {
     data () {
         return {
-            scene: null, // 场景
             camera: null, // 摄像机
             renderer: null, // 渲染器
-            map: null // 地图容器
         }
     },
     methods: {
         // 初始化3D环境
         initEnvironment () {
-            this.scene = new THREE.Scene();
-            this.scene.background = new THREE.Color(0xf0f0f0)
+            scene = new THREE.Scene()
+            scene.background = new THREE.Color(0xf0f0f0)
             // 建一个空对象存放对象
-            this.map = new THREE.Object3D()
+            map = new THREE.Object3D()
             // 设置相机参数
-            this.setCamera();
+            this.setCamera()
             // 初始化
             this.renderer = new THREE.WebGLRenderer({
                 alpha: true,
@@ -42,7 +40,7 @@ export default {
         initMap () {
             console.log('json', chinaJson)
             // d3-geo转化坐标
-            const projection = d3geo.geoMercator().center([104.0, 37.5]).scale(80).translate([0, 0]);
+            const projection = d3geo.geoMercator().center([104.0, 37.5]).scale(80).translate([0, 0])
             // 遍历省份构建模型
             chinaJson.features.forEach(elem => {
                 // 新建一个省份容器：用来存放省份对应的模型和轮廓线
@@ -53,23 +51,24 @@ export default {
                         // 这里的坐标要做2次使用：1次用来构建模型，1次用来构建轮廓线
                         const shape = new THREE.Shape()
                         const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff })
-                        const linGeometry = new THREE.Geometry()
+                        const linePoints = []
                         for (let i = 0; i < polygon.length; i++) {
                             const [x, y] = projection(polygon[i])
                             if (i === 0) {
                                 shape.moveTo(x, -y)
                             }
-                            shape.lineTo(x, -y);
-                            linGeometry.vertices.push(new THREE.Vector3(x, -y, 4.01))
+                            shape.lineTo(x, -y)
+                            linePoints.push(new THREE.Vector3(x, -y, 4.01))
                         }
                         const extrudeSettings = {
                             depth: 4,
                             bevelEnabled: false
-                        };
+                        }
                         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
                         const material = new THREE.MeshBasicMaterial({ color: '#d13a34', transparent: true, opacity: 0.6 })
                         const mesh = new THREE.Mesh(geometry, material)
-                        const line = new THREE.Line(linGeometry, lineMaterial)
+                        const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints)
+                        const line = new THREE.Line(lineGeometry, lineMaterial)
                         province.add(mesh)
                         province.add(line)
                     })
@@ -80,14 +79,14 @@ export default {
                     const [x, y] = projection(elem.properties.centroid)
                     province.properties._centroid = [x, y]
                 }
-                this.map.add(province)
+                map.add(province)
             })
-            this.scene.add(this.map)
+            scene.add(map)
         },
         setCamera () {
-            this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000);
-            this.camera.position.set(0, -70, 90);
-            this.camera.lookAt(0, 0, 0);
+            this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 10000)
+            this.camera.position.set(0, -70, 90)
+            this.camera.lookAt(0, 0, 0)
         },
         // 显示名称
         showName () {
@@ -95,26 +94,26 @@ export default {
             const height = window.innerHeight
             let canvas = document.querySelector('#name')
             if (!canvas) return
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
+            canvas.width = width
+            canvas.height = height
+            const ctx = canvas.getContext('2d')
             // 新建一个离屏canvas
             const offCanvas = document.createElement('canvas')
             offCanvas.width = width
             offCanvas.height = height
-            const ctxOffCanvas = canvas.getContext('2d');
+            const ctxOffCanvas = canvas.getContext('2d')
             // 设置canvas字体样式
-            ctxOffCanvas.font = '16.5px Arial';
-            ctxOffCanvas.strokeStyle = '#FFFFFF';
-            ctxOffCanvas.fillStyle = '#000000';
+            ctxOffCanvas.font = '16.5px Arial'
+            ctxOffCanvas.strokeStyle = '#FFFFFF'
+            ctxOffCanvas.fillStyle = '#000000'
             // texts用来存储显示的名称，重叠的部分就不会放到里面
-            const texts = [];
+            const texts = []
             /**
              * 遍历省份数据，有2个核心功能
              * 1. 将3维坐标转化成2维坐标
              * 2. 后面遍历到的数据，要和前面的数据做碰撞对比，重叠的就不绘制
              * */
-            this.map.children.forEach((elem, index) => {
+            map.children.forEach((elem, index) => {
                 if (!elem.properties._centroid) return
                 // 找到中心点
                 const y = -elem.properties._centroid[1]
@@ -161,43 +160,43 @@ export default {
         // 构建辅助系统: 网格和坐标
         buildAuxSystem () {
             let axisHelper = new THREE.AxesHelper(2000)
-            this.scene.add(axisHelper)
+            scene.add(axisHelper)
             let gridHelper = new THREE.GridHelper(600, 60)
-            this.scene.add(gridHelper)
-            let controls = new THREE.OrbitControls(this.camera, this.renderer.domElement)
+            scene.add(gridHelper)
+            let controls = new OrbitControls(this.camera, this.renderer.domElement)
             controls.enableDamping = true
             controls.dampingFactor = 0.25
             controls.rotateSpeed = 0.35
         },
         // 光照系统
         buildLightSystem () {
-            let directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
-            directionalLight.position.set(300, 1000, 500);
-            directionalLight.target.position.set(0, 0, 0);
-            directionalLight.castShadow = true;
+            let directionalLight = new THREE.DirectionalLight(0xffffff, 1.1)
+            directionalLight.position.set(300, 1000, 500)
+            directionalLight.target.position.set(0, 0, 0)
+            directionalLight.castShadow = true
 
-            let d = 300;
+            let d = 300
             const fov = 45 //拍摄距离  视野角值越大，场景中的物体越小
             const near = 1 //相机离视体积最近的距离
             const far = 1000//相机离视体积最远的距离
-            const aspect = window.innerWidth / window.innerHeight; //纵横比
-            directionalLight.shadow.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-            directionalLight.shadow.bias = 0.0001;
-            directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 1024;
-            this.scene.add(directionalLight)
+            const aspect = window.innerWidth / window.innerHeight //纵横比
+            directionalLight.shadow.camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
+            directionalLight.shadow.bias = 0.0001
+            directionalLight.shadow.mapSize.width = directionalLight.shadow.mapSize.height = 1024
+            scene.add(directionalLight)
 
             let light = new THREE.AmbientLight(0xffffff, 0.6)
-            this.scene.add(light)
+            scene.add(light)
 
         },
         // 根据浏览器窗口变化动态更新尺寸
         onWindowResize () {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.camera.aspect = window.innerWidth / window.innerHeight
+            this.camera.updateProjectionMatrix()
+            this.renderer.setSize(window.innerWidth, window.innerHeight)
         },
         onDocumentMouseMove (event) {
-            event.preventDefault();
+            event.preventDefault()
         },
         // 动画循环
         loop () {
@@ -207,7 +206,7 @@ export default {
         },
         // 渲染画布
         render () {
-            this.renderer.render(this.scene, this.camera);
+            this.renderer.render(scene, this.camera)
         }
     },
     mounted () {
@@ -228,59 +227,31 @@ export default {
     width: 100%;
     height: 100%;
 }
-
 .container {
     // margin: 20px 0;
     position: absolute;
-    text-align: center;
-    /*opacity: 0.2;*/
+
+    /* opacity: 0.2; */
     width: 100%;
+    text-align: center;
     canvas {
         width: 100%;
         height: 100%;
     }
     #name {
-        width: 100%;
-        height: 100%;
         position: absolute;
         top: 0;
         left: 0;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
     }
 }
-
-.info a {
-    display: block;
-    font-size: 16px;
-    line-height: 28px;
-    color: #ffffff;
-    text-decoration: none;
-}
-
-a.title {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.svg-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: white;
-    width: 240px;
-    height: 300px;
-    overflow: hidden;
-    border: 1px solid #f2f2f2;
-    overflow: hidden;
-    border-radius: 6px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
 .from {
     position: absolute;
+    top: 0;
     width: 100%;
     text-align: center;
-    top: 0;
     a {
         color: black;
     }
