@@ -6,11 +6,6 @@ const module = (name:String) => {
     return modules[`/src/pages/${name}/index.vue`]
 }
 
-// import Home from '@/pages/home/index.vue'
-// import Jump from '@/pages/jump/index.vue'
-// import MiniCity from '@/pages/mini-city/index.vue'
-// import ChinaMap from '@/pages/china-map/index.vue'
-
 const routes = [
     {
         path: '/',

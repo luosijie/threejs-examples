@@ -62,9 +62,6 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-canvas {
-    display: block;
-}
 .container {
     display: flex;
     align-items: center;
@@ -73,11 +70,6 @@ canvas {
     width: 100%; // height: 100%;
     background: #ffffff;
     flex-direction: column;
-}
-body {
-    margin: 0;
-    padding: 0;
-    user-select: none;
 }
 .mask {
     position: fixed;
