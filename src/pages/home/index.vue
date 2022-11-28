@@ -21,11 +21,11 @@ export default {
         return {
             workList: [
                 { link: '', img: '' },
-                { link: '/mini-city', img: '/images/threejs-example-mini-city.png' },
+                { link: '/house-in-desert', img: '/images/covers/house-in-desert.png' },
                 { link: '', img: '' },
-                { link: '/jump', img: '/images/threejs-example-jump.png' },
-                { link: '/test', img: '' },
-                { link: '/china-map', img: '/images/threejs-example-china-map.png' }
+                { link: '/jump', img: '/images/covers/threejs-example-jump.png' },
+                { link: '/mini-city', img: '/images/covers/threejs-example-mini-city.png' },
+                { link: '/china-map', img: '/images/covers/threejs-example-china-map.png' }
             ]
         }
     }

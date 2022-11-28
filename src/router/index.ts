@@ -25,6 +25,11 @@ const routes = [
     {
         path: '/china-map',
         component: module('china-map')
+    },
+
+    {
+        path: '/house-in-desert',
+        component: module('house-in-desert')
     }
 ]
 
