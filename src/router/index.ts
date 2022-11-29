@@ -6,6 +6,8 @@ const module = (name:String) => {
     return modules[`/src/pages/${name}/index.vue`]
 }
 
+console.log(modules)
+
 const routes = [
     {
         path: '/',
@@ -30,6 +32,11 @@ const routes = [
     {
         path: '/house-in-desert',
         component: module('house-in-desert')
+    },
+
+    {
+        path: '/carton-room',
+        component: module('carton-room')
     }
 ]
 

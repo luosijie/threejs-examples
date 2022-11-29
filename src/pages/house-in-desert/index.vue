@@ -58,7 +58,7 @@ onMounted(() => {
 
     // load-model
     gltfLoader.load(
-        'resources/house-in-desert/models/house-with-ground.glb',
+        'resources/house-in-desert/models/house.glb',
         gltf => {
             const bakedMesh = gltf.scene.children.find(child => child.name === 'baked')
             bakedMesh.material = bakedMaterial
