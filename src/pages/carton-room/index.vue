@@ -15,11 +15,9 @@ const loader = new Loader()
 onMounted(() => {
     const canvas = document.querySelector('#canvas')
 
-    const world = new World(canvas)
-    world.init()
-
     loader.load(resources)
     loader.onLoadEnd(() => {
+        const world = new World(canvas)
         const room = new Room(loader.resources)
         world.scene.add(room.body)
     })

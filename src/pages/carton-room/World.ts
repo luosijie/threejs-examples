@@ -45,6 +45,8 @@ export default class World {
         this.ambientLight = this.setAmbientLight()
 
         this.orbitControls = this.setOrbitControls()
+
+        this.init()
     }
     
     init () {
@@ -116,7 +118,7 @@ export default class World {
     }
 
     private setSunLight () {
-        const directionalLight = new DirectionalLight(0xffffff, 3)
+        const directionalLight = new DirectionalLight('#ffffff', 3)
         directionalLight.castShadow = true
         directionalLight.shadow.camera.far = 20
         directionalLight.shadow.mapSize.set(2048, 2048)
