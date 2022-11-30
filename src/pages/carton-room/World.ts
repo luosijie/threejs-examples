@@ -4,10 +4,10 @@ import {
     DirectionalLight,
     AmbientLight,
     AxesHelper,
-    PerspectiveCamera,
     GridHelper,
     sRGBEncoding,
-    PCFSoftShadowMap
+    PCFSoftShadowMap,
+    OrthographicCamera
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
@@ -24,7 +24,7 @@ export default class World {
 
     size: Size
     scene: Scene
-    camera: PerspectiveCamera
+    camera: OrthographicCamera
     renderer: WebGLRenderer
 
     sunLight: DirectionalLight
@@ -68,8 +68,12 @@ export default class World {
     updateSize () {
         this.size = this.setSize()
 
-        this.camera.aspect = this.size.aspect
+        this.camera.left = (-this.size.aspect * this.size.frustrum) / 2
+        this.camera.right = (this.size.aspect * this.size.frustrum) / 2
+        this.camera.top = this.size.frustrum / 2
+        this.camera.bottom = -this.size.frustrum / 2
         this.camera.updateProjectionMatrix()
+
         this.renderer.setSize(this.size.width, this.size.height)
     }
 
@@ -98,11 +102,18 @@ export default class World {
     }
 
     private setCamera () {
-        const camera = new PerspectiveCamera(35, this.size.aspect, 0.1, 1000)
-        camera.position.x = 29
-        camera.position.y = 14
-        camera.position.z = 12
-        camera.lookAt(0, 0, 0)
+        const camera = new OrthographicCamera(
+            (-this.size.aspect * this.size.frustrum) / 2,
+            (this.size.aspect * this.size.frustrum) / 2,
+            this.size.frustrum / 2,
+            -this.size.frustrum / 2,
+            -50,
+            50
+
+        )
+        camera.position.y = 5.65
+        camera.position.z = 10
+        camera.rotation.x = -Math.PI / 6
         return camera
     }
 

@@ -1,7 +1,7 @@
 
 <script setup >
 import { onMounted, reactive } from 'vue'
-import Loader, { LoaderType } from '@/utils/Loader.ts'
+import Loader from '@/utils/Loader.ts'
 import World from './World.ts'
 import Room from './Room.ts'
 import resources from './config/resources.ts'
@@ -13,10 +13,10 @@ import ASScroll from '@ashthornton/asscroll'
 import Loading from './components/Loading.vue'
 import ToggleBar from './components/ToggleBar.vue'
 
-const loader = new Loader()
-const timeline = new GSAP.timeline()
+// const timeline = new GSAP.timeline()
 
 let world = null
+let room = null
 let asscroll = null
 
 const status = reactive({
@@ -24,8 +24,22 @@ const status = reactive({
     dark: false // light-theme or dark-dark-theme
 })
 
-const showIntro = () => {
-    console.log('show-intro')
+const showWelcome = () => {
+    const timeline = new GSAP.timeline()
+    const cube = room.body.children.find(e => e.name === 'Cube')
+    timeline.to(cube.scale, {
+        x: 1.4,
+        y: 1.4,
+        z: 1.4,
+        ease: 'back.out(2.5)',
+        duration: 0.7
+    }).to(cube.position, {
+        x: -1,
+        ease: 'power1.out',
+        duration: 0.7,
+    })
+    
+    console.log('show-intro', cube)
 }
 
 onMounted(() => {
@@ -37,14 +51,15 @@ onMounted(() => {
     const canvas = document.querySelector('#canvas')
     world = new World(canvas)
 
+    const loader = new Loader()
     loader.load(resources)
     loader.onLoadEnd(() => {
         status.loading = false
-        showIntro()
         asscroll.enable()
 
-        const room = new Room(loader.resources)
+        room = new Room(loader.resources)
         world.scene.add(room.body)
+        showWelcome()
     })
 
     window.addEventListener('resize', () => {
