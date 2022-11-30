@@ -1,13 +1,13 @@
 import {
     Scene,
-    Vector3,
-    OrthographicCamera,
     WebGLRenderer,
     DirectionalLight,
     AmbientLight,
     AxesHelper,
     PerspectiveCamera,
-    GridHelper
+    GridHelper,
+    sRGBEncoding,
+    PCFSoftShadowMap
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
@@ -111,8 +111,12 @@ export default class World {
             antialias: true,
             canvas: this.canvas
         })
+        renderer.physicallyCorrectLights = true
+        renderer.outputEncoding = sRGBEncoding
+        renderer.toneMappingExposure = 1.75
+        renderer.shadowMap.enabled = true
+        renderer.shadowMap.type = PCFSoftShadowMap
         renderer.setSize(this.size.width, this.size.height)
-
         renderer.setPixelRatio(this.size.pixelRatio)
         return renderer
     }
@@ -123,6 +127,8 @@ export default class World {
         directionalLight.shadow.camera.far = 20
         directionalLight.shadow.mapSize.set(2048, 2048)
         directionalLight.shadow.normalBias = 0.05
+        
+        directionalLight.position.set(-1.5, 7, 3)
         return directionalLight
     }
 

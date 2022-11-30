@@ -9,7 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ashthornton/asscroll": "^2.0.11",
     "d3-geo": "^3.0.1",
+    "gsap": "^3.11.3",
     "three": "^0.146.0",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6"
