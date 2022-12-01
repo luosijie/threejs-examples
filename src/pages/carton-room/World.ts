@@ -7,7 +7,8 @@ import {
     GridHelper,
     sRGBEncoding,
     PCFSoftShadowMap,
-    OrthographicCamera
+    OrthographicCamera,
+    CineonToneMapping
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
@@ -75,6 +76,7 @@ export default class World {
         this.camera.updateProjectionMatrix()
 
         this.renderer.setSize(this.size.width, this.size.height)
+        this.renderer.setPixelRatio(this.size.pixelRatio)
     }
 
     render () {
@@ -109,7 +111,6 @@ export default class World {
             -this.size.frustrum / 2,
             -50,
             50
-
         )
         camera.position.y = 5.65
         camera.position.z = 10
@@ -124,6 +125,7 @@ export default class World {
         })
         renderer.physicallyCorrectLights = true
         renderer.outputEncoding = sRGBEncoding
+        renderer.toneMapping = CineonToneMapping
         renderer.toneMappingExposure = 1.75
         renderer.shadowMap.enabled = true
         renderer.shadowMap.type = PCFSoftShadowMap

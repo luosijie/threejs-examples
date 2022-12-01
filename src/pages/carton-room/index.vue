@@ -2,9 +2,11 @@
 <script setup >
 import { onMounted, reactive } from 'vue'
 import Loader from '@/utils/Loader.ts'
+import resources from './config/resources.ts'
+
 import World from './World.ts'
 import Room from './Room.ts'
-import resources from './config/resources.ts'
+import Floor from './Floor.ts'
 
 import GSAP from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger.js'
@@ -12,34 +14,50 @@ import ASScroll from '@ashthornton/asscroll'
 
 import Loading from './components/Loading.vue'
 import ToggleBar from './components/ToggleBar.vue'
+import AnimateText from './components/AnimateText.vue'
 
 // const timeline = new GSAP.timeline()
 
 let world = null
 let room = null
+let floor = null
 let asscroll = null
 
 const status = reactive({
     loading: true,
-    dark: false // light-theme or dark-dark-theme
+    ready: false,
+    dark: false // true:dark-theme; false: light-theme
 })
 
 const showWelcome = () => {
     const timeline = new GSAP.timeline()
-    const cube = room.body.children.find(e => e.name === 'Cube')
+    timeline.set('.animate-word', { y: 0, yPercent: 100 })
+    const cube = room.children.cube
     timeline.to(cube.scale, {
         x: 1.4,
         y: 1.4,
         z: 1.4,
         ease: 'back.out(2.5)',
         duration: 0.7
-    }).to(cube.position, {
+    }).to(room.body.position, {
         x: -1,
         ease: 'power1.out',
         duration: 0.7,
+    }).to('.welcome-text .animate-word', {
+        yPercent: 0,
+        stagger: 0.05,
+        ease: 'back.out(1.7)',
+        onComplete: () => {
+            status.ready = true
+            asscroll.enable()
+        }
+    }).to('.arrow-down', {
+        opacity: 1
     })
-    
-    console.log('show-intro', cube)
+}
+
+const loadingEnd = () => {
+    showWelcome()
 }
 
 onMounted(() => {
@@ -55,11 +73,13 @@ onMounted(() => {
     loader.load(resources)
     loader.onLoadEnd(() => {
         status.loading = false
-        asscroll.enable()
+
+        floor = new Floor()
+        world.scene.add(floor.body)
 
         room = new Room(loader.resources)
         world.scene.add(room.body)
-        showWelcome()
+        
     })
 
     window.addEventListener('resize', () => {
@@ -73,10 +93,16 @@ onMounted(() => {
     <div :class="[status.dark ? 'dark-theme' : 'light-theme']">
         <canvas id="canvas"/>
 
-        <Transition name="fade">
+        <Transition name="fade" @after-leave="loadingEnd">
             <Loading v-if="status.loading"/>
-            <ToggleBar v-else v-model="status.dark"/>
         </Transition>
+        <Transition name="fade">
+            <ToggleBar v-if="status.ready" v-model="status.dark"/>
+        </Transition>
+        
+        <div class="arrow-down">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path fill="currentColor" d="M12 14.95q-.2 0-.375-.063-.175-.062-.325-.212L6.675 10.05q-.275-.275-.262-.688.012-.412.287-.687.275-.275.7-.275.425 0 .7.275l3.9 3.9 3.925-3.925q.275-.275.688-.263.412.013.687.288.275.275.275.7 0 .425-.275.7l-4.6 4.6q-.15.15-.325.212-.175.063-.375.063Z"/></svg>
+        </div>
 
         <!-- page -->
         <div class="page" asscroll-container>
@@ -85,20 +111,16 @@ onMounted(() => {
                 <section class="hero">
                     <div class="hero-wrapper">
 
-                        <!-- Intro Stuff -->
-                        <div class="intro-text">Welcome to my portfolio!</div>
-                        <div class="arrow-svg-wrapper">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path fill="currentColor" d="M12 14.95q-.2 0-.375-.063-.175-.062-.325-.212L6.675 10.05q-.275-.275-.262-.688.012-.412.287-.687.275-.275.7-.275.425 0 .7.275l3.9 3.9 3.925-3.925q.275-.275.688-.263.412.013.687.288.275.275.275.7 0 .425-.275.7l-4.6 4.6q-.15.15-.325.212-.175.063-.375.063Z"/></svg>
-                        </div>
+                        <AnimateText text="Welcome to my portfolio!" class="welcome-text"/>
 
                         <div class="hero-main">
-                            <h1 class="hero-main-title">Abigail Bloom</h1>
-                            <p class="hero-main-description">Digital Media Student | 3D Artist</p>
+                            <AnimateText text="Abigail Bloom" class="hero-main-title"/>
+                            <AnimateText text="Digital Media Student | 3D Artist" class="hero-main-description"/>
                         </div>
 
                         <div class="hero-second">
-                            <p class="hero-second-subheading first-sub">AbigailBloom</p>
-                            <p class="hero-second-subheading second-sub">Portfolio</p>
+                            <AnimateText text="AbigailBloom" class="hero-second-subheading first-sub"/>
+                            <AnimateText text="Portfolio" class="hero-second-subheading second-sub"/>
                         </div>
 
                     </div>
@@ -205,7 +227,7 @@ onMounted(() => {
 }
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 2s ease;
+    transition: opacity 1s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
@@ -255,25 +277,29 @@ canvas {
     display: inline-block;
     transform: translateY(100%);
 }
-.intro-text {
+.welcome-text {
     position: absolute;
     top: 50%;
     left: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
     font-size: 16px;
     font-weight: 500;
     color: var(--color-text);
     transform: translate(-50%, -50%);
 }
-.arrow-svg-wrapper {
-    position: absolute;
-    top: 90%;
+.arrow-down {
+    position: fixed;
+    bottom: 10px;
     left: 50%;
+    display: flex;
+    justify-content: center;
+    margin-left: -25px;
+    width: 50px;
     color: var(--color-text);
     opacity: 0;
-    transform: translate(-50%, -50%);
     animation: bounce 0.5s ease-in alternate infinite;
 }
 
@@ -412,38 +438,39 @@ canvas {
 .hero {
     width: 100vw;
     height: 100vh;
-}
-.hero-wrapper {
-    position: relative;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1100px;
-    height: 100%;
-}
-.hero-main {
-    position: absolute;
-    bottom: 168px;
-    left: 0;
-    color: var(--color-text);
-}
-.hero-second {
-    position: absolute;
-    top: calc(50% - 120px);
-    right: 0;
-    color: var(--color-text);
-}
-.hero-main-title {
-    font-size: 64px;
-    color: var(--color-text);
-}
-.hero-main-description {
-    font-size: 18px;
-    color: var(--color-text);
-}
-.hero-second-subheading {
-    font-size: 32px;
-    text-transform: uppercase;
-    color: var(--color-text);
+    .hero-wrapper {
+        position: relative;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 1100px;
+        height: 100%;
+        .hero-main {
+            position: absolute;
+            bottom: 168px;
+            left: 0;
+            color: var(--color-text);
+            .hero-main-title {
+                overflow: hidden;
+                font-size: 64px;
+                color: var(--color-text);
+            }
+            .hero-main-description {
+                font-size: 18px;
+                color: var(--color-text);
+            }
+        }
+        .hero-second {
+            position: absolute;
+            top: calc(50% - 120px);
+            right: 0;
+            color: var(--color-text);
+            .hero-second-subheading {
+                font-size: 32px;
+                text-transform: uppercase;
+                color: var(--color-text);
+            }
+        }
+    }
 }
 
 /* Other colors override */
