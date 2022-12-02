@@ -7,79 +7,33 @@ import resources from './config/resources.ts'
 import World from './World.ts'
 import Room from './Room.ts'
 import Floor from './Floor.ts'
-
-import GSAP from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger.js'
-import ASScroll from '@ashthornton/asscroll'
+import Controls from './Controls.ts'
 
 import Loading from './components/Loading.vue'
 import ToggleBar from './components/ToggleBar.vue'
 import AnimateText from './components/AnimateText.vue'
 
-// const timeline = new GSAP.timeline()
-
-let world = null
-let room = null
-let floor = null
-let asscroll = null
-
 const status = reactive({
-    loading: true,
-    ready: false,
     dark: false // true:dark-theme; false: light-theme
 })
 
-const showWelcome = () => {
-    const timeline = new GSAP.timeline()
-    timeline.set('.animate-word', { y: 0, yPercent: 100 })
-    const cube = room.children.cube
-    timeline.to(cube.scale, {
-        x: 1.4,
-        y: 1.4,
-        z: 1.4,
-        ease: 'back.out(2.5)',
-        duration: 0.7
-    }).to(room.body.position, {
-        x: -1,
-        ease: 'power1.out',
-        duration: 0.7,
-    }).to('.welcome-text .animate-word', {
-        yPercent: 0,
-        stagger: 0.05,
-        ease: 'back.out(1.7)',
-        onComplete: () => {
-            status.ready = true
-            asscroll.enable()
-        }
-    }).to('.arrow-down', {
-        opacity: 1
-    })
-}
-
-const loadingEnd = () => {
-    showWelcome()
-}
-
 onMounted(() => {
-    asscroll = new ASScroll({
-    // ease: 0.5,
-        disableRaf: true
-    })
     
     const canvas = document.querySelector('#canvas')
-    world = new World(canvas)
+    const world = new World(canvas)
 
     const loader = new Loader()
     loader.load(resources)
     loader.onLoadEnd(() => {
-        status.loading = false
 
-        floor = new Floor()
+        const floor = new Floor()
         world.scene.add(floor.body)
 
-        room = new Room(loader.resources)
+        const room = new Room(loader.resources)
         world.scene.add(room.body)
         
+        const controls = new Controls(world, room, floor)
+        controls.showWelcome()
     })
 
     window.addEventListener('resize', () => {
@@ -92,13 +46,8 @@ onMounted(() => {
 <template>
     <div :class="[status.dark ? 'dark-theme' : 'light-theme']">
         <canvas id="canvas"/>
-
-        <Transition name="fade" @after-leave="loadingEnd">
-            <Loading v-if="status.loading"/>
-        </Transition>
-        <Transition name="fade">
-            <ToggleBar v-if="status.ready" v-model="status.dark"/>
-        </Transition>
+        <Loading/>
+        <ToggleBar v-model="status.dark"/>
         
         <div class="arrow-down">
             <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path fill="currentColor" d="M12 14.95q-.2 0-.375-.063-.175-.062-.325-.212L6.675 10.05q-.275-.275-.262-.688.012-.412.287-.687.275-.275.7-.275.425 0 .7.275l3.9 3.9 3.925-3.925q.275-.275.688-.263.412.013.687.288.275.275.275.7 0 .425-.275.7l-4.6 4.6q-.15.15-.325.212-.175.063-.375.063Z"/></svg>
@@ -224,14 +173,6 @@ onMounted(() => {
     /* Dark Theme Variables */
     --color-text-dark: #faf4e5;
     --color-background-dark: #8395cd;
-}
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 1s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
 }
 </style>
 <style lang="scss" scoped>

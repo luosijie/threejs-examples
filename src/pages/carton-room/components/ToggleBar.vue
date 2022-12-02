@@ -38,6 +38,7 @@ const toggle = () => {
     justify-content: center;
     align-items: center;
     flex-direction: row;
+    opacity: 0;
     .sun-wrapper, 
     .moon-wrapper {
         display: flex;

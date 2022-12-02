@@ -1,0 +1,281 @@
+import { Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, Object3D, Scene } from 'three'
+import Floor from './Floor'
+import Room from './Room'
+
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger.js'
+import ASScroll from '@ashthornton/asscroll'
+import World from './World'
+
+export default class Controls {
+    timeline: GSAPTimeline
+
+    world: World
+    room: Room
+    floor: Floor
+    cube: Object3D
+
+    constructor (world: World, room: Room, floor: Floor) {
+        this.timeline = gsap.timeline()
+
+        this.world = world
+        this.room = room
+        this.floor = floor
+        this.cube = room.children.cube
+    }
+
+    showWelcome () {
+        this.timeline.set('.animate-word', { y: 0, yPercent: 100 })
+        this.timeline.to('.loading', {
+            opacity: 0
+        }).to(this.cube.scale, {
+            x: 1.4,
+            y: 1.4,
+            z: 1.4,
+            ease: 'back.out(2.5)',
+            duration: 0.7
+        }).to(this.room.body.position, {
+            x: -1,
+            ease: 'power1.out',
+            duration: 0.7,
+        }).to('.welcome-text .animate-word', {
+            yPercent: 0,
+            stagger: 0.05,
+            ease: 'back.out(1.7)',
+            onComplete: () => {
+                this.initScene()
+            }
+        }).to('.arrow-down', {
+            opacity: 1
+        }).to('.toggle-bar', {
+            opacity: 1
+        })
+    }
+
+    initScene () {
+
+        let wheelEvent = (evt:WheelEvent) => {
+            if (evt.deltaY <= 0) return
+            window.removeEventListener('wheel', wheelEvent)
+    
+            this.timeline.to(
+                '.welcome-text .animate-word', 
+                {
+                    yPercent: 100,
+                    stagger: 0.05,
+                    ease: 'back.out(1.7)'
+                }
+            ).to(
+                '.arrow-down', 
+                {
+                    opacity: 0,
+                }, 
+                'same'
+            ).to(
+                this.room.body.position, 
+                {
+                    x: 0,
+                    y: 0,
+                    z: 0,
+                    ease: 'power1.out',
+                },
+                'same'
+            ).to(
+                this.cube.rotation,
+                {
+                    y: 2 * Math.PI + Math.PI / 4,
+                },
+                'same'
+            ).to(
+                this.cube.scale,
+                {
+                    x: 10,
+                    y: 10,
+                    z: 10,
+                },
+                'same'
+            ).to(
+                this.world.camera.position,
+                {
+                    y: 7.5,
+                },
+                'same'
+            ).to(
+                this.room.children.cube.position,
+                {
+                    x: 0.638711,
+                    y: 8.5618,
+                    z: 1.3243,
+                },
+                'same'
+            ).set(this.room.children.body.scale, {
+                x: 1,
+                y: 1,
+                z: 1,
+            }).to(
+                this.room.children.cube.scale,
+                {
+                    x: 0,
+                    y: 0,
+                    z: 0,
+                    duration: 1,
+                },
+                'introtext'
+            ).to(
+                '.hero-main-title .animate-word',
+                {
+                    yPercent: 0,
+                    stagger: 0.07,
+                    ease: 'back.out(1.7)',
+                },
+                'introtext'
+            ).to(
+                '.hero-main-description .animate-word',
+                {
+                    yPercent: 0,
+                    stagger: 0.07,
+                    ease: 'back.out(1.7)',
+                },
+                'introtext'
+            ).to(
+                '.first-sub .animate-word',
+                {
+                    yPercent: 0,
+                    stagger: 0.07,
+                    ease: 'back.out(1.7)',
+                },
+                'introtext'
+            ).to(
+                '.second-sub .animate-word',
+                {
+                    yPercent: 0,
+                    stagger: 0.07,
+                    ease: 'back.out(1.7)',
+                },
+                'introtext'
+            ).to(
+                this.room.children.aquarium.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                '>-0.5'
+            ).to(
+                this.room.children.clock.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                '>-0.4'
+            ).to(
+                this.room.children.shelves.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                '>-0.3'
+            ).to(
+                this.room.children.floor_items.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                '>-0.2'
+            ).to(
+                this.room.children.desks.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                '>-0.1'
+            ).to(
+                this.room.children.table_stuff.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                '>-0.1'
+            ).to(this.room.children.computer.scale, {
+                x: 1,
+                y: 1,
+                z: 1,
+                ease: 'back.out(2.2)',
+                duration: 0.5,
+            }).set(this.room.children.mini_floor.scale, {
+                x: 1,
+                y: 1,
+                z: 1,
+            }).to(
+                this.room.children.chair.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                'chair'
+            ).to(
+                this.room.children.fish.scale,
+                {
+                    x: 1,
+                    y: 1,
+                    z: 1,
+                    ease: 'back.out(2.2)',
+                    duration: 0.5,
+                },
+                'chair'
+            ).to(
+                this.room.children.chair.rotation,
+                {
+                    y: 4 * Math.PI + Math.PI / 4,
+                    ease: 'power2.out',
+                    duration: 1,
+                    onComplete: () => {
+                        this.enableScroll()
+                    }
+                },
+                'chair'
+            )
+            
+        }
+        window.addEventListener('wheel', wheelEvent)
+    }
+
+    enableScroll () {
+        const page = document.querySelector('.page')
+        if (page instanceof HTMLElement) {
+            page.style.overflow = 'visible'
+        }
+
+        const asscroll = new ASScroll({
+            ease: 0.5,
+            disableRaf: true
+        })
+        gsap.ticker.add(asscroll.update)
+
+        ScrollTrigger.defaults({
+            scroller: asscroll.containerElement
+        })
+
+        asscroll.enable()
+    }
+}

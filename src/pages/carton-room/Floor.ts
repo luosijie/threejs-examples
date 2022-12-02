@@ -1,6 +1,6 @@
 import { BackSide, CircleGeometry, Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Object3D, PlaneGeometry, Scene, Vector3 } from 'three'
 
-export default class Room {
+export default class Floor {
     body: Group
     background: Mesh
     circlePink: Mesh
