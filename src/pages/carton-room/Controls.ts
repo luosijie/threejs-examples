@@ -26,33 +26,54 @@ export default class Controls {
 
     showWelcome () {
         this.timeline.set('.animate-word', { y: 0, yPercent: 100 })
-        this.timeline.to('.loading', {
-            opacity: 0
-        }).to(this.cube.scale, {
-            x: 1.4,
-            y: 1.4,
-            z: 1.4,
-            ease: 'back.out(2.5)',
-            duration: 0.7
-        }).to(this.room.body.position, {
-            x: -1,
-            ease: 'power1.out',
-            duration: 0.7,
-        }).to('.welcome-text .animate-word', {
-            yPercent: 0,
-            stagger: 0.05,
-            ease: 'back.out(1.7)',
-            onComplete: () => {
-                this.initScene()
+        this.timeline.to(
+            '.loading', 
+            {
+                opacity: 0
             }
-        }).to('.arrow-down', {
-            opacity: 1
-        }).to('.toggle-bar', {
-            opacity: 1
-        })
+        ).to(
+            this.cube.scale, 
+            {
+                x: 1.4,
+                y: 1.4,
+                z: 1.4,
+                ease: 'back.out(2.5)',
+                duration: 0.7
+            }
+        ).to(
+            this.room.body.position, 
+            {
+                x: -1.2,
+                ease: 'power1.out',
+                duration: 0.7,
+            }
+        ).to(
+            '.arrow-down', 
+            {
+                opacity: 1
+            },
+            '<'
+        ).to(
+            '.toggle-bar', 
+            {
+                opacity: 1
+            },
+            '<'
+        ).to(
+            '.welcome-text .animate-word', 
+            {
+                yPercent: 0,
+                stagger: 0.05,
+                ease: 'back.out(1.7)',
+                onComplete: () => {
+                    this.readyToShowRoom()
+                }
+            },
+            '<'
+        )
     }
 
-    initScene () {
+    readyToShowRoom () {
 
         let wheelEvent = (evt:WheelEvent) => {
             if (evt.deltaY <= 0) return
