@@ -65,8 +65,6 @@ export default class Room {
             
         })
 
-        console.log('chidren in room', this.children)
-
         return scene
     }
 }

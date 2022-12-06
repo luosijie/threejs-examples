@@ -112,9 +112,9 @@ export default class World {
             -50,
             50
         )
-        camera.position.y = 5.65
+        camera.position.y = 6.5
         camera.position.z = 10
-        camera.rotation.x = -Math.PI / 6
+        camera.rotation.x = -Math.PI / 5
         return camera
     }
 

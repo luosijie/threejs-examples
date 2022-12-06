@@ -330,7 +330,7 @@ export default class Controls {
             })
         })
 
-        asscroll.enable()
+        // asscroll.enable()
 
         // First timeline
         const firstMoveTimeline = gsap.timeline({
@@ -344,9 +344,7 @@ export default class Controls {
         firstMoveTimeline.to(
             this.room.body.position,
             { 
-                x: () => {
-                    return this.world.size.width * 0.0014
-                }
+                x: this.world.size.width * 0.0014
             }
         ).to(
             this.floor.circlePink.scale,
