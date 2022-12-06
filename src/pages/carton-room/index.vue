@@ -75,7 +75,7 @@ onMounted(() => {
                     </div>
                 </section>
 
-                <div class="first-move section-margin"></div>
+                <div class="first-move section-margin">first move</div>
 
                 <section class="first-section section left">
                     <div class="progress-wrapper progress-bar-wrapper-left">
@@ -103,7 +103,7 @@ onMounted(() => {
                     </div>
                 </section>
 
-                <div class="second-move section-margin"></div>
+                <div class="second-move section-margin">second move</div>
 
                 <section class="second-section section right">
                     <div class="progress-wrapper progress-bar-wrapper-right">
@@ -130,7 +130,7 @@ onMounted(() => {
                     </div>
                 </section>
 
-                <div class="third-move section-margin"></div>
+                <div class="third-move section-margin">third move</div>
 
                 <section class="third-section section left">
                     <div class="progress-wrapper progress-bar-wrapper-left">
@@ -176,7 +176,9 @@ onMounted(() => {
 }
 </style>
 <style lang="scss" scoped>
-
+.section-margin {
+    color: red($color: #000000);
+}
 .light-theme {
     --color-text: var(--color-text-light);
     --color-background: var(--color-background-light);

@@ -22,6 +22,7 @@ export default class Controls {
         this.room = room
         this.floor = floor
         this.cube = room.children.cube
+
     }
 
     showWelcome () {
@@ -287,6 +288,8 @@ export default class Controls {
             page.style.overflow = 'visible'
         }
 
+        gsap.registerPlugin(ScrollTrigger)
+
         const asscroll = new ASScroll({
             ease: 0.5,
             disableRaf: true
@@ -297,6 +300,120 @@ export default class Controls {
             scroller: asscroll.containerElement
         })
 
+        ScrollTrigger.scrollerProxy(asscroll.containerElement, {
+            scrollTop (value: any) {
+                if (arguments.length) {
+                    asscroll.currentPos = value
+                    return
+                }
+                return asscroll.currentPos
+            },
+            getBoundingClientRect () {
+                return {
+                    top: 0,
+                    left: 0,
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                }
+            },
+            fixedMarkers: true,
+        })
+
+        asscroll.on('update', ScrollTrigger.update)
+        ScrollTrigger.addEventListener('refresh', asscroll.resize)
+
+        requestAnimationFrame(() => {
+            asscroll.enable({
+                newScrollElements: document.querySelectorAll(
+                    '.gsap-marker-start, .gsap-marker-end, [asscroll]'
+                ),
+            })
+        })
+
         asscroll.enable()
+
+        // First timeline
+        const firstMoveTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.first-move',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.6
+            }
+        })
+        firstMoveTimeline.to(
+            this.room.body.position,
+            { 
+                x: () => {
+                    return this.world.size.width * 0.0014
+                }
+            }
+        ).to(
+            this.floor.circlePink.scale,
+            {
+                x: 3,
+                y: 3, 
+                z: 3
+            },
+            '<'
+        )
+
+        // Second timeline
+        const secondMoveTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.second-move',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.6
+            }
+        })
+        secondMoveTimeline.to(
+            this.floor.circleBlue.scale,
+            {
+                x: 3,
+                y: 3, 
+                z: 3
+            }
+        ).to(
+            this.room.body.position,
+            {
+                x: 1,
+                z: this.world.size.height * 0.0032
+            },
+            '<'
+        ).to(
+            this.room.body.scale,
+            {
+                x: 0.4,
+                y: 0.7,
+                z: 0.4,
+            },
+            '<'
+        )
+
+        // Third timeline
+        const thirdMoveTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.third-move',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.6,
+                invalidateOnRefresh: true,
+            },
+        })
+        thirdMoveTimeline.to(
+            this.floor.circleGreen,
+            {
+                x: 3,
+                y: 3,
+                z: 3,
+            }
+        ).to(
+            this.room.body.position,
+            {
+                z: -4.5
+            },
+            '<'
+        )
     }
 }
