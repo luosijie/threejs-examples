@@ -440,6 +440,11 @@
   resolved "https://registry.npmjs.org/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
+"@types/stats@^0.16.30":
+  version "0.16.30"
+  resolved "https://registry.npmjs.org/@types/stats/-/stats-0.16.30.tgz#deb5fa6e59c6d67bd6e0f61a51ef630a83a84ce9"
+  integrity sha512-ihuaNKhVjTQ8UNLJu7Kx96ywf0bSBday/K//HHvO9LKha07Ezxdm6HkazOKUIdayp0EmGEIPBQSL7eLxm8rX0w==
+
 "@types/three@^0.146.0":
   version "0.146.0"
   resolved "https://registry.npmjs.org/@types/three/-/three-0.146.0.tgz#83813ba0d2fff6bdc6d7fda3a77993a932bba45f"
@@ -2691,6 +2696,11 @@ spdx-license-ids@^3.0.0:
   version "3.0.12"
   resolved "https://registry.npmjs.org/spdx-license-ids/-/spdx-license-ids-3.0.12.tgz#69077835abe2710b65f03969898b6637b505a779"
   integrity sha512-rr+VVSXtRhO4OHbXUiAF7xW3Bo9DuuF6C5jH+q/x15j2jniycgKbxU09Hr0WqlSLUs4i4ltHGXqTe7VHclYWyA==
+
+stats.js@^0.17.0:
+  version "0.17.0"
+  resolved "https://registry.npmjs.org/stats.js/-/stats.js-0.17.0.tgz#b1c3dc46d94498b578b7fd3985b81ace7131cc7d"
+  integrity sha512-hNKz8phvYLPEcRkeG1rsGmV5ChMjKDAWU7/OJJdDErPBNChQXxCo3WZurGpnWc6gZhAzEPFad1aVgyOANH1sMw==
 
 string-width@^4.2.3:
   version "4.2.3"

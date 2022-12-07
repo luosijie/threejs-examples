@@ -1,6 +1,7 @@
 
 <script setup >
 import { onMounted, reactive } from 'vue'
+
 import Loader from '@/utils/Loader.ts'
 import resources from './config/resources.ts'
 
@@ -12,12 +13,16 @@ import Controls from './Controls.ts'
 import Loading from './components/Loading.vue'
 import ToggleBar from './components/ToggleBar.vue'
 import AnimateText from './components/AnimateText.vue'
+import Stats from 'stats.js'
 
 const status = reactive({
     dark: false // true:dark-theme; false: light-theme
 })
 
 onMounted(() => {
+    const stats = new Stats()
+    stats.showPanel(0)
+    document.body.appendChild( stats.dom )
     
     const canvas = document.querySelector('#canvas')
     const world = new World(canvas)
@@ -39,6 +44,17 @@ onMounted(() => {
     window.addEventListener('resize', () => {
         world.updateSize()
     })
+
+    const tick = () => {
+        
+        stats.begin()
+        world.render()
+        stats.end()
+
+        window.requestAnimationFrame(tick)            
+    }
+    
+    tick()
 
 })
 
@@ -176,6 +192,7 @@ onMounted(() => {
 }
 .tp-dfwv {
     position: fixed!important;
+    top: 50px;
     left: 10px;
     z-index: 99999!important;
 }

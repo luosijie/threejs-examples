@@ -12,7 +12,8 @@ import {
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-import { Pane } from 'tweakpane'
+// import { Pane } from 'tweakpane'
+import pane from './pane'
 
 interface Size {
     width: number
@@ -61,13 +62,6 @@ export default class World {
         
         this.buildHelper()
 
-        const tick = () => {
-            this.render()
-            window.requestAnimationFrame(tick)            
-        }
-    
-        tick()
-
     }
 
     updateSize () {
@@ -89,17 +83,15 @@ export default class World {
     }
 
     private buildPane () {
-        const pane = new Pane()
 
         // Camera
         const camera = pane.addFolder({
-            title: 'camera',
-            expanded: true
+            title: 'camera'
         })
         // Camera position
         const cameraPosition = camera.addFolder({
             title: 'position',
-            expanded: true
+            expanded: false
         })
         cameraPosition.addInput(this.camera.position, 'x', { min: -10, max: 20, step: 0.01 })
         cameraPosition.addInput(this.camera.position, 'y', { min: -10, max: 20, step: 0.01 })
@@ -108,7 +100,7 @@ export default class World {
         // Camera rotation
         const cameraRotation = camera.addFolder({
             title: 'rotation',
-            expanded: true
+            expanded: false
         })
         cameraRotation.addInput(this.camera.rotation, 'x', { min: -1, max: 1, step: 0.01 })
         cameraRotation.addInput(this.camera.rotation, 'y', { min: -1, max: 1, step: 0.01 })

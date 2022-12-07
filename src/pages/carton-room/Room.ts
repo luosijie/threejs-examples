@@ -1,4 +1,5 @@
 import { Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, Object3D, Scene } from 'three'
+import pane from './pane'
 
 export default class Room {
     body: Scene
@@ -9,6 +10,7 @@ export default class Room {
         this.body = this.setBody(resoureces)
 
         this.onMousemove()
+        this.buildPane()
     }
 
     // Crete models from resources
@@ -68,6 +70,30 @@ export default class Room {
         })
 
         return scene
+    }
+
+    private buildPane () {
+        // Camera
+        const room = pane.addFolder({
+            title: 'room'
+        })
+        // Camera position
+        const roomPosition = room.addFolder({
+            title: 'position',
+            expanded: false
+        })
+        roomPosition.addInput(this.body.position, 'x', { min: -10, max: 20, step: 0.01 })
+        roomPosition.addInput(this.body.position, 'y', { min: -10, max: 20, step: 0.01 })
+        roomPosition.addInput(this.body.position, 'z', { min: -10, max: 20, step: 0.01 })
+
+        // Camera rotation
+        const roomRotation = room.addFolder({
+            title: 'rotation',
+            expanded: false
+        })
+        roomRotation.addInput(this.body.rotation, 'x', { min: -1, max: 1, step: 0.01 })
+        roomRotation.addInput(this.body.rotation, 'y', { min: -1, max: 1, step: 0.01 })
+        roomRotation.addInput(this.body.rotation, 'z', { min: -1, max: 1, step: 0.01 })
     }
 
     private onMousemove () {

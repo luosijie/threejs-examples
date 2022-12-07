@@ -48,7 +48,7 @@ export default class Controls {
         ).to(
             this.room.body.position, 
             {
-                x: -1.2,
+                x: -0.87,
                 ease: 'power1.out',
                 duration: 0.7,
             }
@@ -326,15 +326,15 @@ export default class Controls {
         asscroll.on('update', ScrollTrigger.update)
         ScrollTrigger.addEventListener('refresh', asscroll.resize)
 
-        requestAnimationFrame(() => {
-            asscroll.enable({
-                newScrollElements: document.querySelectorAll(
-                    '.gsap-marker-start, .gsap-marker-end, [asscroll]'
-                ),
-            })
-        })
+        // requestAnimationFrame(() => {
+        //     asscroll.enable({
+        //         newScrollElements: document.querySelectorAll(
+        //             '.gsap-marker-start, .gsap-marker-end, [asscroll]'
+        //         ),
+        //     })
+        // })
 
-        // asscroll.enable()
+        asscroll.enable()
 
         // First timeline
         const firstMoveTimeline = gsap.timeline({
@@ -413,6 +413,7 @@ export default class Controls {
         ).to(
             this.room.body.position,
             {
+                x: 4.02,
                 z: -4.5
             },
             '<'
