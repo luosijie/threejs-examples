@@ -387,6 +387,11 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
+"@tweakpane/core@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/@tweakpane/core/-/core-1.1.1.tgz#5c8f7726f3574801e40811301506c6871bc128d1"
+  integrity sha512-bCywfumcPHiaPLzskFrkB5+hw070UHwxPI45e04TmWW/iIyMwFSJlRvKtbN5cX8Xq1VZedxCgBFoJIici0OyKA==
+
 "@types/eslint@^8.4.5":
   version "8.4.10"
   resolved "https://registry.npmjs.org/@types/eslint/-/eslint-8.4.10.tgz#19731b9685c19ed1552da7052b6f668ed7eb64bb"
@@ -2917,6 +2922,11 @@ tsutils@^3.21.0:
   integrity sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==
   dependencies:
     tslib "^1.8.1"
+
+tweakpane@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.npmjs.org/tweakpane/-/tweakpane-3.1.1.tgz#d67bc2f6b8758bcb4630a0707f7c21a8ea515439"
+  integrity sha512-b9bpZSvG4KLtvSuyP3r20XWztdbzXleXO1RZN5pS4gcVAVesq0+mYz/bylYIckwh/VZjp3f3zUFJSeV2M3eRCw==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"

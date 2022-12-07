@@ -33,7 +33,7 @@ const toggle = () => {
     position: fixed;
     top: 48px;
     right: 48px;
-    z-index: 99999999999999999;
+    z-index: 9999;
     display: flex;
     justify-content: center;
     align-items: center;

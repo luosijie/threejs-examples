@@ -30,7 +30,11 @@ export default class Controls {
         this.timeline.to(
             '.loading', 
             {
-                opacity: 0
+                opacity: 0,
+                onComplete () {
+                    const loading = document.querySelector('.loading')
+                    loading?.parentNode?.removeChild(loading)
+                }
             }
         ).to(
             this.cube.scale, 
@@ -67,14 +71,14 @@ export default class Controls {
                 stagger: 0.05,
                 ease: 'back.out(1.7)',
                 onComplete: () => {
-                    this.readyToShowRoom()
+                    this.showRoom()
                 }
             },
             '<'
         )
     }
 
-    readyToShowRoom () {
+    showRoom () {
 
         let wheelEvent = (evt:WheelEvent) => {
             if (evt.deltaY <= 0) return
@@ -119,7 +123,7 @@ export default class Controls {
             ).to(
                 this.world.camera.position,
                 {
-                    y: 7.5,
+                    y: 8,
                 },
                 'same'
             ).to(

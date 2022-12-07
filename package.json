@@ -13,11 +13,13 @@
     "d3-geo": "^3.0.1",
     "gsap": "^3.11.3",
     "three": "^0.146.0",
+    "tweakpane": "^3.1.1",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
+    "@tweakpane/core": "^1.1.1",
     "@types/greensock": "^1.15.32",
     "@types/node": "^18.11.9",
     "@types/three": "^0.146.0",

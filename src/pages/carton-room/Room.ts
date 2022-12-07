@@ -7,6 +7,8 @@ export default class Room {
     constructor (resoureces: any) {
         this.children = {}
         this.body = this.setBody(resoureces)
+
+        this.onMousemove()
     }
 
     // Crete models from resources
@@ -66,5 +68,13 @@ export default class Room {
         })
 
         return scene
+    }
+
+    private onMousemove () {
+        window.addEventListener('mousemove', evt => {
+            const offset = (evt.clientX - window.innerWidth / 2) * 2
+            const rotation =  offset / window.innerWidth * 0.05
+            this.body.rotation.y = rotation
+        })
     }
 }

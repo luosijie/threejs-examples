@@ -174,6 +174,11 @@ onMounted(() => {
     --color-text-dark: #faf4e5;
     --color-background-dark: #8395cd;
 }
+.tp-dfwv {
+    position: fixed!important;
+    left: 10px;
+    z-index: 99999!important;
+}
 </style>
 <style lang="scss" scoped>
 .section-margin {
