@@ -1,7 +1,7 @@
 
 <script setup >
 import { onMounted, reactive } from 'vue'
-
+import emitter, { EmitterType } from './emitter.ts'
 import Loader from '@/utils/Loader.ts'
 import resources from './config/resources.ts'
 
@@ -14,6 +14,7 @@ import Loading from './components/Loading.vue'
 import ToggleBar from './components/ToggleBar.vue'
 import AnimateText from './components/AnimateText.vue'
 import Stats from 'stats.js'
+import { Clock } from 'three'
 
 const status = reactive({
     dark: false // true:dark-theme; false: light-theme
@@ -39,22 +40,24 @@ onMounted(() => {
         
         const controls = new Controls(world, room, floor)
         controls.showWelcome()
+
+        const clock = new Clock()
+        const tick = () => {
+            stats.begin()
+            emitter.emit(EmitterType.Tick, clock)
+            
+            world.render()
+            stats.end()
+
+            window.requestAnimationFrame(tick)            
+        }
+
+        tick()
     })
 
     window.addEventListener('resize', () => {
         world.updateSize()
     })
-
-    const tick = () => {
-        
-        stats.begin()
-        world.render()
-        stats.end()
-
-        window.requestAnimationFrame(tick)            
-    }
-    
-    tick()
 
 })
 

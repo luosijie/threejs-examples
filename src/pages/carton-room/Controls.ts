@@ -319,8 +319,7 @@ export default class Controls {
                     width: window.innerWidth,
                     height: window.innerHeight,
                 }
-            },
-            fixedMarkers: true,
+            }
         })
 
         asscroll.on('update', ScrollTrigger.update)
@@ -336,87 +335,94 @@ export default class Controls {
 
         asscroll.enable()
 
-        // First timeline
-        const firstMoveTimeline = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.first-move',
-                start: 'top top',
-                end: 'bottom bottom',
-                scrub: 0.6
-            }
-        })
-        firstMoveTimeline.to(
-            this.room.body.position,
-            { 
-                x: this.world.size.width * 0.0014
-            }
-        ).to(
-            this.floor.circlePink.scale,
-            {
-                x: 3,
-                y: 3, 
-                z: 3
-            },
-            '<'
-        )
+        ScrollTrigger.matchMedia({
+            all: () => {
+                // First timeline
+                const firstMoveTimeline = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.first-move',
+                        start: 'top top',
+                        end: 'bottom bottom',
+                        scrub: 0.6,
+                        invalidateOnRefresh: true
+                    }
+                })
+                firstMoveTimeline.to(
+                    this.room.body.position,
+                    { 
+                        x: this.world.size.width * 0.0014
+                    }
+                ).to(
+                    this.floor.circlePink.scale,
+                    {
+                        x: 3,
+                        y: 3, 
+                        z: 3
+                    },
+                    '<'
+                )
 
-        // Second timeline
-        const secondMoveTimeline = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.second-move',
-                start: 'top top',
-                end: 'bottom bottom',
-                scrub: 0.6
-            }
-        })
-        secondMoveTimeline.to(
-            this.floor.circleBlue.scale,
-            {
-                x: 3,
-                y: 3, 
-                z: 3
-            }
-        ).to(
-            this.room.body.position,
-            {
-                x: 1,
-                z: this.world.size.height * 0.0032
-            },
-            '<'
-        ).to(
-            this.room.body.scale,
-            {
-                x: 0.4,
-                y: 0.7,
-                z: 0.4,
-            },
-            '<'
-        )
+                // Second timeline
+                const secondMoveTimeline = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.second-move',
+                        start: 'top top',
+                        end: 'bottom bottom',
+                        scrub: 0.6,
+                        invalidateOnRefresh: true
+                    }
+                })
+                secondMoveTimeline.to(
+                    this.floor.circleBlue.scale,
+                    {
+                        x: 3,
+                        y: 3, 
+                        z: 3
+                    }
+                ).to(
+                    this.room.body.position,
+                    {
+                        x: 1,
+                        z: this.world.size.height * 0.0032
+                    },
+                    '<'
+                ).to(
+                    this.room.body.scale,
+                    {
+                        x: 0.4,
+                        y: 0.7,
+                        z: 0.4,
+                    },
+                    '<'
+                )
 
-        // Third timeline
-        const thirdMoveTimeline = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.third-move',
-                start: 'top top',
-                end: 'bottom bottom',
-                scrub: 0.6,
-                invalidateOnRefresh: true,
-            },
-        })
-        thirdMoveTimeline.to(
-            this.floor.circleGreen,
-            {
-                x: 3,
-                y: 3,
-                z: 3,
+                // Third timeline
+                const thirdMoveTimeline = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.third-move',
+                        start: 'top top',
+                        end: 'bottom bottom',
+                        scrub: 0.6,
+                        invalidateOnRefresh: true
+                    },
+                })
+                thirdMoveTimeline.to(
+                    this.floor.circleGreen,
+                    {
+                        x: 3,
+                        y: 3,
+                        z: 3,
+                    }
+                ).to(
+                    this.room.body.position,
+                    {
+                        x: 4.02,
+                        z: -4.5
+                    },
+                    '<'
+                )
             }
-        ).to(
-            this.room.body.position,
-            {
-                x: 4.02,
-                z: -4.5
-            },
-            '<'
-        )
+        })
+        
     }
 }

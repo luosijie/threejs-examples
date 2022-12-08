@@ -1,16 +1,28 @@
-import { Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, Object3D, Scene } from 'three'
+import { AnimationMixer, Clock, Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, Object3D, Scene } from 'three'
 import pane from './pane'
+import emitter, { EmitterType } from './emitter'
 
 export default class Room {
     body: Scene
     children: {[key: string]: Object3D}
+    mixer: AnimationMixer
 
     constructor (resoureces: any) {
         this.children = {}
         this.body = this.setBody(resoureces)
+        this.mixer = this.setMixer(resoureces)
 
+        this.init()
+    }
+
+    private init () {
         this.onMousemove()
         this.buildPane()
+
+        emitter.on(EmitterType.Tick, (clock: Clock) => {
+            const delta = clock.getDelta()
+            this.mixer.update(delta)
+        })
     }
 
     // Crete models from resources
@@ -70,6 +82,13 @@ export default class Room {
         })
 
         return scene
+    }
+
+    private setMixer (resources: any) {
+        const mixer = new AnimationMixer(this.body)
+        const swim = mixer.clipAction(resources.modelRoom.animations[0])
+        swim.play()
+        return mixer
     }
 
     private buildPane () {
