@@ -33,10 +33,14 @@ const routes = [
         path: '/house-in-desert',
         component: module('house-in-desert')
     },
-
     {
         path: '/carton-room',
         component: module('carton-room')
+    },
+
+    {
+        path: '/sampler-particles',
+        component: module('sampler-particles')
     }
 ]
 
