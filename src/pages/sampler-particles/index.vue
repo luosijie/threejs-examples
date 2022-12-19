@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-import { Scene, sRGBEncoding, PerspectiveCamera, WebGLRenderer, Clock } from 'three'
+import { Scene, sRGBEncoding, PerspectiveCamera, WebGLRenderer, Clock, AxesHelper, BoxGeometry, MeshBasicMaterial, Mesh } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 
@@ -34,10 +34,33 @@ const toggle = value => {
 }
 
 onMounted(() => {
+
+    // sizes
+    const sizes = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    }
    
     const canvas = document.querySelector('#canvas')
 
+    // renderer
+    const renderer = new WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha:true
+    })
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.outputEncoding = sRGBEncoding
+
     const scene = new Scene()
+
+    // Base camera
+    const camera = new PerspectiveCamera(50, sizes.width / sizes.height, 0.1, 100)
+    // camera.position.x = 0
+    // camera.position.y = 1
+    camera.position.z = 5
+    camera.position.y = 1
 
     loader.onLoadEnd(() => {
         horse = new Model(loader.resources.horse, scene)
@@ -45,12 +68,6 @@ onMounted(() => {
         
         horse.show()
     })
-
-    // sizes
-    const sizes = {
-        width: window.innerWidth,
-        height: window.innerHeight
-    }
 
     window.addEventListener('resize', () => {
     // Update sizes
@@ -66,37 +83,22 @@ onMounted(() => {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     })
 
+    // scene.rotateY(Math.PI)
+
     window.addEventListener('mousemove', evt => {
         const x = evt.clientX
         const y = evt.clientY
-        console.log('sss', scene.rotation.y)
         gsap.to(scene.rotation, {
-            y: gsap.utils.mapRange(0, window.innerWidth, .5, -.5, x),
+            y: gsap.utils.mapRange(0, window.innerWidth, 0.5, -0.5, x),
             x: gsap.utils.mapRange(0, window.innerHeight, .5, -.5, y)
             // y: gsap.utils.mapRange(0, window.innerWidth, .2, -.2, x)
         })
     })
 
-    // Base camera
-    const camera = new PerspectiveCamera(50, sizes.width / sizes.height, 0.1, 100)
-    // camera.position.x = 0
-    // camera.position.y = 1
-    camera.position.z = 5
-    scene.add(camera)
-
     // Controls
     const controls = new OrbitControls(camera, canvas)
     controls.enableDamping = true
     controls.enabled = false
-
-    // renderer
-    const renderer = new WebGLRenderer({
-        canvas: canvas,
-        antialias: true
-    })
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.outputEncoding = sRGBEncoding
 
     // animate
     const clock = new Clock()
