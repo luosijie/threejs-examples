@@ -8,39 +8,47 @@ const module = (name:String) => {
 
 console.log(modules)
 
+import Home from '@/pages/home/index.vue'
+import Jump from '@/pages/jump/index.vue'
+import MiniCity from '@/pages/mini-city/index.vue'
+import ChinaMap from '@/pages/china-map/index.vue'
+import HouseInDesert from '@/pages/house-in-desert/index.vue'
+import CartonRoom from '@/pages/carton-room/index.vue'
+import SamplerParticles from '@/pages/sampler-particles/index.vue'
+
 const routes = [
     {
         path: '/',
-        component: module('home')
+        component: Home
     },
 
     {
         path: '/jump',
-        component: module('jump')
+        component: Jump
     },
 
     {
         path: '/mini-city',
-        component: module('mini-city')
+        component: MiniCity
     },
 
     {
         path: '/china-map',
-        component: module('china-map')
+        component: ChinaMap
     },
 
     {
         path: '/house-in-desert',
-        component: module('house-in-desert')
+        component: HouseInDesert
     },
     {
         path: '/carton-room',
-        component: module('carton-room')
+        component: CartonRoom
     },
 
     {
         path: '/sampler-particles',
-        component: module('sampler-particles')
+        component: SamplerParticles
     }
 ]
 
