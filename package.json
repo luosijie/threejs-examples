@@ -21,7 +21,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@tweakpane/core": "^1.1.1",
-    "@types/greensock": "^1.15.32",
     "@types/node": "^18.11.9",
     "@types/stats": "^0.16.30",
     "@types/three": "^0.146.0",

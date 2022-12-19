@@ -14,10 +14,14 @@
     "skipLibCheck": true,
     "noEmit": true,
     "baseUrl": "./",
+    "declaration": true,
     "paths": {
       "@/*": ["./src/*"]
     }
   },
+  "files": [
+    "node_modules/gsap/types/index.d.ts"
+  ],
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

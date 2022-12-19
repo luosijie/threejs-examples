@@ -1,9 +1,9 @@
-import { Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, Object3D, Scene } from 'three'
+import { Object3D } from 'three'
 import Floor from './Floor'
 import Room from './Room'
 
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger.js'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import ASScroll from '@ashthornton/asscroll'
 import World from './World'
 

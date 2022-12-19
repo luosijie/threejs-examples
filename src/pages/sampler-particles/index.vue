@@ -43,7 +43,7 @@ onMounted(() => {
    
     const canvas = document.querySelector('#canvas')
 
-    // renderer
+    // Renderer
     const renderer = new WebGLRenderer({
         canvas: canvas,
         antialias: true,
@@ -53,12 +53,11 @@ onMounted(() => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.outputEncoding = sRGBEncoding
 
+    // Scene
     const scene = new Scene()
 
-    // Base camera
+    // Camera
     const camera = new PerspectiveCamera(50, sizes.width / sizes.height, 0.1, 100)
-    // camera.position.x = 0
-    // camera.position.y = 1
     camera.position.z = 5
     camera.position.y = 1
 
@@ -70,7 +69,7 @@ onMounted(() => {
     })
 
     window.addEventListener('resize', () => {
-    // Update sizes
+        // Update sizes
         sizes.width = window.innerWidth
         sizes.height = window.innerHeight
 
@@ -83,15 +82,12 @@ onMounted(() => {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     })
 
-    // scene.rotateY(Math.PI)
-
     window.addEventListener('mousemove', evt => {
         const x = evt.clientX
         const y = evt.clientY
         gsap.to(scene.rotation, {
             y: gsap.utils.mapRange(0, window.innerWidth, 0.5, -0.5, x),
             x: gsap.utils.mapRange(0, window.innerHeight, .5, -.5, y)
-            // y: gsap.utils.mapRange(0, window.innerWidth, .2, -.2, x)
         })
     })
 
@@ -140,6 +136,9 @@ onMounted(() => {
             {{ item }}
         </button>
     </div>
+    <div class="info">
+        <a href="https://www.awwwards.com/academy/course/impress-everyone-with-a-3d-particle-scene-starting-from-bad-models" class="" target="_blank">Tutorial From Fabio Ottaviani</a>
+    </div>
     <canvas id="canvas"/>
 </template>
 
@@ -160,6 +159,15 @@ onMounted(() => {
             font-weight: bold;
             background: white;
         }
+    }
+}
+.info {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    a {
+        color: #666666;
     }
 }
 </style>
