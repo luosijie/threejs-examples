@@ -6,8 +6,10 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 // https://vitejs.dev/config/
 
 console.log('process-env', process.env)
+const REPO = 'threejs-examples'
+
 export default defineConfig({
-    base: process.env.NODE_ENV === 'production' ? '/threejs-examples/' : '',
+    base: process.env.NODE_ENV === 'production' ? `/${REPO}/` : '/',
     server: {
         port: 8080
     },
