@@ -1,7 +1,7 @@
 
 <script setup>
 import ASScroll from '@ashthornton/asscroll'
-import { onMounted, nextTick } from 'vue'
+import { onMounted } from 'vue'
 
 const cover = name => {
     return new URL(`./images/covers/${name}.png`, import.meta.url).href
@@ -16,13 +16,10 @@ const workList = [
     { link: '/china-map', img: cover('china-map') }
 ]
 
-onMounted(async () => {
-
-    await nextTick()
+onMounted(() => {
     const asscroll = new ASScroll()
     setTimeout(() => {
         asscroll.enable()
-        console.log('a', asscroll)
     }, 500)
 })
 
@@ -58,7 +55,6 @@ onMounted(async () => {
 }
 .info {
     margin: 60px;
-    margin-bottom: 200px;
     text-align: center;
     img {
         margin: 35px;
