@@ -17,7 +17,6 @@ export default class Sketch {
     size: Size
     mouse: Mouse
 
-    clock: Clock
     controls: OrbitControls
 
     canvas: HTMLCanvasElement
@@ -41,8 +40,6 @@ export default class Sketch {
             x: 0, 
             y: 0
         }
-
-        this.clock = new Clock()
 
         this.canvas = config.canvas
         this.renderer = this.setRenderer()
