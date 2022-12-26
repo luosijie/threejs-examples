@@ -39,6 +39,11 @@ const routes = [
     {
         path: '/sampler-particles',
         component: module('sampler-particles')
+    },
+
+    {
+        path: '/globe',
+        component: module('globe')
     }
 ]
 
