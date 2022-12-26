@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="info">
-            <img src="/images/logo.png" alt="Three.js Examples" class="logo">
+            <img src="./images/logo.png" alt="Three.js Examples" class="logo">
             <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
             <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
         </div>
@@ -21,11 +21,11 @@ export default {
         return {
             workList: [
                 { link: '', img: '' },
-                { link: '/house-in-desert', img: '/images/covers/house-in-desert.png' },
+                { link: '/house-in-desert', img: './images/covers/house-in-desert.png' },
                 { link: '', img: '' },
-                { link: '/jump', img: '/images/covers/threejs-example-jump.png' },
-                { link: '/mini-city', img: '/images/covers/threejs-example-mini-city.png' },
-                { link: '/china-map', img: '/images/covers/threejs-example-china-map.png' }
+                { link: '/jump', img: './images/covers/threejs-example-jump.png' },
+                { link: '/mini-city', img: './images/covers/threejs-example-mini-city.png' },
+                { link: '/china-map', img: './images/covers/threejs-example-china-map.png' }
             ]
         }
     }
