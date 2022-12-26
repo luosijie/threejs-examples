@@ -7,7 +7,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 
 console.log('process-env', process.env)
 export default defineConfig({
-    base: process.env.NODE_ENV === 'production' ? '/threejs-example/' : '',
+    base: process.env.NODE_ENV === 'production' ? '/threejs-examples/' : '',
     server: {
         port: 8080
     },
