@@ -6,8 +6,6 @@ const module = (name:String) => {
     return modules[`/src/pages/${name}/index.vue`]
 }
 
-console.log(modules)
-
 const routes = [
     {
         path: '/',

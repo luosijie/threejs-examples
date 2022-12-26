@@ -15,17 +15,22 @@
     </div>
 </template>
 <script>
+
+const cover = name => {
+    return new URL(`./images/covers/${name}.png`, import.meta.url).href
+}
+
 export default {
     name: 'home',
     data () {
         return {
             workList: [
                 { link: '', img: '' },
-                { link: '/house-in-desert', img: './images/covers/house-in-desert.png' },
+                { link: '/house-in-desert', img: cover('house-in-desert') },
                 { link: '', img: '' },
-                { link: '/jump', img: './images/covers/threejs-example-jump.png' },
-                { link: '/mini-city', img: './images/covers/threejs-example-mini-city.png' },
-                { link: '/china-map', img: './images/covers/threejs-example-china-map.png' }
+                { link: '/jump', img: cover('jump') },
+                { link: '/mini-city', img: cover('mini-city') },
+                { link: '/china-map', img: cover('china-map') }
             ]
         }
     }
