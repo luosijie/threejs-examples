@@ -4,13 +4,12 @@ import eslintPlugin from 'vite-plugin-eslint'
 import * as path from 'path'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 // https://vitejs.dev/config/
+
+console.log('process-env', process.env)
 export default defineConfig({
-    base: '/threejs-example/',
+    base: process.env.NODE_ENV === 'production' ? '/threejs-example/' : '',
     server: {
         port: 8080
-    },
-    build: {
-        outDir: 'docs'
     },
     resolve: {
         alias: {
