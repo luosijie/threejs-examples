@@ -5,7 +5,6 @@ import * as path from 'path'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 // https://vitejs.dev/config/
 
-console.log('process-env', process.env)
 const REPO = 'threejs-examples'
 
 export default defineConfig({

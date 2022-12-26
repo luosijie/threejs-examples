@@ -1,55 +1,64 @@
-<template>
-    <div class="container">
-        <div class="info">
-            <img src="./images/logo.png" alt="Three.js Examples" class="logo">
-            <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
-            <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
-        </div>
-        <div class="works">
-            <div v-for="(item, index) in workList" :key="index">
-                <router-link :to="item.link" v-if="item.img">
-                    <img :src="item.img">
-                </router-link>
-            </div>
-        </div>
-    </div>
-</template>
-<script>
+
+<script setup>
+import ASScroll from '@ashthornton/asscroll'
+import { onMounted, nextTick } from 'vue'
 
 const cover = name => {
     return new URL(`./images/covers/${name}.png`, import.meta.url).href
 }
+    
+const workList = [
+    { link: '', img: '' },
+    { link: '/house-in-desert', img: cover('house-in-desert') },
+    { link: '', img: '' },
+    { link: '/jump', img: cover('jump') },
+    { link: '/mini-city', img: cover('mini-city') },
+    { link: '/china-map', img: cover('china-map') }
+]
 
-export default {
-    name: 'home',
-    data () {
-        return {
-            workList: [
-                { link: '', img: '' },
-                { link: '/house-in-desert', img: cover('house-in-desert') },
-                { link: '', img: '' },
-                { link: '/jump', img: cover('jump') },
-                { link: '/mini-city', img: cover('mini-city') },
-                { link: '/china-map', img: cover('china-map') }
-            ]
-        }
-    }
-}
+onMounted(async () => {
+
+    await nextTick()
+    const asscroll = new ASScroll()
+    setTimeout(() => {
+        asscroll.enable()
+        console.log('a', asscroll)
+    }, 500)
+})
 
 </script>
+
+<template>
+    <div asscroll-container>
+        <div asscroll class="container">
+            <div class="info">
+                <img src="./images/logo.png" alt="Three.js Examples" class="logo">
+                <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
+                <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
+            </div>
+            <div class="works">
+                <div v-for="(item, index) in workList" :key="index">
+                    <router-link :to="item.link" v-if="item.img">
+                        <img :src="item.img">
+                    </router-link>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .container {
     display: flex;
     align-items: center;
-    margin: 0;
-    padding: 0;
-    width: 100%; // height: 100%;
+    width: 100vw;
+    min-height: 100vh;
     background: #ffffff;
     flex-direction: column;
 }
 .info {
     margin: 60px;
+    margin-bottom: 200px;
     text-align: center;
     img {
         margin: 35px;
