@@ -1,7 +1,5 @@
 
 <script setup>
-import ASScroll from '@ashthornton/asscroll'
-import { onMounted } from 'vue'
 
 const cover = name => {
     return new URL(`./images/covers/${name}.png`, import.meta.url).href
@@ -16,29 +14,20 @@ const workList = [
     { link: '/china-map', img: cover('china-map') }
 ]
 
-onMounted(() => {
-    const asscroll = new ASScroll()
-    setTimeout(() => {
-        asscroll.enable()
-    }, 500)
-})
-
 </script>
 
 <template>
-    <div asscroll-container>
-        <div asscroll class="container">
-            <div class="info">
-                <img src="./images/logo.png" alt="Three.js Examples" class="logo">
-                <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
-                <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
-            </div>
-            <div class="works">
-                <div v-for="(item, index) in workList" :key="index">
-                    <router-link :to="item.link" v-if="item.img">
-                        <img :src="item.img">
-                    </router-link>
-                </div>
+    <div class="container">
+        <div class="info">
+            <img src="./images/logo.png" alt="Three.js Examples" class="logo">
+            <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
+            <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
+        </div>
+        <div class="works">
+            <div v-for="(item, index) in workList" :key="index">
+                <router-link :to="item.link" v-if="item.img">
+                    <img :src="item.img">
+                </router-link>
             </div>
         </div>
     </div>
@@ -48,7 +37,6 @@ onMounted(() => {
 .container {
     display: flex;
     align-items: center;
-    width: 100vw;
     min-height: 100vh;
     background: #ffffff;
     flex-direction: column;
