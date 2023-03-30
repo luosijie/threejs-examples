@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES6",
     "allowJs": true,
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext", "DOM", "ES6"],
     "skipLibCheck": true,
     "noEmit": true,
     "baseUrl": "./",
@@ -23,5 +23,6 @@
     "node_modules/gsap/types/index.d.ts"
   ],
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["src/**/draco/*.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
