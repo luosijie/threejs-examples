@@ -36,7 +36,7 @@ export default defineConfig({
                 'sampler-particles': resolve(root, 'globe', 'index.html'),
                 'carton-room': resolve(root, 'carton-room', 'index.html'),
                 'house-in-desert': resolve(root, 'house-in-desert', 'index.html'),
-                'china-map': resolve(root, 'china-map', 'index.html')
+                'china-map': resolve(root, 'china-map', 'index.html'),
                 'mini-city': resolve(root, 'mini-city', 'index.html')
             }
         }
