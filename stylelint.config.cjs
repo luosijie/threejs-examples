@@ -24,7 +24,7 @@ module.exports = {
         'unit-case': null,
         'color-hex-case': 'lower',
         'color-hex-length': 'long',
-        'rule-empty-line-before': 'never',
+        // 'rule-empty-line-before': 'never',
         'font-family-no-missing-generic-family-keyword': null,
         'selector-type-no-unknown': null,
         'block-opening-brace-space-before': 'always',
