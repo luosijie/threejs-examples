@@ -4,6 +4,8 @@ import eslintPlugin from 'vite-plugin-eslint'
 import * as path from 'path'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { resolve } from 'path'
+import glsl from 'vite-plugin-glsl'
+
 // https://vitejs.dev/config/
 
 const REPO = 'threejs-examples'
@@ -25,7 +27,8 @@ export default defineConfig({
         eslintPlugin({
             include: ['src/**/*.js', 'src/**/*.vue', 'src/*.js', 'src/*.vue'],
             exclude: ['src/**/draco/*.js']
-        })
+        }),
+        glsl({ watch: true })
     ],
     build: {
         rollupOptions: {

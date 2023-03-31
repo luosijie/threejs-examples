@@ -7,7 +7,7 @@ module.exports = {
         'stylelint-config-prettier'
     ],
     plugins: ['stylelint-order'],
-    customSyntax: 'postcss-html', // 开启会导致css文件校验无效
+    // customSyntax: 'postcss-html', // 开启会导致css文件校验无效
     ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts', '**/*.json'],
     rules: {
         indentation: 4,

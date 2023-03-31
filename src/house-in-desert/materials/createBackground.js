@@ -1,7 +1,7 @@
 import { RGBAFormat, Color, DataTexture, LinearFilter, ShaderMaterial } from 'three'
 
-import shaderFragment from '../shaders/floor/fragment.glsl?raw'
-import shaderVertex from '../shaders/floor/vertex.glsl?raw'
+import vertexShader from '../shaders/background/vertex.glsl'
+import fragmentShader from '../shaders/background/fragment.glsl'
 
 export default function () {
     const topLeft = new Color('#cfbfa7')
@@ -10,10 +10,10 @@ export default function () {
     const bottomLeft = new Color('#ded5c8')
 
     const data = new Uint8Array([
-        Math.round(bottomLeft.r * 255), Math.round(bottomLeft.g * 255), Math.round(bottomLeft.b * 255), 1,
-        Math.round(bottomRight.r * 255), Math.round(bottomRight.g * 255), Math.round(bottomRight.b * 255), 1,
-        Math.round(topLeft.r * 255), Math.round(topLeft.g * 255), Math.round(topLeft.b * 255), 1,
-        Math.round(topRight.r * 255), Math.round(topRight.g * 255), Math.round(topRight.b * 255), 1
+        Math.round(bottomLeft.r * 255), Math.round(bottomLeft.g * 255), Math.round(bottomLeft.b * 255), 255,
+        Math.round(bottomRight.r * 255), Math.round(bottomRight.g * 255), Math.round(bottomRight.b * 255), 255,
+        Math.round(topLeft.r * 255), Math.round(topLeft.g * 255), Math.round(topLeft.b * 255), 255,
+        Math.round(topRight.r * 255), Math.round(topRight.g * 255), Math.round(topRight.b * 255), 255
     ])
 
     // texture-floor
@@ -29,8 +29,8 @@ export default function () {
         wireframe: false,
         transparent: false,
         uniforms,
-        vertexShader: shaderVertex,
-        fragmentShader: shaderFragment
+        vertexShader,
+        fragmentShader
     })
 
     return material
