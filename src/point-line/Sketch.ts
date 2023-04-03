@@ -1,5 +1,5 @@
 import gsap from 'gsap'
-import { BoxGeometry, BoxHelper, PointsMaterial, Group, Mesh, AdditiveBlending, PerspectiveCamera, Scene, BufferGeometry, WebGLRenderer, Material, BufferAttribute, DynamicDrawUsage, Points, Vector3, Line } from 'three'
+import { BoxGeometry, BoxHelper, PointsMaterial, Group, Mesh, AdditiveBlending, PerspectiveCamera, Scene, BufferGeometry, WebGLRenderer, Material, BufferAttribute, DynamicDrawUsage, Points, Vector3, Line, LineBasicMaterial, LineSegments, sRGBEncoding } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Pane } from 'tweakpane'
 
@@ -11,13 +11,17 @@ export interface Config {
     range: number,
     maxParticleCount: number,
     particleCount: number,
-    speed: number
+    speed: number,
+
+    showLines: boolean,
+    connectionsDist: number,
+    connectionsLimit: number
 }
 
-interface PointsInfo {
-    positions: Float32Array,
-    velocities: Array<Vector3>
-    lines: Array<Line>
+interface PointInfo {
+    position: Vector3,
+    velocity: Vector3,
+    connections: number
 }
 
 export default class Sketch {
@@ -31,8 +35,14 @@ export default class Sketch {
     camera: PerspectiveCamera
 
     group: Group
+
+    pointInfos: Array<PointInfo>
+    pointsPositionArray: Float32Array
     points: Points
-    pointsInfo: PointsInfo
+
+    linesPositionArray: Float32Array
+    linesColorArray: Float32Array
+    lines: LineSegments
 
     constructor (config: Config) {
         this.config = config
@@ -45,12 +55,15 @@ export default class Sketch {
         this.controls = new OrbitControls(this.camera, this.canvas)
 
         this.group = new Group()
-        this.pointsInfo = {
-            positions: new Float32Array(this.config.maxParticleCount * 3),
-            velocities: new Array(this.config.maxParticleCount),
-            lines: []
-        }
+
+        this.pointInfos = new Array(this.config.maxParticleCount)
+        this.pointsPositionArray = new Float32Array(this.config.maxParticleCount * 3)
         this.points = this.createPoints()
+
+        const linesNum = this.config.particleCount * this.config.particleCount / 2
+        this.linesPositionArray = new Float32Array(linesNum * 3)
+        this.linesColorArray = new Float32Array(linesNum * 3)
+        this.lines = this.createLines()
 
         this.initPane()
         this.init()
@@ -63,12 +76,17 @@ export default class Sketch {
             this.points.geometry.setDrawRange(0, value)
         })
         pane.addInput(this.config, 'speed', { min: 0, max: .1 })
+        pane.addInput(this.config, 'showLines')
+        pane.addInput(this.config, 'connectionsDist', { min: 0, max: 300 })
+        pane.addInput(this.config, 'connectionsLimit',  { min: 0, max: 10 })
     }
 
     private init () {
         this.updateCamera()
 
         this.group.add(this.points)
+        this.group.add(this.lines)
+
         this.scene.add(this.group)
 
         this.setHelper()
@@ -80,26 +98,35 @@ export default class Sketch {
         const maxParticleCount = this.config.maxParticleCount
         const particleCount = this.config.particleCount
 
-        const positions = this.pointsInfo.positions
-        const velocities = this.pointsInfo.velocities
         for (let i = 0; i < maxParticleCount; i++ ) {
+
             const x = (Math.random() - 0.5) * range
             const y = (Math.random() - 0.5) * range
             const z = (Math.random() - 0.5) * range
+            
+            this.pointsPositionArray[i * 3 + 0] = x
+            this.pointsPositionArray[i * 3 + 1] = y
+            this.pointsPositionArray[i * 3 + 2] = z
 
-            positions[i * 3 + 0] = x
-            positions[i * 3 + 1] = y
-            positions[i * 3 + 2] = z
-
-            velocities[i] = new Vector3(
+            const position = new Vector3(x, y, z)
+            const velocity = new Vector3(
                 Math.random() * 2 - 1,
                 Math.random() * 2 - 1,
                 Math.random() * 2 - 1
+
             )
+
+            const pointInfo = {
+                position,
+                velocity,
+                connections: 0
+            }
+
+            this.pointInfos[i] = pointInfo
         }
 
         const bufferGeomety = new BufferGeometry()
-        bufferGeomety.setAttribute('position', new BufferAttribute(positions, 3).setUsage(DynamicDrawUsage))
+        bufferGeomety.setAttribute('position', new BufferAttribute(this.pointsPositionArray, 3).setUsage(DynamicDrawUsage))
         bufferGeomety.setDrawRange(0, particleCount)
 
         const material = new PointsMaterial({ color: 0xffffff, size: 3, blending: AdditiveBlending, transparent: true, sizeAttenuation: false })
@@ -109,43 +136,107 @@ export default class Sketch {
         return points
     }
 
+    private createLines () {
+        const bufferGeometry = new BufferGeometry()
+        bufferGeometry.setAttribute('position', new BufferAttribute(this.linesPositionArray, 3).setUsage(DynamicDrawUsage))
+        bufferGeometry.setAttribute('color', new BufferAttribute(this.linesColorArray, 3).setUsage(DynamicDrawUsage))
+        bufferGeometry.computeBoundingSphere()
+        bufferGeometry.setDrawRange(0, 0)
+        
+        const material = new LineBasicMaterial({
+            vertexColors: true,
+            blending: AdditiveBlending, 
+            transparent: true 
+        })
+        const lines = new LineSegments(bufferGeometry, material)
+
+        return lines
+    }
+
     private updatePoints () {
-        const positions = this.pointsInfo.positions
-        const velocities = this.pointsInfo.velocities
-        const lines = this.pointsInfo.lines
+        const particleCount = this.config.particleCount
+
         const halfRange = this.config.range / 2
         
-        if (lines.length) {
-            for (let i = 0; i < lines.length; i++) {
-                this.group.remove(lines[i])
-            }
-        }
-        for (let i = 0; i < this.config.particleCount; i++) {
-            // update position
-            const x =  i * 3 + 0
-            const y =  i * 3 + 1
-            const z =  i * 3 + 2
-            positions[x] += velocities[i].x * this.config.speed
-            positions[y] += velocities[i].y * this.config.speed
-            positions[z] += velocities[i].z * this.config.speed
+        let linesIndex = 0
+        let totalLines = 0
 
-            if (positions[x] > halfRange || positions[x] < -halfRange) {
-                velocities[i].x = -velocities[i].x
-            }
-            if (positions[y] > halfRange || positions[y] < -halfRange) {
-                velocities[i].y = -velocities[i].y
-            }
-            if (positions[z] > halfRange || positions[z] < -halfRange) {
-                velocities[i].z = -velocities[i].z
-            }
-
-            for (let j = 0; j < this.config.particleCount; j++) {
-                //
-            }
+        for (let i = 0; i < particleCount; i++) {
+            this.pointInfos[i].connections = 0
         }
 
+        for (let i = 0; i < particleCount; i++) {
+
+            const point = this.pointInfos[i]
+            // update point info
+            const pointPosition = point.position
+            const pointVelocity = point.velocity
+     
+            pointPosition.x += pointVelocity.x * this.config.speed
+            pointPosition.y += pointVelocity.y * this.config.speed
+            pointPosition.z += pointVelocity.z * this.config.speed
+
+            // collision check
+            if (pointPosition.x > halfRange || pointPosition.x < -halfRange) {
+                pointVelocity.x = -pointVelocity.x
+            }
+            if (pointPosition.y > halfRange || pointPosition.y < -halfRange) {
+                pointVelocity.y = -pointVelocity.y
+            }
+            if (pointPosition.z > halfRange || pointPosition.z < -halfRange) {
+                pointVelocity.z = -pointVelocity.z
+            }
+            
+            this.pointsPositionArray[i * 3 + 0] = pointPosition.x
+            this.pointsPositionArray[i * 3 + 1] = pointPosition.y
+            this.pointsPositionArray[i * 3 + 2] = pointPosition.z
+
+            if ( point.connections >= this.config.connectionsLimit) continue
+
+            for (let j = i + 1; j < particleCount; j++) {
+                const startPoint = point
+                const endPoint = this.pointInfos[j]
+                
+                if (point.connections >= this.config.connectionsLimit || endPoint.connections >= this.config.connectionsLimit) continue
+                
+                const distance = startPoint.position.distanceTo(endPoint.position)
+                if (distance >= this.config.connectionsDist) continue
+
+                startPoint.connections++
+                endPoint.connections++
+
+                let alpha = 1. - distance / this.config.connectionsDist
+                    
+                this.linesPositionArray[linesIndex * 3 + 0] = startPoint.position.x
+                this.linesPositionArray[linesIndex * 3 + 1] = startPoint.position.y
+                this.linesPositionArray[linesIndex * 3 + 2] = startPoint.position.z
+
+                this.linesColorArray[linesIndex * 3 + 0] = alpha
+                this.linesColorArray[linesIndex * 3 + 1] = alpha
+                this.linesColorArray[linesIndex * 3 + 2] = alpha
+
+                linesIndex++
+
+                this.linesPositionArray[linesIndex * 3 + 0] = endPoint.position.x
+                this.linesPositionArray[linesIndex * 3 + 1] = endPoint.position.y
+                this.linesPositionArray[linesIndex * 3 + 2] = endPoint.position.z
+
+                this.linesColorArray[linesIndex * 3 + 0] = alpha
+                this.linesColorArray[linesIndex * 3 + 1] = alpha
+                this.linesColorArray[linesIndex * 3 + 2] = alpha
+
+                linesIndex ++
+
+                totalLines++
+            }
+        }
+        // console.log('sss', this.linesPositionArray)
+
+        this.lines.geometry.attributes.position.needsUpdate = true
+        this.lines.geometry.attributes.color.needsUpdate = true
+        this.lines.geometry.setDrawRange(0, totalLines * 2)
+        
         this.points.geometry.attributes.position.needsUpdate = true
-
         // update line
     }
 
@@ -164,7 +255,9 @@ export default class Sketch {
 
     private createRenderer () {
         const renderer = new WebGLRenderer({ antialias: true, canvas: this.canvas, alpha: true })
+        renderer.setPixelRatio(Math.min(2, window.devicePixelRatio))
         renderer.setSize( this.config.width, this.config.height)
+        renderer.outputEncoding = sRGBEncoding
         renderer.setAnimationLoop( this.render.bind(this) )
         return renderer
     }

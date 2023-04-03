@@ -11,9 +11,12 @@ if (canvas instanceof HTMLCanvasElement) {
         height: window.innerHeight,
         
         range: 8,
-        speed: .05,
-        maxParticleCount: 1000,
-        particleCount: 500
+        speed: .01,
+        maxParticleCount: 500,
+        particleCount: 100,
+        showLines: true,
+        connectionsDist: 5,
+        connectionsLimit: 3
     })
 
     window.addEventListener('resize', () => {
