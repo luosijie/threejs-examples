@@ -10,12 +10,12 @@ if (canvas instanceof HTMLCanvasElement) {
         width: window.innerWidth,
         height: window.innerHeight,
         
-        range: 8,
-        speed: .01,
+        range: 800,
+        speed: 1,
         maxParticleCount: 500,
         particleCount: 100,
         showLines: true,
-        connectionsDist: 5,
+        connectionsDist: 150,
         connectionsLimit: 3
     })
 

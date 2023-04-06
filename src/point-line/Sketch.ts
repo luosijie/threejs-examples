@@ -200,6 +200,7 @@ export default class Sketch {
                 if (point.connections >= this.config.connectionsLimit || endPoint.connections >= this.config.connectionsLimit) continue
                 
                 const distance = startPoint.position.distanceTo(endPoint.position)
+                
                 if (distance >= this.config.connectionsDist) continue
 
                 startPoint.connections++
@@ -270,10 +271,8 @@ export default class Sketch {
     }
 
     private createCamera () {
-        const camera = new PerspectiveCamera(70, this.config.width / this.config.height, 0.01, 1000 )
-        camera.position.x = 6
-        camera.position.y = 6
-        camera.position.z = 8
+        const camera = new PerspectiveCamera(70, this.config.width / this.config.height, 0.01, 4000 )
+        camera.position.z = 1750
         return camera
     }
 
