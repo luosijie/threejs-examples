@@ -2,6 +2,7 @@ import gsap from 'gsap'
 import { BoxGeometry, BoxHelper, PointsMaterial, Group, Mesh, AdditiveBlending, PerspectiveCamera, Scene, BufferGeometry, WebGLRenderer, Material, BufferAttribute, DynamicDrawUsage, Points, Vector3, Line, LineBasicMaterial, LineSegments, sRGBEncoding } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Pane } from 'tweakpane'
+import Stats from 'three/addons/libs/stats.module.js'
 
 export interface Config {
     canvas: HTMLCanvasElement,
@@ -26,6 +27,7 @@ interface PointInfo {
 
 export default class Sketch {
     controls: OrbitControls
+    stats: Stats
 
     canvas: HTMLCanvasElement
     config: Config
@@ -53,6 +55,7 @@ export default class Sketch {
         this.renderer = this.createRenderer()
         this.camera = this.createCamera()
         this.controls = new OrbitControls(this.camera, this.canvas)
+        this.stats = this.createStats()
 
         this.group = new Group()
 
@@ -64,9 +67,10 @@ export default class Sketch {
         this.linesPositionArray = new Float32Array(linesNum * 3)
         this.linesColorArray = new Float32Array(linesNum * 3)
         this.lines = this.createLines()
-
+        
         this.initPane()
         this.init()
+
     }
 
     private initPane () {
@@ -75,10 +79,16 @@ export default class Sketch {
             const value = evt.value
             this.points.geometry.setDrawRange(0, value)
         })
-        pane.addInput(this.config, 'speed', { min: 0, max: .1 })
+        pane.addInput(this.config, 'speed', { min: 0, max: 10 })
         pane.addInput(this.config, 'showLines')
         pane.addInput(this.config, 'connectionsDist', { min: 0, max: 300 })
         pane.addInput(this.config, 'connectionsLimit',  { min: 0, max: 10 })
+    }
+
+    private createStats () {
+        const stats = new Stats()
+        document.body.appendChild(stats.dom)
+        return stats
     }
 
     private init () {
@@ -168,28 +178,25 @@ export default class Sketch {
         for (let i = 0; i < particleCount; i++) {
 
             const point = this.pointInfos[i]
-            // update point info
-            const pointPosition = point.position
-            const pointVelocity = point.velocity
      
-            pointPosition.x += pointVelocity.x * this.config.speed
-            pointPosition.y += pointVelocity.y * this.config.speed
-            pointPosition.z += pointVelocity.z * this.config.speed
+            point.position.x += point.velocity.x * this.config.speed
+            point.position.y += point.velocity.y * this.config.speed
+            point.position.z += point.velocity.z * this.config.speed
 
             // collision check
-            if (pointPosition.x > halfRange || pointPosition.x < -halfRange) {
-                pointVelocity.x = -pointVelocity.x
+            if (point.position.x > halfRange || point.position.x < -halfRange) {
+                point.velocity.x = -point.velocity.x
             }
-            if (pointPosition.y > halfRange || pointPosition.y < -halfRange) {
-                pointVelocity.y = -pointVelocity.y
+            if (point.position.y > halfRange || point.position.y < -halfRange) {
+                point.velocity.y = -point.velocity.y
             }
-            if (pointPosition.z > halfRange || pointPosition.z < -halfRange) {
-                pointVelocity.z = -pointVelocity.z
+            if (point.position.z > halfRange || point.position.z < -halfRange) {
+                point.velocity.z = -point.velocity.z
             }
             
-            this.pointsPositionArray[i * 3 + 0] = pointPosition.x
-            this.pointsPositionArray[i * 3 + 1] = pointPosition.y
-            this.pointsPositionArray[i * 3 + 2] = pointPosition.z
+            this.pointsPositionArray[i * 3 + 0] = point.position.x
+            this.pointsPositionArray[i * 3 + 1] = point.position.y
+            this.pointsPositionArray[i * 3 + 2] = point.position.z
 
             if ( point.connections >= this.config.connectionsLimit) continue
 
@@ -231,7 +238,6 @@ export default class Sketch {
                 totalLines++
             }
         }
-        // console.log('sss', this.linesPositionArray)
 
         this.lines.geometry.attributes.position.needsUpdate = true
         this.lines.geometry.attributes.color.needsUpdate = true
@@ -267,11 +273,12 @@ export default class Sketch {
         this.updatePoints()
 
         this.controls.update()
+        this.stats.update()
         this.renderer.render( this.scene, this.camera )
     }
 
     private createCamera () {
-        const camera = new PerspectiveCamera(70, this.config.width / this.config.height, 0.01, 4000 )
+        const camera = new PerspectiveCamera(45, this.config.width / this.config.height, 1, 4000 )
         camera.position.z = 1750
         return camera
     }

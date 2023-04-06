@@ -23,6 +23,6 @@
     "node_modules/gsap/types/index.d.ts"
   ],
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["src/**/draco/*.js"],
+  "exclude": ["src/**/draco/*.js", "node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
