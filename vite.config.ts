@@ -41,7 +41,8 @@ export default defineConfig({
                 'house-in-desert': resolve(root, 'house-in-desert', 'index.html'),
                 'china-map': resolve(root, 'china-map', 'index.html'),
                 'mini-city': resolve(root, 'mini-city', 'index.html'),
-                'point-line': resolve(root, 'point-line', 'index.html')
+                'point-line': resolve(root, 'point-line', 'index.html'),
+                'cities-in-planet': resolve(root, 'cities-in-planet', 'index.html')
             }
         }
     }
