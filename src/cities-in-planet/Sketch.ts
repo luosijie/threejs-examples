@@ -1,15 +1,22 @@
 import gsap from 'gsap'
-import { Clock, Group, PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three'
+import { Clock, Group, Mesh, PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { Config, Size } from './Types'
+import { Size } from './Types'
 
 import Globe from './Globe'
 import Atmosphere from './Atmosphere'
 import Stars from './Stars'
+import Cities from './Cities'
 
 interface Mouse {
     x: number,
     y: number
+}
+
+interface Config {
+    canvas: HTMLCanvasElement,
+    resources: any,
+    radius: number
 }
 
 export default class Sketch {
@@ -27,8 +34,8 @@ export default class Sketch {
     group: Group
     globe: Globe
     stars: Stars
-   
     atmosphere: Atmosphere
+    cities: Cities
     constructor (config: Config) {
         this.config = config
 
@@ -43,13 +50,15 @@ export default class Sketch {
         }
 
         this.canvas = config.canvas
-        this.renderer = this.setRenderer()
+        this.renderer = this.createRender()
         this.scene = new Scene()
-        this.camera = this.setCamera()
+        this.camera = this.createCamera()
         this.controls = new OrbitControls(this.camera, this.canvas)
 
         this.group = new Group()
-        this.globe = new Globe(config.resources.globe)
+        this.globe = new Globe(config.resources.globe, this.config.radius)
+        this.cities = new Cities(this.config.radius)
+
         this.atmosphere = new Atmosphere()
         this.stars = new Stars()
 
@@ -59,35 +68,25 @@ export default class Sketch {
     }
 
     init () {
-        this.scene.add(this.atmosphere.mesh)
-
-        this.group.add(this.globe.mesh)
+        this.group.add(this.globe.main)
+        this.group.add(this.cities.main)
+        
         this.scene.add(this.group)
 
-        this.scene.add(this.stars.points)
+        this.scene.add(this.atmosphere.main)
 
-        window.addEventListener('resize', () => {
-            this.updateSize()
-        })
-
-        window.addEventListener('mousemove', evt => {
-            this.mouse.x = (evt.clientX / this.size.width) * 2 - 1
-            this.mouse.y = (evt.clientY / this.size.height) * 2 - 1
-        })
+        this.scene.add(this.stars.main)
+       
     }
 
     render () {
-        this.globe.mesh.rotation.y += 0.002
-
-        gsap.to(this.group.rotation, {
-            y: this.mouse.x
-        })
+        this.group.rotation.y += 0.008
 
         this.controls.update()
         this.renderer.render( this.scene, this.camera )
     }
 
-    setCamera () {
+    private createCamera () {
         const camera = new PerspectiveCamera(70, this.size.width / this.size.height, 0.01, 1000 )
         camera.position.z = 15
         return camera
@@ -104,7 +103,7 @@ export default class Sketch {
         this.camera.updateProjectionMatrix()
     }
 
-    setRenderer () {
+    private createRender () {
         const renderer = new WebGLRenderer({ antialias: true, canvas: this.canvas, alpha: true })
         renderer.setSize( this.size.width, this.size.height)
         renderer.setAnimationLoop( this.render.bind(this) )
@@ -124,5 +123,10 @@ export default class Sketch {
         this.renderer.setSize(this.size.width, this.size.height)
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+    }
+
+    updateMouse (x: number, y: number) {
+        this.mouse.x = (x / this.size.width) * 2 - 1
+        this.mouse.y = (y / this.size.height) * 2 - 1
     }
 }

@@ -1,12 +1,12 @@
 import { BufferGeometry, Float32BufferAttribute, Points, PointsMaterial } from 'three'
 
 export default class Stars {
-    points: Points
+    main: Points
     constructor () {
 
-        this.points = this.createPoints()
+        this.main = this.create()
     }
-    createPoints () {
+    create () {
         
         const geometry = new BufferGeometry()
         const material = new PointsMaterial()

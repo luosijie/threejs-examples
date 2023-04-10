@@ -2,12 +2,12 @@ import { AdditiveBlending, BackSide, Mesh, ShaderMaterial, SphereGeometry } from
 import vertexShader from './shaders/atmosphere/vertex.glsl?raw'
 import fragmentShader from './shaders/atmosphere/fragment.glsl?raw'
 export default class Atmosphere {
-    mesh: Mesh
+    main: Mesh
     constructor () {
 
-        this.mesh = this.setMesh()
+        this.main = this.create()
     }
-    setMesh () {
+    create () {
         const geometry = new SphereGeometry(5, 50, 50)
         const material = new ShaderMaterial({
             vertexShader,

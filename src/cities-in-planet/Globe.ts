@@ -2,14 +2,18 @@ import { Mesh, ShaderMaterial, SphereGeometry, Texture } from 'three'
 import vertexShader from './shaders/globe/vertex.glsl?raw'
 import fragmentShader from './shaders/globe/fragment.glsl?raw'
 export default class Globe {
-    mesh: Mesh
-    constructor (texture: Texture) {
+    main: Mesh
+    texture: Texture
+    radius: number
+    constructor (texture: Texture, radius: number) {
+        this.texture = texture
+        this.radius = radius
 
-        this.mesh = this.setMesh(texture)
+        this.main = this.create(this.texture)
     }
-    setMesh (texture: Texture) {
+    create (texture: Texture) {
         
-        const geometry = new SphereGeometry(5, 50, 50)
+        const geometry = new SphereGeometry(this.radius, 50, 50)
         const material = new ShaderMaterial({
             vertexShader,
             fragmentShader,

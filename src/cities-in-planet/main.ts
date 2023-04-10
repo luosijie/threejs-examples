@@ -7,15 +7,25 @@ loader.load([
     { name: 'globe', type: LoaderType.Texture, path: './assets/globe.jpg' }
 ])
 
-const canvas = document.querySelector('#canvas')
+let sketch: Sketch
 
+const canvas = document.querySelector('#canvas')
 if (canvas instanceof HTMLCanvasElement) {
     loader.onLoadEnd(() => {
         const config = {
             canvas,
-            resources: loader.resources
+            resources: loader.resources,
+            radius: 5
         }
-        new Sketch(config)
+        sketch = new Sketch(config)
     })
 
 }
+
+window.addEventListener('resize', () => {
+    sketch &&  sketch.updateSize()
+})
+
+window.addEventListener('mousemove', evt => {
+    sketch && sketch.updateMouse(evt.clientX, evt.clientY)
+})

@@ -3,7 +3,3 @@ export interface Size {
     height: number
 }
 
-export interface Config {
-    canvas: HTMLCanvasElement,
-    resources: any
-}
