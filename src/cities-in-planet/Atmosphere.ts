@@ -8,7 +8,7 @@ export default class Atmosphere {
         this.main = this.create()
     }
     create () {
-        const geometry = new SphereGeometry(5, 50, 50)
+        const geometry = new SphereGeometry(6, 50, 50)
         const material = new ShaderMaterial({
             vertexShader,
             fragmentShader,
@@ -16,7 +16,7 @@ export default class Atmosphere {
             side: BackSide
         })
         const mesh = new Mesh(geometry, material)
-        mesh.scale.set(1.1, 1.1, 1.1)
+        // mesh.scale.set(1.1, 1.1, 1.1)
 
         return mesh
     }
