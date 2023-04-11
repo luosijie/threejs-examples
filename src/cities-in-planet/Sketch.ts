@@ -26,6 +26,8 @@ export default class Sketch {
 
     controls: OrbitControls
 
+    clock: Clock
+
     canvas: HTMLCanvasElement
     renderer: WebGLRenderer
     scene: Scene
@@ -49,6 +51,8 @@ export default class Sketch {
             y: 0
         }
 
+        this.clock = new Clock()
+
         this.canvas = config.canvas
         this.renderer = this.createRender()
         this.scene = new Scene()
@@ -68,6 +72,7 @@ export default class Sketch {
     }
 
     init () {
+
         this.group.add(this.globe.main)
         this.group.add(this.cities.main)
         
@@ -80,9 +85,10 @@ export default class Sketch {
     }
 
     render () {
-        this.group.rotation.y += 0.008
+        const elapsedTime = this.clock.getElapsedTime()
 
         this.controls.update()
+        this.cities.update(elapsedTime)
         this.renderer.render( this.scene, this.camera )
     }
 
