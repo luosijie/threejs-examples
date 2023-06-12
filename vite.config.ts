@@ -42,16 +42,8 @@ export default defineConfig({
                         resolve(pagesRoot, dir, 'index.html')
                     ]
                 }))
-                // globe: resolve(root, 'globe', 'index.html'),
-                // jump: resolve(root, 'jump', 'index.html'),
-                // 'sampler-particles': resolve(root, 'globe', 'index.html'),
-                // 'carton-room': resolve(root, 'carton-room', 'index.html'),
-                // 'house-in-desert': resolve(root, 'house-in-desert', 'index.html'),
-                // 'china-map': resolve(root, 'china-map', 'index.html'),
-                // 'mini-city': resolve(root, 'mini-city', 'index.html'),
-                // 'point-line': resolve(root, 'point-line', 'index.html'),
-                // 'cities-in-planet': resolve(root, 'cities-in-planet', 'index.html')
             }
-        }
+        },
+        outDir: path.resolve(__dirname, './dist')
     }
 })
