@@ -5,12 +5,14 @@ import * as path from 'path'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { resolve } from 'path'
 import glsl from 'vite-plugin-glsl'
+import { readdirSync, readFileSync } from 'fs'
 
 // https://vitejs.dev/config/
 
 const REPO = 'threejs-examples'
 
 const root = path.resolve(__dirname, 'src')
+const pagesRoot = path.resolve(__dirname, 'src/pages')
 
 export default defineConfig({
     base: process.env.NODE_ENV === 'production' ? `/${REPO}/` : '/',
@@ -34,15 +36,21 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(root, 'index.html'),
-                globe: resolve(root, 'globe', 'index.html'),
-                jump: resolve(root, 'jump', 'index.html'),
-                'sampler-particles': resolve(root, 'globe', 'index.html'),
-                'carton-room': resolve(root, 'carton-room', 'index.html'),
-                'house-in-desert': resolve(root, 'house-in-desert', 'index.html'),
-                'china-map': resolve(root, 'china-map', 'index.html'),
-                'mini-city': resolve(root, 'mini-city', 'index.html'),
-                'point-line': resolve(root, 'point-line', 'index.html'),
-                'cities-in-planet': resolve(root, 'cities-in-planet', 'index.html')
+                ...Object.fromEntries(readdirSync(pagesRoot).map(dir => {
+                    return [
+                        dir,
+                        resolve(pagesRoot, dir, 'index.html')
+                    ]
+                }))
+                // globe: resolve(root, 'globe', 'index.html'),
+                // jump: resolve(root, 'jump', 'index.html'),
+                // 'sampler-particles': resolve(root, 'globe', 'index.html'),
+                // 'carton-room': resolve(root, 'carton-room', 'index.html'),
+                // 'house-in-desert': resolve(root, 'house-in-desert', 'index.html'),
+                // 'china-map': resolve(root, 'china-map', 'index.html'),
+                // 'mini-city': resolve(root, 'mini-city', 'index.html'),
+                // 'point-line': resolve(root, 'point-line', 'index.html'),
+                // 'cities-in-planet': resolve(root, 'cities-in-planet', 'index.html')
             }
         }
     }

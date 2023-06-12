@@ -7,11 +7,11 @@ const cover = name => {
     
 const workList = [
     { link: '', img: '' },
-    { link: '/house-in-desert/', img: cover('house-in-desert') },
+    { link: '/pages/house-in-desert/', img: cover('house-in-desert') },
     { link: '', img: '' },
-    { link: '/jump/', img: cover('jump') },
-    { link: '/mini-city/', img: cover('mini-city') },
-    { link: '/china-map/', img: cover('china-map') }
+    { link: '/pages/jump/', img: cover('jump') },
+    { link: 'pages//mini-city/', img: cover('mini-city') },
+    { link: 'pages/china-map/', img: cover('china-map') }
 ]
 
 </script>
@@ -41,30 +41,36 @@ const workList = [
     background: #ffffff;
     flex-direction: column;
 }
+
 .info {
     margin: 60px;
     text-align: center;
+
     img {
         margin: 35px;
     }
+
     a {
         display: block;
         font-size: 24px;
         text-decoration: none;
         color: #232323;
     }
+
     a.author {
         margin: 18px;
         font-size: 18px;
         color: #b0b0b0;
     }
 }
+
 .works {
     display: flex;
     justify-content: center;
     margin-bottom: 60px;
     width: 1050px;
     flex-wrap: wrap;
+
     div {
         overflow: hidden;
         margin: 15px;
@@ -72,11 +78,13 @@ const workList = [
         height: 240px;
         border-radius: 4px;
         background: #f4f4f4;
+
         a {
             position: relative;
             display: block;
             width: 100%;
             height: 100%;
+
             img {
                 width: 100%;
                 height: 100%;
@@ -84,6 +92,7 @@ const workList = [
                 object-fit: cover;
             }
         }
+
         &:hover img {
             transform: scale(1.1);
         }
