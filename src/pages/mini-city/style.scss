@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+
+    .info {
+        position: absolute;
+        padding: 10px;
+        width: 100%;
+        opacity: 0.2;
+    }
+
+    a {
+        display: block;
+        font-size: 16px;
+        text-decoration: none;
+        color: #ffffff;
+        line-height: 28px;
+    }
+}
+
+a.title {
+    font-size: 20px;
+    font-weight: bold;
+}

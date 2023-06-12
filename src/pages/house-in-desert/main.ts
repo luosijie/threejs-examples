@@ -7,6 +7,10 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import createBackgroundMaterial from './materials/createBackground.js'
 import createFloorShadowMaterial from './materials/createFloorShadow.js'
 
+import urlImageBaked from './resources/baked.jpg?url'
+import urlImageFloorShadow from './resources/floor-shadow.jpg?url'
+import urlModelHouse from './resources/house.glb?url'
+
 const canvas = document.querySelector('#canvas')
 
 if (canvas instanceof HTMLCanvasElement) {
@@ -16,12 +20,12 @@ if (canvas instanceof HTMLCanvasElement) {
     const textureLoader = new TextureLoader()
 
     // texture-baked
-    const bakedTexture = textureLoader.load('./resources/baked.jpg')
+    const bakedTexture = textureLoader.load(urlImageBaked)
     bakedTexture.flipY = false
     bakedTexture.encoding = sRGBEncoding
 
     // texture-floor-shadow
-    const floorShadowTexture = textureLoader.load('./resources/floor-shadow.jpg')
+    const floorShadowTexture = textureLoader.load(urlImageFloorShadow)
     floorShadowTexture.flipY = false
     floorShadowTexture.encoding = sRGBEncoding
 
@@ -38,7 +42,7 @@ if (canvas instanceof HTMLCanvasElement) {
 
     // Draco loader
     const dracoLoader = new DRACOLoader()
-    dracoLoader.setDecoderPath('draco/')
+    dracoLoader.setDecoderPath('/draco/')
 
     // GLTF loader
     const gltfLoader = new GLTFLoader()
@@ -55,7 +59,7 @@ if (canvas instanceof HTMLCanvasElement) {
 
     // load-model
     gltfLoader.load(
-        './resources/house.glb',
+        urlModelHouse,
         gltf => {
             const bakedMesh = gltf.scene.children.find(child => child.name === 'baked')
             if (bakedMesh instanceof Mesh) {

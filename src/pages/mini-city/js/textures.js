@@ -1,5 +1,6 @@
-import * as THREE from 'three'
-let textures = {
+
+import { RepeatWrapping, Texture } from 'three'
+const textures = {
     window: function () {
         let canvas = document.createElement('canvas')
         let ctx = canvas.getContext('2d')
@@ -24,9 +25,9 @@ let textures = {
         ctx.fillStyle = colors.bottom
         ctx.fillRect(17, 17, 13, 13)
 
-        let canvasTexture = new THREE.Texture(canvas)
-        canvasTexture.wrapS = THREE.RepeatWrapping
-        canvasTexture.wrapT = THREE.RepeatWrapping
+        let canvasTexture = new Texture(canvas)
+        canvasTexture.wrapS = RepeatWrapping
+        canvasTexture.wrapT = RepeatWrapping
         canvasTexture.needsUpdate = true
 
         return canvasTexture

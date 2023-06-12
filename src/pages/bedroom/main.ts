@@ -6,6 +6,11 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 import createBackgroundMaterial from './materials/createBackground.js'
 
+import urlRoom from './resources/room.glb?url'
+import urlPlants from './resources/plants.glb?url'
+import urlMatcapGreen from './resources/matcap-green.webp?url'
+import urlImageBaked from './resources/baked.webp?url'
+
 const canvas : HTMLCanvasElement = <HTMLCanvasElement> document.querySelector('#canvas')
 
 // Set loaders
@@ -13,7 +18,7 @@ const canvas : HTMLCanvasElement = <HTMLCanvasElement> document.querySelector('#
 const textureLoader = new TextureLoader()
 
 const dracoLoader = new DRACOLoader()
-dracoLoader.setDecoderPath('draco/')
+dracoLoader.setDecoderPath('/draco/')
 
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
@@ -44,12 +49,12 @@ backgroundMesh.updateMatrix()
 scene.add(backgroundMesh)
 
 // Load room
-const roomTexture = textureLoader.load('./resources/baked.webp')
+const roomTexture = textureLoader.load(urlImageBaked)
 roomTexture.flipY = false
 roomTexture.encoding = sRGBEncoding
 
 gltfLoader.load(
-    './resources/room.glb',
+    urlRoom,
     gltf => {
         const bakedMesh : Mesh = <Mesh> gltf.scene.children.find(child => child.name === 'main')
 
@@ -60,12 +65,12 @@ gltfLoader.load(
 )
 
 // Load plants
-const plantsTexture = textureLoader.load('./resources/matcap-green.webp')
+const plantsTexture = textureLoader.load(urlMatcapGreen)
 plantsTexture.flipY = false
 plantsTexture.encoding = sRGBEncoding
 
 gltfLoader.load(
-    './resources/plants.glb',
+    urlPlants,
     gltf => {
         const mesh : Mesh = <Mesh> gltf.scene.children.find(child => child.name === 'plants')
         

@@ -66,6 +66,7 @@ body {
     margin: 0;
     padding: 0;
 }
+
 .container {
     display: flex;
     align-items: center;
@@ -75,6 +76,7 @@ body {
     background: #ffffff;
     flex-direction: column;
 }
+
 .mask {
     position: fixed;
     display: flex;
@@ -85,9 +87,11 @@ body {
     height: 100%;
     background: rgb(0 0 0 / 40%);
     flex-direction: column;
+
     .title {
         padding-bottom: 30px;
     }
+
     .content {
         display: flex;
         justify-content: center;
@@ -100,21 +104,25 @@ body {
         flex-direction: column;
     }
 }
+
 .score-container {
     text-align: center;
     color: #ffffff;
 }
+
 .title {
     margin-bottom: 10px;
     font-size: 20px;
     font-weight: bold;
     color: rgb(255 255 255 / 60%);
 }
+
 .score {
     margin-top: 20px;
     font-size: 100px;
     font-weight: bold;
 }
+
 button.restart {
     width: 200px;
     height: 40px;
@@ -125,9 +133,11 @@ button.restart {
     background: white;
     cursor: pointer;
 }
+
 button.restart:hover {
     color: #232323;
 }
+
 .info {
     position: absolute;
     margin: 20px 0;
@@ -135,6 +145,7 @@ button.restart:hover {
     text-align: center;
     opacity: 0.2;
 }
+
 .info a {
     display: block;
     font-size: 16px;
@@ -142,10 +153,12 @@ button.restart:hover {
     color: #ffffff;
     line-height: 28px;
 }
+
 a.title {
     font-size: 20px;
     font-weight: bold;
 }
+
 .score-gaming {
     margin-top: 10px;
     font-size: 16px;

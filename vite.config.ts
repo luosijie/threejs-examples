@@ -5,18 +5,17 @@ import * as path from 'path'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { resolve } from 'path'
 import glsl from 'vite-plugin-glsl'
-import { readdirSync, readFileSync } from 'fs'
+import { readdirSync } from 'fs'
 
 // https://vitejs.dev/config/
-
-const REPO = 'threejs-examples'
 
 const root = path.resolve(__dirname, 'src')
 const pagesRoot = path.resolve(__dirname, 'src/pages')
 
 export default defineConfig({
-    // base: process.env.NODE_ENV === 'production' ? `/${REPO}/` : '/',
+    base: process.env.NODE_ENV === 'production' ? '' : '/',
     root,
+    publicDir: path.resolve(__dirname, 'public'),
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'src')

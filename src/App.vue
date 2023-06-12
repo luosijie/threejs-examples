@@ -10,7 +10,7 @@ const workList = [
     { link: '', img: '' },
     { link: '/pages/house-in-desert/', img: cover('house-in-desert') },
     { link: '/pages/jump/', img: cover('jump') },
-    { link: 'pages//mini-city/', img: cover('mini-city') },
+    { link: 'pages/mini-city/', img: cover('mini-city') },
     { link: 'pages/china-map/', img: cover('china-map') }
 ]
 
