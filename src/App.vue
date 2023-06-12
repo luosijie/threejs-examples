@@ -2,13 +2,13 @@
 <script setup>
 
 const cover = name => {
-    return new URL(`./assets/images/covers/${name}.png`, import.meta.url).href
+    return new URL(`./assets/covers/${name}.png`, import.meta.url).href
 }
     
 const workList = [
+    { link: '/pages/bedroom/', img: cover('bedroom') },
     { link: '', img: '' },
     { link: '/pages/house-in-desert/', img: cover('house-in-desert') },
-    { link: '', img: '' },
     { link: '/pages/jump/', img: cover('jump') },
     { link: 'pages//mini-city/', img: cover('mini-city') },
     { link: 'pages/china-map/', img: cover('china-map') }
@@ -19,7 +19,7 @@ const workList = [
 <template>
     <div class="container">
         <div class="info">
-            <img src="./assets/images/logo.png" alt="Three.js Examples" class="logo">
+            <img src="./assets/logo.png" alt="Three.js Examples" class="logo">
             <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
             <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
         </div>

@@ -1,0 +1,25 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+.info {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+    margin: 20px;
+
+    a {
+        display: block;
+        text-align: right;
+        text-decoration: none;
+        color: white;
+    }
+}
