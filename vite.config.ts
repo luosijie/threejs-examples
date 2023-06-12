@@ -15,7 +15,7 @@ const root = path.resolve(__dirname, 'src')
 const pagesRoot = path.resolve(__dirname, 'src/pages')
 
 export default defineConfig({
-    base: process.env.NODE_ENV === 'production' ? `/${REPO}/` : '/',
+    // base: process.env.NODE_ENV === 'production' ? `/${REPO}/` : '/',
     root,
     resolve: {
         alias: {
